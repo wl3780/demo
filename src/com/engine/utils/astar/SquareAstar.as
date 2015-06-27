@@ -10,7 +10,6 @@ package com.engine.utils.astar
     import com.engine.core.tile.square.SquarePt;
     import com.engine.core.tile.square.Square;
     import flash.utils.getTimer;
-    import com.engine.utils.Track;
     import flash.geom.Point;
 
     public class SquareAstar 
@@ -79,7 +78,7 @@ package com.engine.utils.astar
                 this.getScale9Grid(_arg_1, this.nonce, this.endPoint, _arg_5);
             };
             var _local_7:Array = this.cleanArray();
-            Track.track("saiman", "*****************寻路时间", (getTimer() - _local_6), "路径长: ", _local_7.length, "*******************", "\n\n");
+            log("saiman", "*****************寻路时间", (getTimer() - _local_6), "路径长: ", _local_7.length, "*******************", "\n\n");
             return (_local_7);
         }
 

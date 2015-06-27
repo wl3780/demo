@@ -1,110 +1,101 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.utils.Hash
-
-package com.engine.utils
+﻿package com.engine.utils
 {
-    import flash.utils.Dictionary;
-    import com.engine.namespaces.coder;
+	import com.engine.namespaces.coder;
+	
+	import flash.utils.Dictionary;
 
-    use namespace coder;
+	use namespace coder;
 
-    public class Hash 
-    {
+	public class Hash 
+	{
 
-        private var _length:int;
-        private var _hash:Dictionary;
+		private var _length:int;
+		private var _hash:Dictionary;
 
-        public function Hash()
-        {
-            this._length = 0;
-            this._hash = new Dictionary();
-        }
+		public function Hash()
+		{
+			_length = 0;
+			_hash = new Dictionary();
+		}
 
-        public function put(_arg_1:String, _arg_2:Object):void
-        {
-            if (this.has(_arg_1) == false){
-                this._hash[_arg_1] = _arg_2;
-                this._length++;
-            } else {
-                this.remove(_arg_1);
-                this._hash[_arg_1] = _arg_2;
-                this._length++;
-            };
-        }
+		public function put(key:String, val:Object):void
+		{
+			if (this.has(key) == false) {
+				_hash[key] = val;
+				_length++;
+			} else {
+				this.remove(key);
+				_hash[key] = val;
+				_length++;
+			}
+		}
 
-        public function remove(_arg_1:String):Object
-        {
-            var _local_2:Object;
-            if (this.has(_arg_1)){
-                _local_2 = this._hash[_arg_1];
-                delete this._hash[_arg_1];
-                this._length--;
-                return (_local_2);
-            };
-            return (null);
-        }
+		public function remove(key:String):Object
+		{
+			if (this.has(key)) {
+				var ret:Object = _hash[key];
+				delete _hash[key];
+				_length--;
+				return ret;
+			}
+			return null;
+		}
 
-        public function has(_arg_1:String):Boolean
-        {
-            if (this._hash[_arg_1] != null){
-                return (true);
-            };
-            return (false);
-        }
+		public function has(key:String):Boolean
+		{
+			if (_hash[key] != null) {
+				return true;
+			}
+			return false;
+		}
 
-        public function take(_arg_1:String):Object
-        {
-            return (this._hash[_arg_1]);
-        }
+		public function take(key:String):Object
+		{
+			return _hash[key];
+		}
 
-        public function get length():int
-        {
-            return (this._length);
-        }
+		public function get length():int
+		{
+			return _length;
+		}
 
-        public function get hash():Dictionary
-        {
-            return (this._hash);
-        }
+		public function get hash():Dictionary
+		{
+			return _hash;
+		}
 
-        public function dispose():void
-        {
-            this._hash = null;
-            this._length = 0;
-        }
+		public function dispose():void
+		{
+			_hash = null;
+			_length = 0;
+		}
 
-        coder function dispose():void
-        {
-            var _local_1:String;
-            for (_local_1 in this._hash) {
-                delete this._hash[_local_1];
-            };
-            this._hash = null;
-            this._length = 0;
-        }
+		coder function dispose():void
+		{
+			for (var key:String in _hash) {
+				delete _hash[key];
+			}
+			_hash = null;
+			_length = 0;
+		}
 
-        coder function values():Array
-        {
-            var _local_2:Object;
-            var _local_1:Array = [];
-            for each (_local_2 in this._hash) {
-                _local_1.push(_local_2);
-            };
-            return (_local_1);
-        }
+		coder function values():Array
+		{
+			var ret:Array = [];
+			for each (var val:Object in _hash) {
+				ret.push(val);
+			}
+			return ret;
+		}
 
-        coder function takekey():String
-        {
-            var _local_1:Object;
-            for each (_local_1 in this._hash) {
-                return ((_local_1.id as String));
-            };
-            return (null);
-        }
+		coder function keys():Array
+		{
+			var ret:Array = [];
+			for each (var key:Object in _hash) {
+				ret.push(key);
+			}
+			return null;
+		}
 
-
-    }
-}//package com.engine.utils
-
+	}
+}

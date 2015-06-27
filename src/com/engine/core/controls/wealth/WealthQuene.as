@@ -5,28 +5,26 @@
 
 package com.engine.core.controls.wealth
 {
-    import flash.events.EventDispatcher;
+    import com.engine.core.Core;
+    import com.engine.core.controls.elisor.FrameOrder;
+    import com.engine.core.controls.events.WealthEvent;
+    import com.engine.core.controls.events.WealthProgressEvent;
+    import com.engine.core.controls.wealth.loader.BingLoader;
+    import com.engine.core.controls.wealth.loader.DisplayLoader;
+    import com.engine.core.controls.wealth.loader.ILoader;
     import com.engine.core.model.IProto;
+    import com.engine.core.model.Proto;
+    import com.engine.core.model.wealth.WealthGroupVo;
+    import com.engine.core.model.wealth.WealthVo;
+    import com.engine.namespaces.coder;
+    
+    import flash.events.EventDispatcher;
+    import flash.events.ProgressEvent;
+    import flash.events.TimerEvent;
     import flash.system.LoaderContext;
     import flash.utils.Dictionary;
-    import __AS3__.vec.Vector;
-    import com.engine.core.model.wealth.WealthGroupVo;
-    import com.engine.namespaces.coder;
-    import com.engine.core.controls.elisor.FrameOrder;
     import flash.utils.Timer;
-    import com.engine.core.Core;
-    import flash.events.TimerEvent;
     import flash.utils.getTimer;
-    import com.engine.core.model.wealth.WealthVo;
-    import com.engine.core.controls.events.WealthEvent;
-    import com.engine.core.controls.wealth.loader.ILoader;
-    import com.engine.utils.Track;
-    import flash.events.ProgressEvent;
-    import com.engine.core.controls.events.WealthProgressEvent;
-    import com.engine.core.controls.wealth.loader.DisplayLoader;
-    import com.engine.core.controls.wealth.loader.BingLoader;
-    import com.engine.core.model.Proto;
-    import __AS3__.vec.*;
 
     use namespace coder;
 
@@ -245,7 +243,7 @@ package com.engine.core.controls.wealth
 
         private function priorityErrorFunc(_arg_1:WealthVo):void
         {
-            Track.track("saiman", "加载失败：", _arg_1);
+            log("saiman", "加载失败：", _arg_1);
             this.removeLoader(_arg_1.path);
             var _local_2 = WealthManager.getIntance();
             (_local_2.coder::callError(_arg_1.path, false));

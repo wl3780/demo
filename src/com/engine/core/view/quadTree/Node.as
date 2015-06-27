@@ -1,209 +1,198 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.quadTree.Node
-
-package com.engine.core.view.quadTree
+﻿package com.engine.core.view.quadTree
 {
-    import com.engine.core.model.Proto;
-    import com.engine.namespaces.coder;
-    import flash.geom.Rectangle;
-    import flash.utils.Dictionary;
-    import com.engine.core.Core;
-    import com.engine.utils.Hash;
-    import flash.display.Graphics;
+	import com.engine.core.Core;
+	import com.engine.core.model.Proto;
+	import com.engine.namespaces.coder;
+	import com.engine.utils.Hash;
+	
+	import flash.display.Graphics;
+	import flash.geom.Rectangle;
+	import flash.utils.Dictionary;
 
-    use namespace coder;
+	use namespace coder;
 
-    public class Node extends Proto 
-    {
+	public class Node extends Proto 
+	{
 
-        coder var _tid_:String;
-        coder var _depth_:int;
-        coder var _rect:Rectangle;
-        private var _nodeA:Node;
-        private var _nodeB:Node;
-        private var _nodeC:Node;
-        private var _nodeD:Node;
-        private var _nodes:Dictionary;
-        private var _length:int;
-        private var _tree:NodeTree;
+		coder var _tid_:String;
+		coder var _depth_:int;
+		coder var _rect:Rectangle;
+		
+		private var _nodeA:Node;
+		private var _nodeB:Node;
+		private var _nodeC:Node;
+		private var _nodeD:Node;
+		private var _nodes:Dictionary;
+		private var _length:int;
+		private var _tree:NodeTree;
 
-        public function Node()
-        {
-            this._nodes = new Dictionary();
-        }
+		public function Node()
+		{
+			_nodes = new Dictionary();
+		}
 
-        public function get rect():Rectangle
-        {
-            return (this.coder::_rect);
-        }
+		public function get rect():Rectangle
+		{
+			return this.coder::_rect;
+		}
 
-        public function setUp(_arg_1:String, _arg_2:String, _arg_3:Rectangle, _arg_4:int):void
-        {
-            var _local_5:Rectangle;
-            var _local_6:int;
-            this.coder::_depth_ = _arg_4;
-            this.coder::_tid_ = _arg_1;
-            this.coder::_rect = _arg_3;
-            _local_6 = (_arg_4 - 1);
-            var _local_7:int = _arg_3.x;
-            var _local_8:int = _arg_3.y;
-            var _local_9:Number = _arg_3.width;
-            var _local_10:Number = _arg_3.height;
-            var _local_11:int = (_local_9 / 2);
-            var _local_12:int = (_local_10 / 2);
-            this.$id = (((_local_7 + _local_11) + Core.SIGN) + (_local_8 + _local_12));
-            this.$oid = _arg_2;
-            this._tree = (NodeTreePool.getInstance().take(_arg_1) as NodeTree);
-            this._tree.addNode(this.$id, this);
-            if (_local_6 > 0){
-                if (this._nodeA == null){
-                    this._nodeA = new Node();
-                    _local_5 = new Rectangle(_local_7, _local_8, _local_11, _local_12);
-                    this._nodeA.setUp(_arg_1, this.$id, _local_5, _local_6);
-                };
-                if (this._nodeB == null){
-                    this._nodeB = new Node();
-                    _local_5 = new Rectangle(_local_7, (_local_8 + _local_12), _local_11, _local_12);
-                    this._nodeB.setUp(_arg_1, this.$id, _local_5, _local_6);
-                };
-                if (this._nodeC == null){
-                    this._nodeC = new Node();
-                    _local_5 = new Rectangle((_local_7 + _local_11), _local_8, _local_11, _local_12);
-                    this._nodeC.setUp(_arg_1, this.$id, _local_5, _local_6);
-                };
-                if (this._nodeD == null){
-                    this._nodeD = new Node();
-                    _local_5 = new Rectangle((_local_7 + _local_11), (_local_8 + _local_12), _local_11, _local_12);
-                    this._nodeD.setUp(_arg_1, this.$id, _local_5, _local_6);
-                };
-                this.project();
-            };
-        }
+		public function setUp(tid:String, oid:String, area:Rectangle, depth:int):void
+		{
+			this.coder::_depth_ = depth;
+			this.coder::_tid_ = tid;
+			this.coder::_rect = area;
+			
+			var nextDepth:int = depth - 1;
+			var nextRect:Rectangle;
+			var rectX:int = area.x;
+			var rectY:int = area.y;
+			var rectW:Number = area.width;
+			var rectH:Number = area.height;
+			var rectHW:int = rectW / 2;
+			var rectHH:int = rectH / 2;
+			
+			_id = (rectX + rectHW) + Core.SIGN + (rectY + rectHH);
+			_oid = oid;
+			_tree = NodeTreePool.getInstance().take(tid) as NodeTree;
+			_tree.addNode(_id, this);
+			if (nextDepth > 0) {
+				if (_nodeA == null) {
+					_nodeA = new Node();
+					nextRect = new Rectangle(rectX, rectY, rectHW, rectHH);
+					_nodeA.setUp(tid, _id, nextRect, nextDepth);
+				}
+				if (_nodeB == null) {
+					_nodeB = new Node();
+					nextRect = new Rectangle(rectX, (rectY + rectHH), rectHW, rectHH);
+					_nodeB.setUp(tid, _id, nextRect, nextDepth);
+				}
+				if (_nodeC == null) {
+					_nodeC = new Node();
+					nextRect = new Rectangle((rectX + rectHW), rectY, rectHW, rectHH);
+					_nodeC.setUp(tid, _id, nextRect, nextDepth);
+				}
+				if (_nodeD == null) {
+					_nodeD = new Node();
+					nextRect = new Rectangle((rectX + rectHW), (rectY + rectHH), rectHW, rectHH);
+					_nodeD.setUp(tid, _id, nextRect, nextDepth);
+				}
+				this.project();
+			}
+		}
 
-        private function project():void
-        {
-            var _local_1:INoder;
-            if (this.coder::_depth_ > 0){
-                for each (_local_1 in this._nodes) {
-                    if (this._nodeA.coder::_rect.contains(_local_1.x, _local_1.y)){
-                        this._nodeA.addChild(_local_1.id, _local_1);
-                    } else {
-                        if (this._nodeB.coder::_rect.contains(_local_1.x, _local_1.y)){
-                            this._nodeB.addChild(_local_1.id, _local_1);
-                        } else {
-                            if (this._nodeC.coder::_rect.contains(_local_1.x, _local_1.y)){
-                                this._nodeC.addChild(_local_1.id, _local_1);
-                            } else {
-                                if (this._nodeD.coder::_rect.contains(_local_1.x, _local_1.y)){
-                                    this._nodeD.addChild(_local_1.id, _local_1);
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        }
+		private function project():void
+		{
+			if (this.coder::_depth_ > 0) {
+				var subNode:INoder;
+				for each (subNode in _nodes) {
+					if (_nodeA.coder::_rect.contains(subNode.x, subNode.y)) {
+						_nodeA.addChild(subNode.id, subNode);
+					} else if (_nodeB.coder::_rect.contains(subNode.x, subNode.y)) {
+						_nodeB.addChild(subNode.id, subNode);
+					} else if (_nodeC.coder::_rect.contains(subNode.x, subNode.y)) {
+						_nodeC.addChild(subNode.id, subNode);
+					} else if (_nodeD.coder::_rect.contains(subNode.x, subNode.y)) {
+						_nodeD.addChild(subNode.id, subNode);
+					}
+				}
+			}
+		}
 
-        public function reFree():void
-        {
-            if (this.coder::_depth_ >= 1){
-                this._nodes = null;
-                this._nodes = new Dictionary();
-                if (this._nodeA){
-                    this._nodeA.reFree();
-                };
-                if (this._nodeB){
-                    this._nodeB.reFree();
-                };
-                if (this._nodeC){
-                    this._nodeC.reFree();
-                };
-                if (this._nodeD){
-                    this._nodeD.reFree();
-                };
-            };
-        }
+		public function reFree():void
+		{
+			if (this.coder::_depth_ > 0) {
+				_nodes = new Dictionary();
+				if (_nodeA) {
+					_nodeA.reFree();
+				}
+				if (_nodeB) {
+					_nodeB.reFree();
+				}
+				if (_nodeC) {
+					_nodeC.reFree();
+				}
+				if (_nodeD) {
+					_nodeD.reFree();
+				}
+			}
+		}
 
-        override public function dispose():void
-        {
-            this._nodes = null;
-            this._tree = null;
-            super.dispose();
-        }
+		override public function dispose():void
+		{
+			_nodes = null;
+			_tree = null;
+			super.dispose();
+		}
 
-        public function treeNodes():Hash
-        {
-            return (this._tree.nodes);
-        }
+		public function treeNodes():Hash
+		{
+			return _tree.nodes;
+		}
 
-        public function get parent():Node
-        {
-            if (this.oid == null){
-                return (null);
-            };
-            return ((this._tree.nodes.take(this.oid) as Node));
-        }
+		public function get parent():Node
+		{
+			if (this.oid == null) {
+				return null;
+			}
+			return _tree.nodes.take(this.oid) as Node;
+		}
 
-        public function addChild(_arg_1:String, _arg_2:INoder):void
-        {
-            if (this._nodes[_arg_1] == null){
-                this._nodes[_arg_1] = _arg_2;
-                this._length++;
-            };
-        }
+		public function get nodeA():Node
+		{
+			return _nodeA;
+		}
 
-        public function get nodeA():Node
-        {
-            return (this._nodeA);
-        }
+		public function get nodeB():Node
+		{
+			return _nodeB;
+		}
 
-        public function get nodeB():Node
-        {
-            return (this._nodeB);
-        }
+		public function get nodeC():Node
+		{
+			return _nodeC;
+		}
 
-        public function get nodeC():Node
-        {
-            return (this._nodeC);
-        }
+		public function get nodeD():Node
+		{
+			return _nodeD;
+		}
 
-        public function get nodeD():Node
-        {
-            return (this._nodeD);
-        }
+		public function get length():int
+		{
+			return _length;
+		}
 
-        public function get length():int
-        {
-            return (this._length);
-        }
+		public function get dic():Dictionary
+		{
+			return _nodes;
+		}
 
-        public function get dic():Dictionary
-        {
-            return (this._nodes);
-        }
+		public function addChild(id:String, node:INoder):void
+		{
+			if (_nodes[id] == null) {
+				_nodes[id] = node;
+				_length++;
+			}
+		}
 
-        public function removeChild(_arg_1:String):void
-        {
-            if (this._nodes[_arg_1]){
-                delete this._nodes[_arg_1];
-                this._length--;
-            };
-        }
+		public function removeChild(id:String):void
+		{
+			if (_nodes[id]) {
+				delete _nodes[id];
+				_length--;
+			}
+		}
 
-        public function drawBound(_arg_1:Graphics, _arg_2:Rectangle, _arg_3:uint, _arg_4:Boolean=false):void
-        {
-            if (((_arg_2) && (_arg_1))){
-                _arg_1.lineStyle(1, _arg_3);
-                if (_arg_4){
-                    _arg_1.beginFill(0, 0.2);
-                };
-                _arg_1.drawRect(_arg_2.topLeft.x, _arg_2.topLeft.y, _arg_2.width, _arg_2.height);
-            };
-        }
+		public function drawBound(pen:Graphics, area:Rectangle, color:uint, alpha:Boolean=false):void
+		{
+			if (area && pen) {
+				pen.lineStyle(1, color);
+				if (alpha) {
+					pen.beginFill(0, 0.2);
+				}
+				pen.drawRect(area.topLeft.x, area.topLeft.y, area.width, area.height);
+			}
+		}
 
-
-    }
-}//package com.engine.core.view.quadTree
-
+	}
+}

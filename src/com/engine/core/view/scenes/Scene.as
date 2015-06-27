@@ -31,7 +31,6 @@
 	import com.engine.utils.Hash;
 	import com.engine.utils.HitTest;
 	import com.engine.utils.SuperKey;
-	import com.engine.utils.Track;
 	import com.engine.utils.astar.SquareAstar;
 	import com.engine.utils.gome.SquareUitls;
 	import com.engine.utils.gome.TileUitls;
@@ -505,15 +504,15 @@
 
 		public function fine(_arg_1:Rectangle, _arg_2:Boolean, _arg_3:int=100):Array
 		{
-			return (this.$nodeTree.find(_arg_1, _arg_2, _arg_3));
+			return this.$nodeTree.find(_arg_1, _arg_2, _arg_3);
 		}
 
-		public function buildTree(_arg_1:Rectangle, _arg_2:int=50, _arg_3:Vector.<INoder>=null):void
+		public function buildTree(area:Rectangle, _arg_2:int=50, _arg_3:Vector.<INoder>=null):void
 		{
-			if ((_arg_3 == null)) {
+			if (_arg_3 == null) {
 				_arg_3 = new Vector.<INoder>();
 			}
-			this.$nodeTree.build(_arg_1, _arg_2, _arg_3);
+			this.$nodeTree.build(area, _arg_2, _arg_3);
 		}
 
 		public function get shiftKey():Boolean
@@ -657,7 +656,7 @@
 			var _local_3:DisplayObject;
 			var _local_4:Char;
 			if (_arg_1.char_id == null) {
-				Track.track("saiman", "char_id属性不能为null!");
+				log("saiman", "char_id属性不能为null!");
 			}
 			if (((_arg_1) && (_arg_1.char_id))) {
 				if (_arg_1) {
