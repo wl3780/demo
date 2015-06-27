@@ -1,17 +1,11 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.BitmapScale9Grid
-
-package com.engine.core.view
+﻿package com.engine.core.view
 {
-    import flash.display.BitmapData;
-    import flash.geom.Rectangle;
     import com.engine.namespaces.coder;
-    import flash.geom.Matrix;
-    import __AS3__.vec.Vector;
+    
+    import flash.display.BitmapData;
     import flash.display.Graphics;
-    import __AS3__.vec.*;
+    import flash.geom.Matrix;
+    import flash.geom.Rectangle;
 
     use namespace coder;
 

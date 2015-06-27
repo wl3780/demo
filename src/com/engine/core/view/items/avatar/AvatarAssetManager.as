@@ -16,7 +16,6 @@ package com.engine.core.view.items.avatar
     import flash.utils.Timer;
     import flash.events.TimerEvent;
     import com.engine.namespaces.coder;
-    import com.engine.utils.Track;
     import com.engine.core.model.wealth.WealthGroupVo;
     import com.engine.core.controls.wealth.WealthConstant;
     import com.engine.core.controls.wealth.loader.DisplayLoader;
@@ -147,7 +146,7 @@ package com.engine.core.view.items.avatar
 
         private function wealthErrorFunc(_arg_1:WealthEvent):void
         {
-            Track.track("saiman", "[ERROR]:", _arg_1.vo.path);
+            log("saiman", "[ERROR]:", _arg_1.vo.path);
             AvatarManager.coder::getInstance().loadedAvatarError((_arg_1.vo.data.owner as String));
         }
 
@@ -175,7 +174,7 @@ package com.engine.core.view.items.avatar
         public function loadAvatar(_arg_1:String, _arg_2:String, _arg_3:String=null):String
         {
             var _local_4:String = Core.coder::nextInstanceIndex().toString();
-            Track.track("saiman", "加载动作资源：", _arg_1);
+            log("saiman", "加载动作资源：", _arg_1);
             var _local_5:WealthGroupVo = new WealthGroupVo();
             if (_arg_1.indexOf(".sm") == -1){
                 _local_5.level = WealthConstant.BUBBLE_LEVEL;
@@ -521,7 +520,7 @@ package com.engine.core.view.items.avatar
                     i = (i + 1);
                 };
             } catch(e:Error) {
-                Track.track("saiman", e.message);
+                log("saiman", e.message);
             };
         }
 
@@ -634,7 +633,7 @@ package com.engine.core.view.items.avatar
                         if (this.bitmapdatas.hasOwnProperty(_local_15) == false){
                             _local_23 = _local_22.children();
                             if (_local_23.length() == 0){
-                                Track.track("saiman", "资源配置文件格式不符合要求");
+                                log("saiman", "资源配置文件格式不符合要求");
                                 return (new Dictionary());
                             };
                             if (this.bitmapdatas[_local_15] == null){

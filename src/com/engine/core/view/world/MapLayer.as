@@ -6,7 +6,6 @@
     import com.engine.core.tile.TileGroup;
     import com.engine.core.view.scenes.Scene;
     import com.engine.namespaces.coder;
-    import com.engine.utils.Track;
     
     import flash.display.Bitmap;
     import flash.display.BitmapData;
@@ -120,7 +119,7 @@
             this.loader_.addEventListener(Event.COMPLETE, this.loadedDataFunc);
             this.loader_.addEventListener(IOErrorEvent.IO_ERROR, this.loadedDataErrorFunc);
             Core.stage.addEventListener(Event.RESIZE, this.resizeFunc);
-            Track.track("saiman", "加载地图数据文件---------------");
+            log("saiman", "加载地图数据文件---------------");
         }
 
         private function loadedDataErrorFunc(_arg_1:*):void
@@ -165,7 +164,7 @@
             var _local_2:Loader = (_arg_1.target.loader as Loader);
             var _local_3:Bitmap = (_local_2.content as Bitmap);
             if (_local_3){
-                Track.track("saiman", "加载完成：", _local_2.name);
+                log("saiman", "加载完成：", _local_2.name);
                 if (((_local_3.bitmapData) && ((this.bgHash[((_local_2.x + "-") + _local_2.y)] == null)))){
                     _local_2.removeEventListener(Event.ENTER_FRAME, this.render);
                     delete this.loadHash[((_local_2.x + "-") + _local_2.y)];
@@ -330,14 +329,14 @@
         {
             this._limitIndex_++;
             this.loadImageFunc();
-            Track.track("saiman", " 加载错误：", _arg_1.target.loader.name);
+            log("saiman", " 加载错误：", _arg_1.target.loader.name);
         }
 
         private function loadedDataFunc(_arg_1:Event):void
         {
             var _local_2:String;
             this.scene_data_path = null;
-            Track.track("saiman", "地图数据加载完毕！！！-----------------");
+            log("saiman", "地图数据加载完毕！！！-----------------");
             if (coder::hostPath != null){
                 _local_2 = (((((coder::hostPath + Core.mapPath) + "map_mini/") + this.map_id) + ".jpg?version=") + Core.version);
             } else {
@@ -356,7 +355,7 @@
             this.loader.load(new URLRequest(_local_2), _local_5);
             this.loader.contentLoaderInfo.addEventListener(Event.COMPLETE, this.miniMapLoadedFunc);
             this.loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, this.errorFunc);
-            Track.track("saiman", "加载小地图--------------------");
+            log("saiman", "加载小地图--------------------");
             Scene.scene.changing = false;
             Scene.scene.setupReady();
             this.loadImage(Scene.scene.mainChar.x, Scene.scene.mainChar.y);
@@ -371,7 +370,7 @@
             var _local_2:Number;
             var _local_3:Number;
             var _local_4:Matrix;
-            Track.track("saiman", "小地图加载完毕--------------------");
+            log("saiman", "小地图加载完毕--------------------");
             this.graphics.clear();
             this.bg_bmd = BitmapData(_arg_1.target.loader.content.bitmapData).clone();
             this.mapData.width = this.mapData.pixel_width;
@@ -510,7 +509,7 @@
                                 _local_21.y = _local_22.y;
                                 if (_local_23.intersects(_local_21)){
                                     _local_12.push((((((_local_17 + _local_25) + "_") + _local_24) + ".jpg?version=") + Core.version));
-                                    Track.track("saiman", "加载切片：", _local_26);
+                                    log("saiman", "加载切片：", _local_26);
                                     this._bgHash[_local_25][_local_24] = _local_26;
                                     _local_27 = new Loader();
                                     _local_27.name = _local_26;

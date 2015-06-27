@@ -28,6 +28,7 @@
 
 		private var scene:GameScene;
 		private var text:TextField;
+		
 		private var openShadow:Boolean = true;
 		private var headVisible:Boolean = false;
 		private var bodyVisible:Boolean = true;
@@ -80,6 +81,7 @@
 			
 			this.createButton(this.clickFunc, "（隐藏/显示）身体", 200, 0);
 			this.createButton(this.clickFunc2, "（隐藏/显示）名字", 400, 0);
+			this.createButton(this.clickFunc3, "（隐藏/显示）影子", 600, 0);
 			this.createButton(this.clickFunc4, "10机器人", 200, 35);
 			this.createButton(this.clickFunc5, "50机器人", 400, 35);
 			this.createButton(this.clickFunc6, "100机器人", 600, 35);
@@ -90,23 +92,21 @@
 			HeartbeatFactory.getInstance().addFrameOrder(this.enterFrameFunc);
 		}
 
-		private function resetNum(_arg_1:int):void
+		private function resetNum(num:int):void
 		{
-			var _local_2:Char;
-			var _local_3:int;
-			var _local_4:int;
-			if (robot_quene.length > _arg_1) {
-				while (robot_quene.length > _arg_1) {
-					_local_2 = (robot_quene.pop() as Char);
-					this.scene.remove(_local_2);
-					_local_2.recover();
+			if (robot_quene.length > num) {
+				var char:Char = null;
+				while (robot_quene.length > num) {
+					char = robot_quene.pop() as Char;
+					this.scene.remove(char);
+					char.recover();
 				}
 			} else {
-				_local_3 = (_arg_1 - robot_quene.length);
-				_local_4 = 0;
-				while (_local_4 < _local_3) {
+				var idx:int = 0;
+				var len:int = num - robot_quene.length;
+				while (idx < len) {
 					this.createRobot();
-					_local_4++;
+					idx++;
 				}
 			}
 		}
@@ -132,12 +132,14 @@
 			this.addChild(label);
 		}
 
+		// 显示/隐藏身体
 		protected function clickFunc(btn:MouseEvent):void
 		{
 			this.bodyVisible = !this.bodyVisible;
 			this.setCharBodyVisible();
 		}
 
+		// 显示/隐藏名字
 		protected function clickFunc2(btn:MouseEvent):void
 		{
 			this.headVisible = !this.headVisible;
@@ -150,6 +152,7 @@
 			}
 		}
 
+		// 显示/隐藏影子
 		protected function clickFunc3(evt:MouseEvent):void
 		{
 			this.openShadow = !this.openShadow;
@@ -162,37 +165,43 @@
 			}
 		}
 
+		// 10机器人
 		private function clickFunc4(evt:MouseEvent):void
 		{
-			var _local_2:Char;
+			var char:Char;
 			while (robot_quene.length > 10) {
-				_local_2 = (robot_quene.pop() as Char);
-				this.scene.remove(_local_2);
-				_local_2.recover();
+				char = robot_quene.pop() as Char;
+				this.scene.remove(char);
+				char.recover();
 			}
 		}
 
-		private function clickFunc5(_arg_1:MouseEvent):void
+		// 50机器人
+		private function clickFunc5(evt:MouseEvent):void
 		{
 			this.resetNum(50);
 		}
 
-		private function clickFunc6(_arg_1:MouseEvent):void
+		// 100机器人
+		private function clickFunc6(evt:MouseEvent):void
 		{
 			this.resetNum(100);
 		}
 
-		private function clickFunc7(_arg_1:MouseEvent):void
+		// 300机器人
+		private function clickFunc7(evt:MouseEvent):void
 		{
 			this.resetNum(300);
 		}
 
-		private function clickFunc8(_arg_1:MouseEvent):void
+		// 500机器人
+		private function clickFunc8(evt:MouseEvent):void
 		{
 			this.resetNum(500);
 		}
 
-		private function clickFunc9(_arg_1:MouseEvent):void
+		// 1000机器人
+		private function clickFunc9(evt:MouseEvent):void
 		{
 			this.resetNum(1000);
 		}
@@ -200,7 +209,7 @@
 		protected function setCharBodyVisible():void
 		{
 			var char:Avatar;
-			var idx:int = (robot_quene.length - 1);
+			var idx:int = robot_quene.length - 1;
 			while (idx >= 0) {
 				char = robot_quene[idx] as Avatar;
 				char.bodyVisible = this.bodyVisible;
@@ -210,11 +219,7 @@
 
 		private function setupReady():void
 		{
-			var idx:int;
-			while (idx < 10) {
-				this.createRobot();
-				idx++;
-			}
+			this.resetNum(10);
 			this.robotReady = true;
 		}
 
@@ -232,51 +237,53 @@
 
 		private function robotMove():void
 		{
-			var _local_1:Char;
-			var _local_2:Array;
-			var _local_3:Point;
-			if ((getTimer() - time_dur) > 80) {
-				time_dur = getTimer();
-				if (action_index >= robot_quene.length) {
-					action_index = 0;
-				}
-				_local_1 = robot_quene[action_index];
-				if (((!(_local_1.runing)) && (!(_local_1.jumping)))) {
-					_local_2 = [1, -1];
-					_local_3 = new Point(this.scene.mainChar.x, this.scene.mainChar.y);
-					_local_3.x = (_local_3.x + (((Math.random() * ((stage.stageWidth / 2) - 100)) >> 0) * _local_2[((Math.random() * _local_2.length) >> 0)]));
-					_local_3.y = (_local_3.y + (((Math.random() * ((stage.stageHeight / 2) - 20)) >> 0) * _local_2[((Math.random() * _local_2.length) >> 0)]));
-					_local_1.walk([_local_3]);
-					action_index++;
-				} else {
-					action_index++;
-				}
+			if ((getTimer() - time_dur) < 80) {
+				return;
+			}
+			time_dur = getTimer();
+			
+			if (action_index >= robot_quene.length) {
+				action_index = 0;
+			}
+			var pos:Point;
+			var flags:Array = [1, -1];
+			var char:Char = robot_quene[action_index];
+			if (!char.runing && !char.jumping) {
+				pos = new Point(this.scene.mainChar.x, this.scene.mainChar.y);
+				pos.x += (Math.random() * (stage.stageWidth / 2 - 100) >> 0) * flags[Math.random() * flags.length >> 0];
+				pos.y += (Math.random() * (stage.stageHeight / 2 - 20) >> 0) * flags[Math.random() * flags.length >> 0];
+				char.walk([pos]);
+				action_index++;
+			} else {
+				action_index++;
 			}
 		}
 
 		private function createRobot():Char
 		{
-			var _local_1:Char = Char.createChar();
-			_local_1.openShadow = true;
-			_local_1.proto = null;
-			_local_1.name = ("robot" + robot_index);
-			_local_1.stopMove();
-			_local_1.char_id = String((robot_index + 10000));
-			var _local_2:Array = [1, -1];
-			var _local_3:Point = new Point(this.scene.mainChar.x, this.scene.mainChar.y);
-			_local_3.x = (_local_3.x + (((Math.random() * ((stage.stageWidth / 2) - 100)) >> 0) * _local_2[((Math.random() * _local_2.length) >> 0)]));
-			_local_3.y = (_local_3.y + (((Math.random() * ((stage.stageHeight / 2) - 20)) >> 0) * _local_2[((Math.random() * _local_2.length) >> 0)]));
-			_local_1.x = _local_3.x;
-			_local_1.y = _local_3.y;
-			var _local_4:Array = [100000001, 100000002, 100000003, 100000004];
-			this.scene.updataCharAvatarPart(_local_1, _local_4[((Math.random() * _local_4.length) >> 0)], 0, 0);
-			_local_1.speed = 250;
-			_local_1.headVisible = this.headVisible;
-			_local_1.bodyVisible = this.bodyVisible;
-			robot_quene.push(_local_1);
-			this.scene.addItem(_local_1, SceneConstant.MIDDLE_LAYER);
+			var char:Char = Char.createChar();
+			char.openShadow = true;
+			char.proto = null;
+			char.name = "robot" + robot_index;
+			char.stopMove();
+			char.char_id = String(robot_index + 10000);
+			
+			var flags:Array = [1, -1];
+			var pos:Point = new Point(this.scene.mainChar.x, this.scene.mainChar.y);
+			pos.x += (Math.random() * (stage.stageWidth / 2 - 100) >> 0) * flags[Math.random() * flags.length >> 0];
+			pos.y += (Math.random() * (stage.stageHeight / 2 - 20) >> 0) * flags[Math.random() * flags.length >> 0];
+			char.x = pos.x;
+			char.y = pos.y;
+			
+			var clothes:Array = [100000001, 100000002, 100000003, 100000004];
+			this.scene.updataCharAvatarPart(char, clothes[Math.random() * clothes.length >> 0], 0, 0);
+			char.speed = 250;
+			char.headVisible = this.headVisible;
+			char.bodyVisible = this.bodyVisible;
+			robot_quene.push(char);
+			this.scene.addItem(char, SceneConstant.MIDDLE_LAYER);
 			robot_index++;
-			return (_local_1);
+			return char;
 		}
 
 		private function getCamera():Point
@@ -288,7 +295,6 @@
 		public function sceneReadyFunc():void
 		{
 		}
-
 
 	}
 }

@@ -31,7 +31,6 @@
 	import com.engine.utils.Hash;
 	import com.engine.utils.HitTest;
 	import com.engine.utils.SuperKey;
-	import com.engine.utils.Track;
 	import com.engine.utils.astar.SquareAstar;
 	import com.engine.utils.gome.SquareUitls;
 	import com.engine.utils.gome.TileUitls;
@@ -657,7 +656,7 @@
 			var _local_3:DisplayObject;
 			var _local_4:Char;
 			if (_arg_1.char_id == null) {
-				Track.track("saiman", "char_id属性不能为null!");
+				log("saiman", "char_id属性不能为null!");
 			}
 			if (((_arg_1) && (_arg_1.char_id))) {
 				if (_arg_1) {
