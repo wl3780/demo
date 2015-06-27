@@ -40,7 +40,6 @@
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.GradientType;
-	import flash.display.Graphics;
 	import flash.display.Shape;
 	import flash.display.SpreadMethod;
 	import flash.display.Sprite;
@@ -69,7 +68,6 @@
 	public class Scene extends BaseSprite 
 	{
 
-		public static var graphics:Graphics;
 		public static var scene:Scene;
 		public static var clickEnbeled:Boolean = true;
 
@@ -86,7 +84,6 @@
 		public var changing:Boolean = false;
 		public var isReady:Boolean = false;
 		public var lockSceneMove:Boolean;
-		public var flyLock:Boolean = false;
 		public var onSceneReadyFunc:Function;
 		public var shadowShape:Shape;
 		
@@ -102,29 +99,24 @@
 		protected var shoawdBitmapArray:Array;
 		protected var mouseDownTime:int = 0;
 		protected var _walkEndFunc_:Function;
-		protected var num:int = 0;
 		protected var overAvatar:IAvatar;
 		protected var autoWalk:Boolean = false;
-		protected var isZuobi:Boolean = false;
 		protected var headArray:Dictionary;
 		
 		coder var astar:SquareAstar;
-		coder var actionQuene:Array;
 		
 		private var _sceneFlyMode:Boolean;
-		private var testchars:Array;
 		private var _lingthMode:int;
+		
 		private var container:DisplayObjectContainer;
 		private var timeNum:int = 0;
 		private var _time:int = 0;
 		private var _selectAvatar;
-		private var imageTime:int = 0;
 		private var time_1:Number;
 		private var time_2:Number;
 		private var timeCounter:int;
 		private var timeBool:Boolean = false;
 		private var $point:Point;
-		private var index:int = 0;
 		private var cleanTime:int;
 		private var checkTime:int = 0;
 		private var depthTime:int = 0;
@@ -133,13 +125,11 @@
 		public function Scene()
 		{
 			this.mouseDownPoint = new Point();
-			this.testchars = [];
-			this.actionQuene = [];
 			this.shoawdBitmapArray = [];
 			this.$point = new Point(-1, -1);
 			this.headArray = new Dictionary();
 			_outsideRect = new Rectangle();
-			scene = this;
+			Scene.scene = this;
 			super();
 			this.init();
 			
@@ -507,12 +497,12 @@
 			return this.$nodeTree.find(_arg_1, _arg_2, _arg_3);
 		}
 
-		public function buildTree(area:Rectangle, _arg_2:int=50, _arg_3:Vector.<INoder>=null):void
+		public function buildTree(area:Rectangle, size:int=50, subNodes:Vector.<INoder>=null):void
 		{
-			if (_arg_3 == null) {
-				_arg_3 = new Vector.<INoder>();
+			if (subNodes == null) {
+				subNodes = new Vector.<INoder>();
 			}
-			this.$nodeTree.build(area, _arg_2, _arg_3);
+			this.$nodeTree.build(area, size, subNodes);
 		}
 
 		public function get shiftKey():Boolean

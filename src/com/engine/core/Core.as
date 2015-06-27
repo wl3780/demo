@@ -54,7 +54,6 @@
 		public static var sceneIntersects:Boolean = false;
 		public static var mouseStateLock:Boolean = false;
 		public static var screenShaking:Boolean = true;
-		public static var sandBoxEnabled:Boolean = true;
 		
 		public static var fps:int;
 		

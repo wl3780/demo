@@ -56,12 +56,12 @@
 			this.stage.align = StageAlign.TOP_LEFT;
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			
-			Core.setup(this, "/", "zh_CN", "v1");
+			Core.setup(this, "../", "zh_CN", "v1");
 			this.scene.buildTree(new Rectangle(0, 0, 10000, 10000));
 			this.scene.setup(Core.stage, this);
 			this.scene.updataMainChar(100000002, 0, 0);
 			this.scene.changeScene(5);
-			this.scene.$bottomLayer.init(("scene_" + 4));
+			this.scene.$bottomLayer.init("scene_" + 4);
 			this.scene.mainChar.speed = 270;
 			this.scene.mainChar.char_id = "saiman";
 			this.scene.mainChar.openShadow = true;
