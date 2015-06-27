@@ -20,7 +20,7 @@
 
 	public class demo extends Sprite 
 	{
-
+		
 		private static var time_dur:int;
 		private static var robot_quene:Array = [];
 		private static var action_index:int;
