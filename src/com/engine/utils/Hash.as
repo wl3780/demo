@@ -66,12 +66,6 @@
 
 		public function dispose():void
 		{
-			_hash = null;
-			_length = 0;
-		}
-
-		coder function dispose():void
-		{
 			for (var key:String in _hash) {
 				delete _hash[key];
 			}

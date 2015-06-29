@@ -1,6 +1,5 @@
 ﻿package com.engine.core.view.scenes
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import com.engine.core.Core;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.controls.wealth.WealthPool;
@@ -62,8 +61,6 @@
 	
 	import gs.TweenLite;
 	import gs.easing.Linear;
-
-	use namespace coder;
 
 	public class Scene extends BaseSprite 
 	{
@@ -238,7 +235,7 @@
 
 		protected function _saiman_debug_(_arg_1:Event):void
 		{
-			MonsterDebugger.enabled = !(MonsterDebugger.enabled);
+//			MonsterDebugger.enabled = !MonsterDebugger.enabled;
 		}
 
 		public function get walkEndFunc():Function

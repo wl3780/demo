@@ -1,12 +1,6 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.controls.wealth.WealthQuene
-
-package com.engine.core.controls.wealth
+﻿package com.engine.core.controls.wealth
 {
     import com.engine.core.Core;
-    import com.engine.core.controls.elisor.FrameOrder;
     import com.engine.core.controls.events.WealthEvent;
     import com.engine.core.controls.events.WealthProgressEvent;
     import com.engine.core.controls.wealth.loader.BingLoader;
@@ -26,24 +20,24 @@ package com.engine.core.controls.wealth
     import flash.utils.Timer;
     import flash.utils.getTimer;
 
-    use namespace coder;
-
     public class WealthQuene extends EventDispatcher implements IProto 
     {
 
         public static var speed:int;
+		
         private static var time:int = 0;
         private static var bytesSpeed:int = 0;
 
         public var loaderContext:LoaderContext;
+		
+        private var _limitIndex_:int = 2;
+		
         private var _proto:Object;
         private var _id:String;
         private var _oid:String;
         private var _groupHash:Dictionary;
         private var _priorityHash:Vector.<WealthGroupVo>;
         private var _bubbleHash:Vector.<WealthGroupVo>;
-        coder var _limitIndex_:int = 2;
-        coder var order:FrameOrder;
         private var _loaders:Dictionary;
         private var _isDispose:Boolean;
         private var timer:Timer;
@@ -55,6 +49,15 @@ package com.engine.core.controls.wealth
         {
             this.setUp();
         }
+		
+		coder function get limitIndex():int
+		{
+			return _limitIndex_;
+		}
+		coder function set limitIndex(val:int):void
+		{
+			_limitIndex_ = val;
+		}
 
         public static function getSpeedStr():String
         {
@@ -189,14 +192,14 @@ package com.engine.core.controls.wealth
             };
             if (this._priorityHash.length > 0){
                 _local_1 = 0;
-                while (_local_1 < this.coder::_limitIndex_) {
+                while (_local_1 < this.coder::limitIndex) {
                     _local_2 = this.getNextWealth(this._priorityHash);
                     if (_local_2){
                         _local_3 = this._groupHash[_local_2.oid];
                         if (this.hasCatch(_local_2.path)){
                             _local_2.coder::loaded = true;
                             this.dispatchWealthEvent(WealthEvent.WEALTH_LOADED, _local_2);
-                            this.coder::_limitIndex_ = (this.coder::_limitIndex_ + 1);
+                            this.coder::limitIndex = (this.coder::limitIndex + 1);
                             _local_3.checkFinish();
                             if (((_local_3.loaded) && ((_local_3.lock == false)))){
                                 this.removeGroup(_local_2.oid);
@@ -209,8 +212,8 @@ package com.engine.core.controls.wealth
                         } else {
                             this.loadElemt(_local_2, this.priorityLoadedFunc, this.priorityErrorFunc, this.priorityProFunc);
                         };
-                        if ((coder::_limitIndex_ > 0)){
-                            this.coder::_limitIndex_--;
+                        if ((coder::limitIndex > 0)){
+                            coder::limitIndex--;
                         };
                         _local_1--;
                     };
@@ -384,7 +387,7 @@ package com.engine.core.controls.wealth
                                 if (WealthPool.getIntance().has(vo.path) == false){
                                     loader.unloadAndStop();
                                 };
-                                this.coder::_limitIndex_ = 3;
+                                this.coder::limitIndex = 3;
                             };
                         };
                         i = (i + 1);
@@ -393,7 +396,7 @@ package com.engine.core.controls.wealth
                         this.removeGroup(group.id);
                         group.dispose();
                     };
-                    group.coder::lock = true;
+                    group.coder::$lock = true;
                     group.coder::loaded = true;
                 };
             } catch(e:Error) {
@@ -429,7 +432,7 @@ package com.engine.core.controls.wealth
             _local_3.vo.setUp(_arg_2.path, _arg_2.data, _arg_2.oid);
             _local_3.vo.coder::id = _arg_2.id;
             _local_3.vo.coder::loaded = _arg_2.loaded;
-            _local_3.vo.coder::index = _arg_2.index;
+            _local_3.vo.coder::$index = _arg_2.index;
             _local_3.vo.proto = _arg_2.proto;
             _local_3.vo.coder::lock = _arg_2.lock;
             var _local_4:WealthGroupVo = this.takeGroup(_arg_2.oid);

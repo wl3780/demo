@@ -11,8 +11,8 @@ package com.engine.core.controls
     {
 
         function get type():String;
-        function execute();
-        function callback(_arg_1:Array=null);
+        function execute():void;
+        function callback(_arg_1:Array=null):void;
 
     }
 }//package com.engine.core.controls

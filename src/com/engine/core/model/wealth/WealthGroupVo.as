@@ -1,32 +1,26 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.model.wealth.WealthGroupVo
-
-package com.engine.core.model.wealth
+﻿package com.engine.core.model.wealth
 {
+    import com.engine.core.Core;
+    import com.engine.core.controls.wealth.WealthConstant;
     import com.engine.core.model.Proto;
     import com.engine.namespaces.coder;
-    import __AS3__.vec.Vector;
-    import flash.utils.Dictionary;
-    import com.engine.core.controls.wealth.WealthConstant;
-    import com.engine.core.Core;
+    
     import flash.net.URLLoaderDataFormat;
-    import __AS3__.vec.*;
-
-    use namespace coder;
+    import flash.utils.Dictionary;
 
     public class WealthGroupVo extends Proto 
     {
 
-        private var _level:int;
-        coder var index:int;
+        public var name:String = "";
+        public var loadedIndex:int;
+        
+        coder var $index:int;
+        coder var $lock:Boolean;
+		
+		private var _level:int;
         private var _values:Vector.<WealthVo>;
         private var _hash:Dictionary;
         private var _loaded:Boolean;
-        coder var lock:Boolean;
-        public var name:String = "";
-        public var loadedIndex:int;
 
         public function WealthGroupVo()
         {
@@ -37,7 +31,7 @@ package com.engine.core.model.wealth
 
         public function get lock():Boolean
         {
-            return ((this.coder::lock as Boolean));
+            return ((this.coder::$lock as Boolean));
         }
 
         public function get level():int
@@ -76,7 +70,7 @@ package com.engine.core.model.wealth
                 } else {
                     _local_5.dataFormat = URLLoaderDataFormat.BINARY;
                 };
-                _local_5.coder::index = this._values.length;
+                _local_5.coder::$index = this._values.length;
                 _local_5.loadIndex = _arg_3;
                 this._values.push(_local_5);
                 this._hash[_local_4] = _local_5;
@@ -122,7 +116,7 @@ package com.engine.core.model.wealth
                     } else {
                         _local_6.dataFormat = URLLoaderDataFormat.BINARY;
                     };
-                    _local_6.coder::index = this._values.length;
+                    _local_6.coder::$index = this._values.length;
                     this._hash[_local_3] = _local_6;
                     this._values.push(_local_6);
                 };
@@ -138,7 +132,7 @@ package com.engine.core.model.wealth
                 _local_1 = this._values.shift();
                 _local_2 = 0;
                 while (_local_2 < this._values.length) {
-                    this._values[_local_2].coder::index = _local_2;
+                    this._values[_local_2].coder::$index = _local_2;
                     _local_2++;
                 };
                 delete this._hash[_local_1.id];

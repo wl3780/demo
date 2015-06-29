@@ -10,3 +10,4 @@
 		public static const TOTAL:String = "total";
 
 	}
+}

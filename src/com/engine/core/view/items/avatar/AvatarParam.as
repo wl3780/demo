@@ -1,20 +1,13 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.items.avatar.AvatarParam
-
-package com.engine.core.view.items.avatar
+﻿package com.engine.core.view.items.avatar
 {
-    import com.engine.core.model.Proto;
-    import __AS3__.vec.Vector;
-    import com.engine.namespaces.coder;
-    import flash.net.registerClassAlias;
-    import flash.geom.Rectangle;
     import com.engine.core.Core;
+    import com.engine.core.model.IProto;
+    import com.engine.core.model.Proto;
+    import com.engine.namespaces.coder;
+    
     import flash.display.BitmapData;
-    import __AS3__.vec.*;
-
-    use namespace coder;
+    import flash.geom.Rectangle;
+    import flash.net.registerClassAlias;
 
     public class AvatarParam extends Proto 
     {
@@ -37,10 +30,12 @@ package com.engine.core.view.items.avatar
         public var bitmapdatas:Array;
         public var startPlayTime:int = 0;
         public var counter:int;
-        coder var assets_id:String;
         public var assetsPath:String;
         public var maxRects:Array;
-        private var _isDisposed:Boolean = false;
+		
+        coder var assets_id:String;
+        
+		private var _isDisposed:Boolean = false;
 
         public function AvatarParam()
         {
@@ -63,10 +58,10 @@ package com.engine.core.view.items.avatar
             this.maxRects = new Array(8);
         }
 
-        coder function clone():AvatarParam
+        override public function clone():IProto
         {
             var _local_3:Array;
-            var _local_1:AvatarParam = (this.clone() as AvatarParam);
+            var _local_1:AvatarParam = super.clone() as AvatarParam;
             _local_1.coder::oid = this.oid;
             var _local_2:int;
             while (_local_2 < this.heights.length) {
@@ -122,7 +117,5 @@ package com.engine.core.view.items.avatar
             super.dispose();
         }
 
-
     }
-}//package com.engine.core.view.items.avatar
-
+}

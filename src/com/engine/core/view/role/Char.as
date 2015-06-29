@@ -985,9 +985,6 @@
 		public function moving():void
 		{
 			var _local_1:int;
-			if (!Core.sandBoxEnabled) {
-				return;
-			}
 			if (this.avatarParts == null) {
 				this.pathArr = [];
 				this.runing = false;

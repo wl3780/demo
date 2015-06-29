@@ -30,8 +30,6 @@
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 
-	use namespace coder;
-
 	public class Avatar extends NoderItem implements IAvatar 
 	{
 

@@ -1,22 +1,15 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.controls.wealth.WealthManager
-
-package com.engine.core.controls.wealth
+﻿package com.engine.core.controls.wealth
 {
-    import com.engine.utils.Hash;
-    import flash.utils.Dictionary;
-    import com.engine.namespaces.coder;
-    import com.engine.core.model.wealth.WealthGroupVo;
-    import com.engine.core.model.wealth.WealthVo;
     import com.engine.core.Core;
     import com.engine.core.controls.events.WealthEvent;
     import com.engine.core.controls.events.WealthProgressEvent;
+    import com.engine.core.model.wealth.WealthGroupVo;
+    import com.engine.core.model.wealth.WealthVo;
+    import com.engine.namespaces.coder;
+    import com.engine.utils.Hash;
+    
     import flash.events.ProgressEvent;
-    import __AS3__.vec.Vector;
-
-    use namespace coder;
+    import flash.utils.Dictionary;
 
     public class WealthManager 
     {
@@ -129,7 +122,7 @@ package com.engine.core.controls.wealth
                     break;
                 };
                 if (_arg_2 == false){
-                    _local_5.coder::_limitIndex_ = (_local_5.coder::_limitIndex_ + 1);
+                    _local_5.coder::limitIndex = (_local_5.coder::limitIndex + 1);
                 };
                 if (_local_7.lock == false){
                     _local_7.checkFinish();
@@ -169,7 +162,7 @@ package com.engine.core.controls.wealth
                 if (_local_9 == null) break;
                 delete this._requestHash[_arg_1][_local_9.id];
                 if ((_arg_2 == false)){
-                    _local_6.coder::_limitIndex_ = (_local_6.coder::_limitIndex_ + 1);
+                    _local_6.coder::limitIndex = (_local_6.coder::limitIndex + 1);
                 };
                 if (_local_9.loadIndex > 0){
                     _local_9.loadIndex--;

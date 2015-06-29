@@ -1,41 +1,23 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.items.avatar.AvatartParts
-
-package com.engine.core.view.items.avatar
+﻿package com.engine.core.view.items.avatar
 {
-    import com.engine.core.model.Proto;
-    import flash.utils.Dictionary;
-    import com.engine.namespaces.coder;
-    import flash.display.BitmapData;
-    import flash.geom.Rectangle;
     import com.engine.core.Core;
     import com.engine.core.ItemConst;
+    import com.engine.core.model.Proto;
+    import com.engine.namespaces.coder;
+    
+    import flash.display.BitmapData;
+    import flash.geom.Rectangle;
+    import flash.utils.Dictionary;
     import flash.utils.getTimer;
-
-    use namespace coder;
 
     public class AvatartParts extends Proto 
     {
 
-        private var assetsIndex:int;
-        private var counter:int;
-        private var _stop:Boolean = false;
-        private var _effectRestricts:Dictionary;
         public var avatarParts:Dictionary;
         public var effectsParts:Dictionary;
         public var hiedBody:Boolean = false;
         public var hiedWeapon:Boolean = false;
         public var hiedMount:Boolean = false;
-        private var states:Array;
-        private var _state:String = "stand";
-        private var oldState:String = "stand";
-        private var _currRestrict:AvatarRestrict;
-        private var _currentFrame:int = 0;
-        private var _fly_currentFrame:int = 0;
-        private var _totalFrames:int = 4;
-        private var _dir:int = 4;
         public var eid_len:int = 0;
         public var type:String;
         public var attackSpeed:Number = 1;
@@ -44,11 +26,6 @@ package com.engine.core.view.items.avatar
         public var runing:Boolean;
         public var jumping:Boolean;
         public var isTimeoutDelete:Boolean = true;
-        private var _speed:int = 0;
-        private var wid_id:String;
-        private var mid_id:String;
-        private var midm_id:String;
-        private var isDisposed:Boolean = false;
         public var specialMode:int = 0;
         public var isFlyMode:Boolean = false;
         public var isAutoDispose:Boolean = true;
@@ -63,13 +40,32 @@ package com.engine.core.view.items.avatar
         public var playEffectFunc:Function;
         public var isPalyStandDeay:Boolean = true;
         public var isOnMonut:Boolean;
+        public var lockEffectState:Boolean = true;
+		
         protected var _effectRestrict:Dictionary;
+		
+        private var assetsIndex:int;
+        private var counter:int;
+        private var _stop:Boolean = false;
+        private var _effectRestricts:Dictionary;
+        private var states:Array;
+        private var _state:String = "stand";
+        private var oldState:String = "stand";
+        private var _currRestrict:AvatarRestrict;
+        private var _currentFrame:int = 0;
+        private var _fly_currentFrame:int = 0;
+        private var _totalFrames:int = 4;
+        private var _dir:int = 4;
+        private var _speed:int = 0;
+        private var wid_id:String;
+        private var mid_id:String;
+        private var midm_id:String;
+        private var isDisposed:Boolean = false;
         private var _isLockSpeed:Boolean = false;
         private var _lockSpeedState:String = "all";
         private var _isLockEffectPlaySpeed:Boolean;
         private var _lockEffectPlaySpeed:int;
         private var lockSpeedValue:int;
-        public var lockEffectState:Boolean = true;
         private var timerId:int = 0;
 
         public function AvatartParts()
@@ -197,9 +193,6 @@ package com.engine.core.view.items.avatar
             var _local_16:Object;
             var _local_17:int;
             if (((((this.isDisposed) || (this._stop))) || ((this.avatarParts == null)))){
-                return;
-            };
-            if (!Core.sandBoxEnabled){
                 return;
             };
             if (this.avatarParts != null){
@@ -600,7 +593,7 @@ package com.engine.core.view.items.avatar
             };
         }
 
-        coder function setupReady(_arg_1:String):void
+        coder function _setupReady_(_arg_1:String):void
         {
             if (this.subFunc != null){
                 this.subFunc.apply(null, ["setupReady"]);

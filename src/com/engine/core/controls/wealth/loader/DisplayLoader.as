@@ -27,8 +27,6 @@ package com.engine.core.controls.wealth.loader
     import com.engine.core.model.Proto;
     import com.engine.core.model.IProto;
 
-    use namespace coder;
-
     public class DisplayLoader extends Loader implements IOrderDispatcher, ILoader 
     {
 

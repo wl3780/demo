@@ -1,23 +1,17 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.items.avatar.AvatarManager
-
-package com.engine.core.view.items.avatar
+﻿package com.engine.core.view.items.avatar
 {
-    import com.engine.core.view.base.BaseShape;
-    import flash.utils.Dictionary;
-    import com.engine.core.controls.elisor.Elisor;
-    import flash.utils.Timer;
-    import flash.events.Event;
-    import com.engine.namespaces.coder;
     import com.engine.core.Core;
-    import flash.utils.getTimer;
+    import com.engine.core.controls.elisor.Elisor;
+    import com.engine.core.view.base.BaseShape;
     import com.engine.core.view.role.MainChar;
     import com.engine.core.view.scenes.Scene;
     import com.engine.core.view.scenes.SceneConstant;
-
-    use namespace coder;
+    import com.engine.namespaces.coder;
+    
+    import flash.events.Event;
+    import flash.utils.Dictionary;
+    import flash.utils.Timer;
+    import flash.utils.getTimer;
 
     public class AvatarManager extends BaseShape 
     {

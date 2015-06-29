@@ -1,25 +1,18 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.base.BaseShape
-
-package com.engine.core.view.base
+﻿package com.engine.core.view.base
 {
-    import flash.display.Shape;
+    import com.engine.core.Core;
+    import com.engine.core.controls.IOrder;
+    import com.engine.core.controls.elisor.Elisor;
+    import com.engine.core.controls.elisor.EventOrder;
+    import com.engine.core.controls.elisor.FrameOrder;
+    import com.engine.core.controls.elisor.OrderMode;
+    import com.engine.core.model.IProto;
+    import com.engine.core.model.Proto;
+    import com.engine.core.view.DisplayObjectPort;
     import com.engine.core.view.IBaseSprite;
     import com.engine.namespaces.coder;
-    import com.engine.core.Core;
-    import com.engine.core.view.DisplayObjectPort;
-    import com.engine.core.controls.elisor.EventOrder;
-    import com.engine.core.controls.elisor.Elisor;
-    import com.engine.core.controls.elisor.OrderMode;
-    import com.engine.core.controls.elisor.FrameOrder;
-    import com.engine.core.controls.IOrder;
-    import __AS3__.vec.Vector;
-    import com.engine.core.model.Proto;
-    import com.engine.core.model.IProto;
-
-    use namespace coder;
+    
+    import flash.display.Shape;
 
     public class BaseShape extends Shape implements IBaseSprite 
     {

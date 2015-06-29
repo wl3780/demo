@@ -1,29 +1,23 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.items.avatar.ItemAvatar
-
-package com.engine.core.view.items.avatar
+﻿package com.engine.core.view.items.avatar
 {
-    import com.engine.core.view.items.Item;
-    import com.engine.namespaces.coder;
-    import flash.geom.Point;
-    import flash.utils.Dictionary;
-    import flash.display.Bitmap;
-    import flash.text.TextField;
-    import com.engine.core.tile.square.SquarePt;
-    import flash.geom.Rectangle;
-    import com.engine.utils.gome.SquareUitls;
-    import com.engine.core.view.scenes.SceneConstant;
-    import com.engine.core.view.scenes.Scene;
     import com.engine.core.Core;
-    import flash.text.TextFormat;
-    import flash.filters.GlowFilter;
     import com.engine.core.ItemConst;
-    import flash.display.DisplayObject;
+    import com.engine.core.tile.square.SquarePt;
+    import com.engine.core.view.items.Item;
+    import com.engine.core.view.scenes.Scene;
+    import com.engine.core.view.scenes.SceneConstant;
+    import com.engine.namespaces.coder;
+    import com.engine.utils.gome.SquareUitls;
+    
+    import flash.display.Bitmap;
     import flash.display.BitmapData;
-
-    use namespace coder;
+    import flash.display.DisplayObject;
+    import flash.filters.GlowFilter;
+    import flash.geom.Point;
+    import flash.geom.Rectangle;
+    import flash.text.TextField;
+    import flash.text.TextFormat;
+    import flash.utils.Dictionary;
 
     public class ItemAvatar extends Item implements IAvatar 
     {

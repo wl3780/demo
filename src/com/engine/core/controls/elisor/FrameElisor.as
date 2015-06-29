@@ -1,240 +1,221 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.controls.elisor.FrameElisor
-
-package com.engine.core.controls.elisor
+﻿package com.engine.core.controls.elisor
 {
-    import com.engine.core.model.Proto;
-    import flash.utils.Dictionary;
-    import com.engine.namespaces.coder;
-    import com.engine.core.controls.IOrder;
-    import __AS3__.vec.Vector;
-    import __AS3__.vec.*;
+	import com.engine.core.controls.IOrder;
+	import com.engine.core.model.Proto;
+	import com.engine.namespaces.coder;
+	
+	import flash.utils.Dictionary;
 
-    use namespace coder;
+	public class FrameElisor extends Proto 
+	{
 
-    public class FrameElisor extends Proto 
-    {
+		private static var _instance:FrameElisor;
 
-        private static var _instance:FrameElisor;
+		private var _owners:Dictionary;
+		private var _quenes:Dictionary;
+		private var _orders:Dictionary;
+		private var _len:int;
 
-        private var _owners:Dictionary;
-        private var _quenes:Dictionary;
-        private var _orders:Dictionary;
-        private var _len:int;
+		coder static function getInstance():FrameElisor
+		{
+			if (_instance == null) {
+				_instance = new FrameElisor();
+				_instance.initialize();
+			}
+			return _instance;
+		}
 
+		public function initialize():void
+		{
+			_owners = new Dictionary();
+			_quenes = new Dictionary();
+			_orders = new Dictionary();
+		}
 
-        coder static function getInstance():FrameElisor
-        {
-            if (_instance == null){
-                _instance = new (FrameElisor)();
-                _instance.initialize();
-            };
-            return (_instance);
-        }
+		public function addOrder(order:FrameOrder, _arg_2:Boolean=false):Boolean
+		{
+			if (order == null) {
+				return false;
+			}
+			var oid:String = order.oid;
+			var id:String = order.id;
+			var delay:String = order.delay+"";
+			if (oid && id && delay) {
+				var delayItem:DeayQuene;
+				if (_owners[oid] == null) {
+					_owners[oid] = new Dictionary();
+				}
+				if (_quenes[delay] == null) {
+					delayItem = new DeayQuene(order.delay);
+					_quenes[delay] = delayItem;
+				} else {
+					delayItem = _quenes[delay];
+				}
+				delayItem.addOrder(order);
+				_owners[oid][id] = _orders[id] = order;
+				_len++;
+				return true;
+			}
+			return false;
+		}
 
+		public function stopOrder(id:String):void
+		{
+			var order:FrameOrder = _orders[id] as FrameOrder;
+			if (order) {
+				order.stop = false;
+			}
+		}
 
-        public function initialize():void
-        {
-            this._owners = new Dictionary();
-            this._quenes = new Dictionary();
-            this._orders = new Dictionary();
-        }
+		public function startOrder(id:String):void
+		{
+			var order:FrameOrder = _orders[id] as FrameOrder;
+			if (order) {
+				order.stop = true;
+			}
+		}
 
-        public function addOrder(_arg_1:FrameOrder, _arg_2:Boolean=false):Boolean
-        {
-            var _local_6:DeayQuene;
-            if (_arg_1 == null){
-                return (false);
-            };
-            var _local_3:String = _arg_1.oid;
-            var _local_4:String = _arg_1.id;
-            var _local_5:String = _arg_1.delay.toString();
-            if (((((_local_3) && (_local_4))) && (_local_5))){
-                if (this._owners[_local_3] == null){
-                    this._owners[_local_3] = new Dictionary();
-                };
-                if (this._quenes[_local_5] == null){
-                    _local_6 = new DeayQuene(_arg_1.delay);
-                    this._quenes[_local_5] = _local_6;
-                };
-                _local_6 = this._quenes[_local_5];
-                _local_6.addOrder(_arg_1);
-                this._owners[_local_3][_local_4] = (this._orders[_local_4] = _arg_1);
-                this._len++;
-                return (true);
-            };
-            return (false);
-        }
+		public function removeOrder(id:String):FrameOrder
+		{
+			var order:FrameOrder = _orders[id] as FrameOrder;
+			if (order) {
+				order.stop = true;
+				delete _orders[id];
+				if (_owners[order.oid]) {
+					delete _owners[order.oid][id];
+				}
+				
+				var dict:Dictionary = _owners[order.oid];
+				var delayItem:DeayQuene = _quenes[order.delay+""] as DeayQuene;
+				if (delayItem) {
+					delayItem.removeOrder(id);
+				}
+				_len--;
+				for each (var orderItem:FrameOrder in dict) {
+					order.dispose();
+					return order;
+				}
+				delete _owners[order.oid];
+				order.dispose();
+				return order;
+			}
+			return null;
+		}
 
-        public function stopOrder(_arg_1:String):void
-        {
-            var _local_2:FrameOrder = (this._orders[_arg_1] as FrameOrder);
-            if (_local_2){
-                _local_2.stop = false;
-            };
-        }
+		public function hasOrder(id:String):Boolean
+		{
+			if (_orders[id]) {
+				return true;
+			}
+			return false;
+		}
 
-        public function startOrder(_arg_1:String):void
-        {
-            var _local_2:FrameOrder = (this._orders[_arg_1] as FrameOrder);
-            if (_local_2){
-                _local_2.stop = true;
-            };
-        }
+		public function removeQuene(delayID:String):void
+		{
+			delete _quenes[delayID];
+		}
 
-        public function removeOrder(_arg_1:String):FrameOrder
-        {
-            var _local_2:FrameOrder;
-            var _local_3:Dictionary;
-            var _local_4:DeayQuene;
-            var _local_5:FrameOrder;
-            if (this._orders[_arg_1]){
-                _local_2 = (this._orders[_arg_1] as FrameOrder);
-                _local_2.stop = true;
-                delete this._orders[_arg_1];
-                if (this._owners[_local_2.oid]){
-                    delete this._owners[_local_2.oid][_arg_1];
-                };
-                _local_3 = this._owners[_local_2.oid];
-                _local_4 = (this._quenes[_local_2.delay.toString()] as DeayQuene);
-                if (_local_4){
-                    _local_4.removeOrder(_arg_1);
-                };
-                this._len--;
-                for each (_local_5 in _local_3) {
-                    _local_2.dispose();
-                    return (_local_2);
-                };
-                delete this._owners[_local_2.oid];
-                _local_2.dispose();
-                return (_local_2);
-            };
-            return (null);
-        }
+		public function hasQuene(delayID:String):Boolean
+		{
+			if (_quenes[delayID]) {
+				return true;
+			}
+			return false;
+		}
 
-        public function hasOrder(_arg_1:String):Boolean
-        {
-            if (this._orders[_arg_1]){
-                return (true);
-            };
-            return (false);
-        }
+		public function takeQuene(delayID:String):DeayQuene
+		{
+			return _quenes[delayID];
+		}
 
-        public function removeQuene(_arg_1:String):void
-        {
-            delete this._quenes[_arg_1];
-        }
+		public function takeOrder(id:String):FrameOrder
+		{
+			return _orders[id] as FrameOrder;
+		}
 
-        public function hasQuene(_arg_1:String):Boolean
-        {
-            if (this._quenes[_arg_1]){
-                return (true);
-            };
-            return (false);
-        }
+		public function hasGroup(oid:String):Boolean
+		{
+			if (_owners[oid]) {
+				return true;
+			}
+			return false;
+		}
 
-        public function takeQuene(_arg_1:String):DeayQuene
-        {
-            return (this._quenes[_arg_1]);
-        }
+		public function takeGroupOrder(oid:String):Vector.<IOrder>
+		{
+			var list:Vector.<IOrder> = new Vector.<IOrder>();
+			if (_owners[oid]) {
+				for each (var item:IOrder in _owners[oid]) {
+					list.push(item);
+				}
+			}
+			return list;
+		}
 
-        public function takeOrder(_arg_1:String):FrameOrder
-        {
-            return ((this._orders[_arg_1] as FrameOrder));
-        }
+		public function disposeGroupOrders(oid:String):Vector.<IOrder>
+		{
+			var list:Vector.<IOrder> = new Vector.<IOrder>();
+			if (_owners[oid]) {
+				var item:FrameOrder;
+				for (var key:String in _owners[oid]) {
+					item = _owners[oid][key];
+					item.stop;
+					item.dispose();
+					list.push(item);
+					_len++;
+				}
+				delete _owners[oid];
+			}
+			return list;
+		}
 
-        public function hasGroup(_arg_1:String):Boolean
-        {
-            if (this._owners[_arg_1]){
-                return (true);
-            };
-            return (false);
-        }
+		public function chageDeay(id:String, delay:int):Boolean
+		{
+			var order:FrameOrder = _orders[id] as FrameOrder;
+			if (order) {
+				var delayNew:DeayQuene;
+				var delayItem:DeayQuene = _quenes[order.delay+""] as DeayQuene;
+				if (delayItem) {
+					if (delayItem.delay == order.delay) {
+						delayItem.removeOrder(id);
+					}
+					order.coder::delay = delay;
+					if (_quenes[delay+""]) {
+						DeayQuene(_quenes[delay+""]).addOrder(order);
+					} else {
+						delayNew = new DeayQuene(delay);
+						_quenes[delay+""] = delayItem;
+						delayNew.addOrder(order);
+					}
+				} else {
+					order.coder::delay = delay;
+					delayNew = new DeayQuene(delay);
+					_quenes[delay+""] = delayItem;
+					delayNew.addOrder(order);
+				}
+				return true;
+			}
+			return false;
+		}
 
-        public function takeGroupOrder(_arg_1:String):Vector.<IOrder>
-        {
-            var _local_3:IOrder;
-            var _local_2:Vector.<IOrder> = new Vector.<IOrder>();
-            if (this._owners[_arg_1]){
-                for each (_local_3 in this._owners[_arg_1]) {
-                    _local_2.push(_local_3);
-                };
-            };
-            return (_local_2);
-        }
+		override public function dispose():void
+		{
+			var delayItem:DeayQuene;
+			for (var key:String in _quenes) {
+				delayItem = _quenes[key];
+				delayItem.dispose();
+				delete _quenes[key];
+			}
+			_quenes = null;
+			for each (var item:FrameOrder in _orders) {
+				item.dispose();
+			}
+			_orders = null;
+			_owners = null;
+			_len = 0;
+			_instance = null;
+			super.dispose();
+		}
 
-        public function disposeGroupOrders(_arg_1:String):Vector.<IOrder>
-        {
-            var _local_3:String;
-            var _local_4:FrameOrder;
-            var _local_2:Vector.<IOrder> = new Vector.<IOrder>();
-            if (this._owners[_arg_1]){
-                for (_local_3 in this._owners[_arg_1]) {
-                    _local_4 = this._owners[_arg_1][_local_3];
-                    _local_4.stop;
-                    _local_4.dispose();
-                    _local_2.push((_local_4 as IOrder));
-                    this._len++;
-                };
-                delete this._owners[_arg_1];
-            };
-            return (_local_2);
-        }
-
-        public function chageDeay(_arg_1:String, _arg_2:int):Boolean
-        {
-            var _local_4:DeayQuene;
-            var _local_5:DeayQuene;
-            var _local_3:FrameOrder = (this._orders[_arg_1] as FrameOrder);
-            if (_local_3){
-                _local_4 = (this._quenes[_local_3.delay.toString()] as DeayQuene);
-                if (_local_4){
-                    if (_local_4.delay == _local_3.delay){
-                        _local_4.removeOrder(_arg_1);
-                    };
-                    _local_3.coder::delay = _arg_2;
-                    if (this._quenes[_arg_2.toString()]){
-                        DeayQuene(this._quenes[_arg_2.toString()]).addOrder(_local_3);
-                    } else {
-                        _local_5 = new DeayQuene(_arg_2);
-                        this._quenes[_arg_2] = _local_4;
-                        _local_5.addOrder(_local_3);
-                    };
-                } else {
-                    _local_3.coder::delay = _arg_2;
-                    _local_5 = new DeayQuene(_arg_2);
-                    this._quenes[_arg_2] = _local_4;
-                    _local_5.addOrder(_local_3);
-                };
-                return (true);
-            };
-            return (false);
-        }
-
-        override public function dispose():void
-        {
-            var _local_1:String;
-            var _local_2:FrameOrder;
-            var _local_3:DeayQuene;
-            _instance = null;
-            for (_local_1 in this._quenes) {
-                _local_3 = this._quenes[_local_1];
-                _local_3.dispose();
-                delete this._quenes[_local_1];
-            };
-            this._quenes = null;
-            for each (_local_2 in this._orders) {
-                _local_2.dispose();
-            };
-            this._orders = null;
-            this._owners = null;
-            this._len = 0;
-            super.dispose();
-        }
-
-
-    }
-}//package com.engine.core.controls.elisor
-
+	}
+}

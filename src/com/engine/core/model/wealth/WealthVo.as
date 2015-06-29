@@ -1,30 +1,28 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.model.wealth.WealthVo
-
-package com.engine.core.model.wealth
+﻿package com.engine.core.model.wealth
 {
-    import com.engine.core.model.Proto;
-    import com.engine.namespaces.coder;
-    import flash.net.registerClassAlias;
     import com.engine.core.Core;
     import com.engine.core.controls.wealth.WealthConstant;
+    import com.engine.core.model.Proto;
+    import com.engine.namespaces.coder;
+    
+    import flash.net.registerClassAlias;
 
     use namespace coder;
 
     public class WealthVo extends Proto 
     {
+		
+        public var loadIndex:int = 0;
+        public var group_totalNum:int;
+        public var group_loadedIndex:int;
+        public var dataFormat:String;
 
+        coder var $index:int;
+		
         private var _path:String;
         private var _data:Object;
         private var _loaded:Boolean;
         private var _lock:Boolean;
-        public var loadIndex:int = 0;
-        public var group_totalNum:int;
-        public var group_loadedIndex:int;
-        coder var index:int;
-        public var dataFormat:String;
 
         public function WealthVo()
         {
@@ -71,7 +69,7 @@ package com.engine.core.model.wealth
 
         public function get index():int
         {
-            return (this.coder::index);
+            return this.coder::$index;
         }
 
         public function get type():String

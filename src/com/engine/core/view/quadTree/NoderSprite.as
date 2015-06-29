@@ -1,15 +1,8 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.quadTree.NoderSprite
-
-package com.engine.core.view.quadTree
+﻿package com.engine.core.view.quadTree
 {
+    import com.engine.core.Core;
     import com.engine.core.view.BaseSprite;
     import com.engine.namespaces.coder;
-    import com.engine.core.Core;
-
-    use namespace coder;
 
     public class NoderSprite extends BaseSprite implements INoderSpite 
     {

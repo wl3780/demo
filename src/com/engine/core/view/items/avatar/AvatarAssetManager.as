@@ -71,7 +71,7 @@ package com.engine.core.view.items.avatar
             this.avatarParams = new Dictionary();
             this.bitmapdatas = new Dictionary();
             this._quene = new WealthQuene();
-            if (!Core.sandBoxEnabled){
+            if (false){
                 this._quene.loaderContext = new LoaderContext(false);
             } else {
                 this._quene.loaderContext = new LoaderContext(false, ApplicationDomain.currentDomain, SecurityDomain.currentDomain);
@@ -97,9 +97,6 @@ package com.engine.core.view.items.avatar
             var _local_10:Array;
             var _local_11:String;
             var _local_12:Dictionary;
-            if (!Core.sandBoxEnabled){
-                return;
-            };
             if ((Core.fps >= 12)){
                 _local_2 = 5;
             } else {
