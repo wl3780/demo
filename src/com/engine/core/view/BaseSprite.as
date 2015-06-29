@@ -82,45 +82,47 @@
 		public function hasOrder(_arg_1:String, _arg_2:String):Boolean
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			return (elisor.hasOrder(_arg_1, _arg_2));
+			return elisor.hasOrder(_arg_1, _arg_2);
 		}
 
 		public function removeOrder(_arg_1:String, _arg_2:String):IOrder
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			return (elisor.removeOrder(_arg_1, _arg_2));
+			return elisor.removeOrder(_arg_1, _arg_2);
 		}
 
 		public function addOrder(_arg_1:IOrder):Boolean
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			return (elisor.addOrder(_arg_1));
+			return elisor.addOrder(_arg_1);
 		}
 
 		public function takeGroupOrders(_arg_1:String):Vector.<IOrder>
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			return (elisor.takeGroupOrders(_id, _arg_1));
+			return elisor.takeGroupOrders(_id, _arg_1);
 		}
 
 		public function disposeGroupOrders(_arg_1:String):Vector.<IOrder>
 		{
-			var _local_2:Elisor = Elisor.getInstance();
-			return (_local_2.disposeGroupOrders(_id, _arg_1));
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.disposeGroupOrders(_id, _arg_1);
 		}
 
 		coder function set id(val:String):void
 		{
 			DisplayObjectPort.coder::getInstance().remove(_id);
-			var _local_2:Vector.<IOrder> = Elisor.getInstance().disposeGroupOrders(_id);
+			var orderList:Vector.<IOrder> = Elisor.getInstance().disposeGroupOrders(_id);
 			_id = val;
 			DisplayObjectPort.coder::getInstance().put(this);
-			var _local_3:int;
-			while (_local_3 < _local_2.length) {
-				if (_local_2[_local_3]) {
-					Elisor.getInstance().addOrder(_local_2[_local_3]);
+			var idx:int = 0;
+			var order:IOrder = null;
+			while (idx < orderList.length) {
+				order = orderList[idx];
+				if (order) {
+					Elisor.getInstance().addOrder(order);
 				}
-				_local_3++;
+				idx++;
 			}
 		}
 		public function get id():String
@@ -157,31 +159,25 @@
 
 		public function dispose():void
 		{
-			var _local_2:int;
-			var _local_3:IOrder;
-			if (!Core.sandBoxEnabled) {
-				return;
-			}
-			if (graphics) {
+			if (this.graphics) {
 				this.graphics.clear();
 			}
 			if (this.parent) {
 				this.parent.removeChild(this);
 			}
-			var _local_1:Vector.<IOrder> = this.disposeGroupOrders(OrderMode.TOTAL);
-			if (_local_1) {
-				_local_2 = 0;
-				while (_local_2 < _local_1.length) {
-					_local_3 = _local_1[_local_2];
-					if (_local_3) {
-						_local_3.dispose();
+			var orderList:Vector.<IOrder> = this.disposeGroupOrders(OrderMode.TOTAL);
+			if (orderList) {
+				var order:IOrder;
+				var idx:int = 0;
+				while (idx < orderList.length) {
+					order = orderList[idx];
+					if (order) {
+						order.dispose();
 					}
-					_local_3 = null;
-					_local_2++;
+					idx++;
 				}
 			}
 			DisplayObjectPort.coder::getInstance().remove(_id);
-			_local_1 = null;
 			_id = null;
 			this.$oid = null;
 			this.$proto = null;

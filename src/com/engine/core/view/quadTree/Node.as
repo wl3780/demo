@@ -51,30 +51,30 @@
 			var rectHW:int = rectW / 2;
 			var rectHH:int = rectH / 2;
 			
-			_id = (rectX + rectHW) + Core.SIGN + (rectY + rectHH);
-			_oid = oid;
+			$id = (rectX + rectHW) + Core.SIGN + (rectY + rectHH);
+			$oid = oid;
 			_tree = NodeTreePool.getInstance().take(tid) as NodeTree;
-			_tree.addNode(_id, this);
+			_tree.addNode($id, this);
 			if (nextDepth > 0) {
 				if (_nodeA == null) {
 					_nodeA = new Node();
 					nextRect = new Rectangle(rectX, rectY, rectHW, rectHH);
-					_nodeA.setUp(tid, _id, nextRect, nextDepth);
+					_nodeA.setUp(tid, $id, nextRect, nextDepth);
 				}
 				if (_nodeB == null) {
 					_nodeB = new Node();
 					nextRect = new Rectangle(rectX, (rectY + rectHH), rectHW, rectHH);
-					_nodeB.setUp(tid, _id, nextRect, nextDepth);
+					_nodeB.setUp(tid, $id, nextRect, nextDepth);
 				}
 				if (_nodeC == null) {
 					_nodeC = new Node();
 					nextRect = new Rectangle((rectX + rectHW), rectY, rectHW, rectHH);
-					_nodeC.setUp(tid, _id, nextRect, nextDepth);
+					_nodeC.setUp(tid, $id, nextRect, nextDepth);
 				}
 				if (_nodeD == null) {
 					_nodeD = new Node();
 					nextRect = new Rectangle((rectX + rectHW), (rectY + rectHH), rectHW, rectHH);
-					_nodeD.setUp(tid, _id, nextRect, nextDepth);
+					_nodeD.setUp(tid, $id, nextRect, nextDepth);
 				}
 				this.project();
 			}

@@ -1,172 +1,162 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.controls.elisor.FrameOrder
-
-package com.engine.core.controls.elisor
+﻿package com.engine.core.controls.elisor
 {
-    import com.engine.core.controls.Order;
-    import flash.net.registerClassAlias;
-    import com.engine.namespaces.coder;
-    import com.engine.core.Core;
+	import com.engine.core.Core;
+	import com.engine.core.controls.Order;
+	import com.engine.namespaces.coder;
+	
+	import flash.net.registerClassAlias;
 
-    use namespace coder;
+	use namespace coder;
 
-    public class FrameOrder extends Order 
-    {
+	public class FrameOrder extends Order 
+	{
 
-        private var _applyFunc:Function;
-        private var _arguments:Array;
-        private var _callbackFunc:Function;
-        private var _timeOutFunc:Function;
-        private var _timeOutargs:Array;
-        private var _stop:Boolean;
-        private var _startTime:Number;
-        private var _between:int;
-        private var _delay:int;
+		private var _applyFunc:Function;
+		private var _arguments:Array;
+		private var _callbackFunc:Function;
+		private var _timeOutFunc:Function;
+		private var _timeOutargs:Array;
+		private var _stop:Boolean;
+		private var _startTime:Number;
+		private var _between:int;
+		private var _delay:int;
 
-        public function FrameOrder()
-        {
-            registerClassAlias("saiman.save.FrameOrder", FrameOrder);
-            this.$type = OrderMode.FRAME_ORDER;
-            this.$id = Core.coder::nextInstanceIndex().toString(16);
-            this._stop = true;
-        }
+		public function FrameOrder()
+		{
+			registerClassAlias("saiman.save.FrameOrder", FrameOrder);
+			this.$type = OrderMode.FRAME_ORDER;
+			this.$id = Core.coder::nextInstanceIndex().toString(16);
+			_stop = true;
+		}
 
-        public function get delay():int
-        {
-            return (this._delay);
-        }
+		public function get delay():int
+		{
+			return _delay;
+		}
 
-        coder function set delay(_arg_1:int):void
-        {
-            this._delay = _arg_1;
-        }
+		coder function set delay(val:int):void
+		{
+			_delay = val;
+		}
 
-        public function set delay(_arg_1:int):void
-        {
-            if (this._delay != _arg_1){
-                if (FrameElisor.coder::getInstance().chageDeay(this.$id, _arg_1) == false){
-                    this._delay = _arg_1;
-                };
-            };
-        }
+		public function set delay(val:int):void
+		{
+			if (_delay != val) {
+				if (FrameElisor.coder::getInstance().chageDeay(this.$id, val) == false) {
+					_delay = val;
+				}
+			}
+		}
 
-        public function setUp(_arg_1:String, _arg_2:int, _arg_3:int=-1):void
-        {
-            if ((_arg_1 == null)){
-                this.$oid = Core.coder::nextInstanceIndex().toString(16);
-            } else {
-                this.$oid = _arg_1;
-            };
-            this.$oid = _arg_1;
-            this._delay = _arg_2;
-            this._between = _arg_3;
-        }
+		public function setUp(oid:String, delay:int, between:int=-1):void
+		{
+			if (oid == null){
+				this.$oid = Core.coder::nextInstanceIndex().toString(16);
+			} else {
+				this.$oid = oid;
+			}
+			_delay = delay;
+			_between = between;
+		}
 
-        public function setTimeOut(_arg_1:Function, _arg_2:Array):void
-        {
-            this._timeOutFunc = _arg_1;
-            this._timeOutargs = _arg_2;
-        }
+		public function setTimeOut(func:Function, args:Array):void
+		{
+			_timeOutFunc = func;
+			_timeOutargs = args;
+		}
 
-        public function register(_arg_1:Function, _arg_2:Array, _arg_3:Function=null):void
-        {
-            if (_arg_1 != null){
-                this._applyFunc = _arg_1;
-            };
-            if ((_arg_2 == null)){
-                _arg_2 = [];
-            };
-            this._arguments = _arg_2;
-            if (_arg_3 != null){
-                this._callbackFunc = _arg_3;
-            };
-        }
+		public function register(applyFunc:Function, args:Array, callbackFunc:Function=null):void
+		{
+			if (applyFunc != null) {
+				_applyFunc = applyFunc;
+			}
+			if (args == null) {
+				args = [];
+			}
+			_arguments = args;
+			if (callbackFunc != null) {
+				_callbackFunc = callbackFunc;
+			}
+		}
 
-        public function start():void
-        {
-            this._startTime = Core.delayTime;
-            this._stop = false;
-        }
+		public function start():void
+		{
+			_startTime = Core.delayTime;
+			_stop = false;
+		}
 
-        public function set stop(_arg_1:Boolean):void
-        {
-            var _local_2:DeayQuene;
-            if (this._stop != _arg_1){
-                this._stop = _arg_1;
-                _local_2 = FrameElisor.coder::getInstance().takeQuene(this._delay.toString());
-                if (_arg_1){
-                    _local_2.stopOrder(this.$id);
-                } else {
-                    _local_2.startOrder(this.$id);
-                };
-            };
-        }
+		public function set stop(val:Boolean):void
+		{
+			if (_stop != val) {
+				_stop = val;
+				var quene:DeayQuene = FrameElisor.coder::getInstance().takeQuene(_delay+"");
+				if (val) {
+					quene.stopOrder(this.$id);
+				} else {
+					quene.startOrder(this.$id);
+				}
+			}
+		}
 
-        public function get stop():Boolean
-        {
-            return (this._stop);
-        }
+		public function get stop():Boolean
+		{
+			return _stop;
+		}
 
-        override public function execute()
-        {
-            var _local_1:*;
-            var _local_2:int;
-            if (this._stop == false){
-                if (this._applyFunc != null){
-                    _local_1 = this._applyFunc.apply(null, this._arguments);
-                    this.callback([_local_1]);
-                };
-                if (this._between != -1){
-                    _local_2 = Core.delayTime;
-                    if ((_local_2 - (this._startTime + this._between)) >= 0){
-                        this._stop = true;
-                        if (this._timeOutargs == null){
-                            this._timeOutargs = [];
-                        };
-                        if (this._timeOutFunc != null){
-                            this._timeOutFunc.apply(null, this._timeOutargs);
-                        };
-                        this.dispose();
-                        return;
-                    };
-                };
-            };
-        }
+		override public function execute()
+		{
+			if (_stop == false) {
+				if (_applyFunc != null) {
+					var applyRet:* = _applyFunc.apply(null, _arguments);
+					this.callback([applyRet]);
+				}
+				if (_between != -1) {
+					var delayTime:int = Core.delayTime;
+					if ((delayTime - (_startTime + _between)) >= 0) {
+						_stop = true;
+						if (_timeOutargs == null) {
+							_timeOutargs = [];
+						}
+						if (_timeOutFunc != null) {
+							_timeOutFunc.apply(null, _timeOutargs);
+						}
+						this.dispose();
+						return;
+					}
+				}
+			}
+		}
 
-        override public function callback(args:Array=null)
-        {
-            try {
-                if (this._callbackFunc == null){
-                    return;
-                };
-                this._callbackFunc.apply(null, args);
-            } catch(e:Error) {
-                this.dispose();
-                throw (new Error(("【异常】：" + e.message)));
-            };
-        }
+		override public function callback(args:Array=null)
+		{
+			try {
+				if (_callbackFunc == null) {
+					return;
+				}
+				_callbackFunc.apply(null, args);
+			} catch(e:Error) {
+				this.dispose();
+				throw new Error("【异常】：" + e.message);
+			}
+		}
 
-        override public function dispose():void
-        {
-            if (FrameElisor.coder::getInstance().hasOrder(this.id)){
-                FrameElisor.coder::getInstance().removeOrder(this.id);
-            };
-            this._stop = false;
-            this._applyFunc = null;
-            this._callbackFunc = null;
-            this._arguments = null;
-            this._timeOutFunc = null;
-            this._timeOutargs = null;
-            this._startTime = 0;
-            this._delay = 0;
-            this._startTime = 0;
-            this._between = 0;
-            super.dispose();
-        }
+		override public function dispose():void
+		{
+			if (FrameElisor.coder::getInstance().hasOrder(this.id)) {
+				FrameElisor.coder::getInstance().removeOrder(this.id);
+			}
+			_stop = false;
+			_applyFunc = null;
+			_callbackFunc = null;
+			_arguments = null;
+			_timeOutFunc = null;
+			_timeOutargs = null;
+			_startTime = 0;
+			_delay = 0;
+			_startTime = 0;
+			_between = 0;
+			super.dispose();
+		}
 
-
-    }
-}//package com.engine.core.controls.elisor
-
+	}
+}

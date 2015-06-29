@@ -12,45 +12,45 @@
 	public class Proto implements IProto 
 	{
 
-		protected var _id:String;
-		protected var _oid:String;
-		protected var _proto:Object;
+		protected var $id:String;
+		protected var $oid:String;
+		protected var $proto:Object;
 
 		public function Proto()
 		{
 			registerClassAlias("saiman.save.ProtoVo", Proto);
-			_id = Core.SIGN + Core.coder::nextInstanceIndex().toString(16);
+			$id = Core.SIGN + Core.coder::nextInstanceIndex().toString(16);
 		}
 
 		public function get oid():String
 		{
-			return _oid;
+			return $oid;
 		}
 		coder function set oid(val:String):void
 		{
-			if (_oid != val) {
-				_oid = val;
+			if ($oid != val) {
+				$oid = val;
 			}
 		}
 
 		public function get id():String
 		{
-			return _id;
+			return $id;
 		}
 		coder function set id(val:String):void
 		{
-			if (_id != val) {
-				_id = val;
+			if ($id != val) {
+				$id = val;
 			}
 		}
 
 		public function get proto():Object
 		{
-			return _proto;
+			return $proto;
 		}
 		public function set proto(val:Object):void
 		{
-			_proto = val;
+			$proto = val;
 		}
 
 		public function clone():IProto
@@ -60,9 +60,9 @@
 
 		public function dispose():void
 		{
-			_id = null;
-			_oid = null;
-			_proto = null;
+			$id = null;
+			$oid = null;
+			$proto = null;
 		}
 
 		public function toString():String
