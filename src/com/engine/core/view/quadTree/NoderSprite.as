@@ -118,7 +118,7 @@
 
 		public function get tid():String
 		{
-			return (this.coder::_tid);
+			return this.coder::_tid;
 		}
 
 		public function push(_arg_1:Node):void
@@ -148,6 +148,7 @@
 		override public function dispose():void
 		{
 			_isActivate = false;
+			_initialized = false;
 			this.remove(_node);
 			_node = null;
 			_tree = null;

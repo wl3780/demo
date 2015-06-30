@@ -29,6 +29,7 @@
 		public static var EYE_SHOT_RECT:Rectangle = new Rectangle(0, 0, 0x0400, 0x0300);
 		
 		public static var stage:Stage;
+		/** 四叉树id */
 		public static var SCENE_ITEM_NODER:String = "SCENE_ITEM_NODER";
 		public static var CORE_RECT:Rectangle;
 		public static var _Lessen_Frame_:int = 1;

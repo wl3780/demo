@@ -435,13 +435,13 @@
 
 		public function get mainChar():MainChar
 		{
-			return (_mainChar);
+			return _mainChar;
 		}
 
 		private function cleanMemory():void
 		{
-			var _local_1:int = (System.totalMemory / 0x100000);
-			if (_local_1 > 150) {
+			var ram:int = System.totalMemory / 0x100000;
+			if (ram > 150) {
 				AvatarManager.coder::getInstance().clean();
 				AvatarAssetManager.getInstance().clean();
 			}
@@ -488,9 +488,9 @@
 			return (null);
 		}
 
-		public function fine(_arg_1:Rectangle, _arg_2:Boolean, _arg_3:int=100):Array
+		public function fine(area:Rectangle, exact:Boolean, definition:int=100):Array
 		{
-			return this.$nodeTree.find(_arg_1, _arg_2, _arg_3);
+			return this.$nodeTree.find(area, exact, definition);
 		}
 
 		public function buildTree(area:Rectangle, size:int=50, subNodes:Vector.<INoder>=null):void
