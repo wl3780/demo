@@ -22,7 +22,8 @@
 
 		public var setupReadyFunc:Function;
 		
-		private var index:int = 0;
+		private var _avatarArray:Array = [100000001, 100000002, 100000004, 100000003];
+		private var _avatarIndex:int = 0;
 
 		public function GameScene()
 		{
@@ -96,12 +97,11 @@
 			}
 			switch (evt.keyCode) {
 				case Keyboard.NUMBER_1:
-					var array:Array = [100000001, 100000002, 100000004, 100000003];
-					this.index++;
-					if (this.index >= array.length) {
-						this.index = 0;
+					_avatarIndex++;
+					if (_avatarIndex >= _avatarArray.length) {
+						_avatarIndex = 0;
 					}
-					GameScene.scene.updataCharAvatarPart(mainChar, array[this.index]);
+					GameScene.scene.updataCharAvatarPart(mainChar, _avatarArray[this._avatarIndex]);
 					break;
 				case Keyboard.NUMBER_2:
 					if (this.mainChar && this.selectAvatar) {
