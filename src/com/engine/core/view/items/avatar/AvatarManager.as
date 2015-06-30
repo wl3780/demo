@@ -235,14 +235,14 @@
                     var _local_8 = _local_5;
                     (_local_8.coder::setupStart(_local_2));
                     for each (_local_6 in _local_4) {
-                        _local_7 = (_local_6.coder::clone() as AvatarParam);
+                        _local_7 = (_local_6.clone() as AvatarParam);
                         _local_7.coder::assets_id = _local_1.assets_id;
                         _local_7.startPlayTime = _local_1.startTime;
                         var _local_10 = _local_5;
                         (_local_10.coder::addAvatarPart(_local_7));
                     };
                     _local_8 = _local_5;
-                    (_local_8.coder::setupReady(_local_2));
+                    (_local_8.coder::_setupReady_(_local_2));
                 };
                 _local_4 = null;
             };

@@ -16,9 +16,7 @@
 		private var stageFrameOrder:Vector.<Function>;
 		private var stageFrameOrderTarget:Vector.<DisplayObject>;
 		private var heartbeatIndex:int = 0;
-		private var heartbeatSize:int;
 		private var startIndex:int;
-		private var endIndex:int;
 
 		public function HeartbeatFactory()
 		{
@@ -41,29 +39,33 @@
 		
 		protected function onEnterFrame(event:Event):void
 		{
-			var index:int;
-			var len:int;
-			var order:Function = null;
+			var idx:int;
+			var action:Function = null;
 			if (unstageFrameOrder.length) {
-				FPSUtils.fps < 3 ? heartbeatSize = 2 : heartbeatSize = 6;
+				var heartbeatSize:int = FPSUtils.fps < 3 ? 2 : 6;
 				heartbeatIndex = Math.ceil(unstageFrameOrder.length / heartbeatSize);
-				for (index = 0, len = unstageFrameOrder.length - heartbeatIndex; index < len; index++) {
+				idx = unstageFrameOrder.length - heartbeatIndex;
+				while (idx >= 0) {
 					if (startIndex >= unstageFrameOrder.length) {
 						startIndex = 0;
 					}
-					order = unstageFrameOrder[startIndex];
-					order.apply();
-					startIndex ++;
+					action = unstageFrameOrder[startIndex];
+					action.apply();
+					startIndex++;
+					idx--;
 				}
 			}
 			
 			var dis:DisplayObject = null;
-			for (index = 0, len = stageFrameOrder.length; index < len; index++) {
-				dis = stageFrameOrderTarget[index];
+			idx = 0;
+			var len:int = stageFrameOrder.length
+			while (idx < len) {
+				dis = stageFrameOrderTarget[idx];
 				if (dis.stage) {
-					order = stageFrameOrder[index];
-					order.apply();
+					action = stageFrameOrder[idx];
+					action.apply();
 				}
+				idx++;
 			}
 		}
 		

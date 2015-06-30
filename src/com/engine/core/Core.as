@@ -12,8 +12,6 @@
 	import flash.display.Stage;
 	import flash.geom.Rectangle;
 
-	use namespace coder;
-
 	public class Core 
 	{
 

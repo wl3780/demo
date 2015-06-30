@@ -4,8 +4,6 @@
 	
 	import flash.utils.Dictionary;
 
-	use namespace coder;
-
 	public class Hash 
 	{
 

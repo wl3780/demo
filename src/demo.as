@@ -89,7 +89,7 @@
 			this.createButton(this.clickFunc8, "500机器人", 400, 70);
 			this.createButton(this.clickFunc9, "1000机器人", 600, 70);
 			
-			HeartbeatFactory.getInstance().addFrameOrder(this.enterFrameFunc);
+			HeartbeatFactory.getInstance().addFrameOrder(enterFrameFunc, null);
 		}
 
 		private function resetNum(num:int):void
@@ -168,12 +168,7 @@
 		// 10机器人
 		private function clickFunc4(evt:MouseEvent):void
 		{
-			var char:Char;
-			while (robot_quene.length > 10) {
-				char = robot_quene.pop() as Char;
-				this.scene.remove(char);
-				char.recover();
-			}
+			this.resetNum(10);
 		}
 
 		// 50机器人

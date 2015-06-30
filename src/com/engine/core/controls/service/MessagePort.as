@@ -5,14 +5,11 @@
 
 package com.engine.core.controls.service
 {
-    import com.engine.core.controls.model.ModuleMonitor;
-    import com.engine.namespaces.coder;
-    import com.engine.core.controls.model.MessageConstant;
-    import __AS3__.vec.Vector;
     import com.engine.core.controls.model.IModule;
+    import com.engine.core.controls.model.MessageConstant;
+    import com.engine.core.controls.model.ModuleMonitor;
     import com.engine.core.controls.model.ServierProtModule;
-
-    use namespace coder;
+    import com.engine.namespaces.coder;
 
     public class MessagePort 
     {

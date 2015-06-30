@@ -5,8 +5,6 @@
 	import com.engine.namespaces.coder;
 	import com.engine.utils.Hash;
 
-	use namespace coder;
-
 	public class DisplayObjectPort extends Proto 
 	{
 

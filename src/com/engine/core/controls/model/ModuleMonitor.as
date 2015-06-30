@@ -5,19 +5,16 @@
 
 package com.engine.core.controls.model
 {
+    import com.engine.core.controls.service.Body;
+    import com.engine.core.controls.service.IMessage;
+    import com.engine.core.controls.service.Message;
+    import com.engine.core.controls.service.MessagePort;
     import com.engine.core.model.Proto;
-    import com.engine.utils.Hash;
     import com.engine.namespaces.coder;
+    import com.engine.utils.Hash;
+    
     import flash.utils.describeType;
     import flash.utils.getDefinitionByName;
-    import com.engine.core.controls.service.Message;
-    import __AS3__.vec.Vector;
-    import com.engine.core.controls.service.Body;
-    import com.engine.core.controls.service.MessagePort;
-    import com.engine.core.controls.service.IMessage;
-    import __AS3__.vec.*;
-
-    use namespace coder;
 
     public class ModuleMonitor extends Proto 
     {
