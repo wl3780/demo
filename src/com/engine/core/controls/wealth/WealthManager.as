@@ -122,7 +122,7 @@
                     break;
                 };
                 if (_arg_2 == false){
-                    _local_5.coder::limitIndex = (_local_5.coder::limitIndex + 1);
+                    _local_5.limitIndex = (_local_5.limitIndex + 1);
                 };
                 if (_local_7.lock == false){
                     _local_7.checkFinish();
@@ -162,7 +162,7 @@
                 if (_local_9 == null) break;
                 delete this._requestHash[_arg_1][_local_9.id];
                 if ((_arg_2 == false)){
-                    _local_6.coder::limitIndex = (_local_6.coder::limitIndex + 1);
+                    _local_6.limitIndex = (_local_6.limitIndex + 1);
                 };
                 if (_local_9.loadIndex > 0){
                     _local_9.loadIndex--;

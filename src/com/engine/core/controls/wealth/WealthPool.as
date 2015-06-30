@@ -5,15 +5,14 @@
 
 package com.engine.core.controls.wealth
 {
-    import com.engine.core.model.Proto;
-    import com.engine.namespaces.coder;
-    import flash.utils.Dictionary;
-    import com.engine.utils.Hash;
-    import com.engine.core.controls.wealth.loader.ILoader;
     import com.engine.core.Core;
     import com.engine.core.controls.wealth.loader.DisplayLoader;
-
-    use namespace coder;
+    import com.engine.core.controls.wealth.loader.ILoader;
+    import com.engine.core.model.Proto;
+    import com.engine.namespaces.coder;
+    import com.engine.utils.Hash;
+    
+    import flash.utils.Dictionary;
 
     public class WealthPool extends Proto 
     {

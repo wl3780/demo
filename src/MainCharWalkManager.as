@@ -12,8 +12,6 @@
 	
 	import flash.geom.Point;
 
-	use namespace coder;
-
 	public class MainCharWalkManager 
 	{
 
@@ -32,7 +30,7 @@
 		public function MainCharWalkManager()
 		{
 			super();
-			this.paths = [];
+			this.coder::paths = [];
 			this.astar = new SquareAstar();
 		}
 

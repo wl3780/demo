@@ -18,7 +18,6 @@
 		private var heartbeatIndex:int = 0;
 		private var heartbeatSize:int;
 		private var startIndex:int;
-		private var endIndex:int;
 
 		public function HeartbeatFactory()
 		{

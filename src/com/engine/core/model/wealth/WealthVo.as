@@ -7,8 +7,6 @@
     
     import flash.net.registerClassAlias;
 
-    use namespace coder;
-
     public class WealthVo extends Proto 
     {
 		

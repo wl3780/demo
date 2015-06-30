@@ -5,12 +5,11 @@
 
 package com.engine.core.view.items
 {
-    import flash.utils.Dictionary;
-    import com.engine.namespaces.coder;
     import com.engine.core.view.items.avatar.IAvatar;
+    import com.engine.namespaces.coder;
+    
+    import flash.utils.Dictionary;
     import flash.utils.getQualifiedClassName;
-
-    use namespace coder;
 
     public class InstancePool 
     {

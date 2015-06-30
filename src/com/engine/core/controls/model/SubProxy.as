@@ -5,17 +5,14 @@
 
 package com.engine.core.controls.model
 {
-    import com.engine.core.model.Proto;
-    import flash.utils.getQualifiedClassName;
-    import com.engine.core.controls.service.IMessage;
-    import com.engine.namespaces.coder;
-    import flash.utils.getDefinitionByName;
-    import com.engine.core.controls.service.Message;
-    import __AS3__.vec.Vector;
     import com.engine.core.controls.service.Body;
-    import __AS3__.vec.*;
-
-    use namespace coder;
+    import com.engine.core.controls.service.IMessage;
+    import com.engine.core.controls.service.Message;
+    import com.engine.core.model.Proto;
+    import com.engine.namespaces.coder;
+    
+    import flash.utils.getDefinitionByName;
+    import flash.utils.getQualifiedClassName;
 
     public class SubProxy extends Proto implements IProxy 
     {

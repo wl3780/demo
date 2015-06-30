@@ -7,8 +7,6 @@
     import flash.geom.Matrix;
     import flash.geom.Rectangle;
 
-    use namespace coder;
-
     public class BitmapScale9Grid 
     {
 

@@ -29,8 +29,7 @@
         private static var bytesSpeed:int = 0;
 
         public var loaderContext:LoaderContext;
-		
-        private var _limitIndex_:int = 2;
+        public var limitIndex:int = 2;
 		
         private var _proto:Object;
         private var _id:String;
@@ -50,15 +49,6 @@
             this.setUp();
         }
 		
-		coder function get limitIndex():int
-		{
-			return _limitIndex_;
-		}
-		coder function set limitIndex(val:int):void
-		{
-			_limitIndex_ = val;
-		}
-
         public static function getSpeedStr():String
         {
             var _local_1 = "";
@@ -192,14 +182,14 @@
             };
             if (this._priorityHash.length > 0){
                 _local_1 = 0;
-                while (_local_1 < this.coder::limitIndex) {
+                while (_local_1 < this.limitIndex) {
                     _local_2 = this.getNextWealth(this._priorityHash);
                     if (_local_2){
                         _local_3 = this._groupHash[_local_2.oid];
                         if (this.hasCatch(_local_2.path)){
                             _local_2.coder::loaded = true;
                             this.dispatchWealthEvent(WealthEvent.WEALTH_LOADED, _local_2);
-                            this.coder::limitIndex = (this.coder::limitIndex + 1);
+                            this.limitIndex = (this.limitIndex + 1);
                             _local_3.checkFinish();
                             if (((_local_3.loaded) && ((_local_3.lock == false)))){
                                 this.removeGroup(_local_2.oid);
@@ -212,8 +202,8 @@
                         } else {
                             this.loadElemt(_local_2, this.priorityLoadedFunc, this.priorityErrorFunc, this.priorityProFunc);
                         };
-                        if ((coder::limitIndex > 0)){
-                            coder::limitIndex--;
+                        if ((limitIndex > 0)){
+                            limitIndex--;
                         };
                         _local_1--;
                     };
@@ -387,7 +377,7 @@
                                 if (WealthPool.getIntance().has(vo.path) == false){
                                     loader.unloadAndStop();
                                 };
-                                this.coder::limitIndex = 3;
+                                this.limitIndex = 3;
                             };
                         };
                         i = (i + 1);

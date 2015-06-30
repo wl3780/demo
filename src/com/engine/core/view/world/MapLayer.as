@@ -26,8 +26,6 @@
     import flash.utils.Dictionary;
     import flash.utils.setTimeout;
 
-    use namespace coder;
-
     public class MapLayer extends Sprite 
     {
 
