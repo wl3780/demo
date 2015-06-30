@@ -33,6 +33,8 @@
 	import com.engine.utils.astar.SquareAstar;
 	import com.engine.utils.gome.SquareUitls;
 	import com.engine.utils.gome.TileUitls;
+	import com.greensock.TweenLite;
+	import com.greensock.easing.Linear;
 	
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
@@ -58,9 +60,6 @@
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
-	
-	import gs.TweenLite;
-	import gs.easing.Linear;
 
 	public class Scene extends BaseSprite 
 	{
@@ -253,9 +252,9 @@
 			return (_selectAvatar);
 		}
 
-		public function set selectAvatar(_arg_1:*):void
+		public function set selectAvatar(target:*):void
 		{
-			_selectAvatar = _arg_1;
+			_selectAvatar = target;
 		}
 
 		public function get lingthMode():int

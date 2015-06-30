@@ -19,6 +19,8 @@
 	import com.engine.core.view.scenes.SceneEventDispatcher;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.gome.TileUitls;
+	import com.greensock.TweenLite;
+	import com.greensock.easing.Linear;
 	
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
@@ -36,9 +38,6 @@
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
-	
-	import gs.TweenLite;
-	import gs.easing.Linear;
 
 	public class Char extends Avatar 
 	{
@@ -739,14 +738,14 @@
 			}
 		}
 
-		override public function play(_arg_1:String, _arg_2:AvatarRestrict=null, _arg_3:Boolean=false, _arg_4:Function=null, _arg_5:Boolean=true):void
+		override public function play(action:String, _arg_2:AvatarRestrict=null, _arg_3:Boolean=false, _arg_4:Function=null, _arg_5:Boolean=true):void
 		{
 			if (this.isBackMoving == false) {
 				clearTimeout(this.jumpTimerIndex);
-				super.play(_arg_1, _arg_2, _arg_3, _arg_4, _arg_5);
+				super.play(action, _arg_2, _arg_3, _arg_4, _arg_5);
 				if (this._wing_effect_1) {
-					this._wing_effect_1.play(_arg_1);
-					this._wing_effect_2.play(_arg_1);
+					this._wing_effect_1.play(action);
+					this._wing_effect_2.play(action);
 				}
 			}
 		}

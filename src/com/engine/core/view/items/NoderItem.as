@@ -1,12 +1,7 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.items.NoderItem
-
-package com.engine.core.view.items
+﻿package com.engine.core.view.items
 {
-    import com.engine.core.view.quadTree.NoderSprite;
     import com.engine.core.Core;
+    import com.engine.core.view.quadTree.NoderSprite;
 
     public class NoderItem extends NoderSprite implements IItem 
     {

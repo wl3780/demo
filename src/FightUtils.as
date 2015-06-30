@@ -5,14 +5,13 @@
 	import com.engine.core.view.role.Char;
 	import com.engine.core.view.scenes.SceneConstant;
 	import com.engine.utils.gome.LinearAndFan;
+	import com.greensock.TweenLite;
+	import com.greensock.easing.Linear;
 	
 	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
-	
-	import gs.TweenLite;
-	import gs.easing.Linear;
 
 	public class FightUtils 
 	{

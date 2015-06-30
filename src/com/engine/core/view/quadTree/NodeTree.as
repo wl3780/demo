@@ -1,6 +1,5 @@
 ﻿package com.engine.core.view.quadTree
 {
-	import com.engine.core.Core;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.Hash;
@@ -30,7 +29,7 @@
 			this.coder::id = id;
 		}
 		
-		public function build(scope:Rectangle, _arg_2:int=50, subNodes:Vector.<INoder>=null):void
+		public function build(scope:Rectangle, minSize:int=50, subNoders:Vector.<INoder>=null):void
 		{
 			NodeTreePool.getInstance().put(this);
 			_scopeRect = scope;
@@ -40,28 +39,27 @@
 			} else {
 				_rulerValue = scope.height;
 			}
-			_depth = NodeTree.takeDepth(_rulerValue, _arg_2);
-			var _local_4:int = Math.round(Math.pow(2, _depth));
-			scope.width = Math.round(scope.width / _local_4) * _local_4;
-			scope.height = Math.round(scope.height / _local_4) * _local_4;
-			NodeTree.minSize = (_rulerValue / _local_4);
-			NodeTree.minWidth = scope.width / _local_4;
-			NodeTree.minHeight = scope.height / _local_4;
+			_depth = NodeTree.takeDepth(_rulerValue, minSize);
+			var value:int = Math.round(Math.pow(2, _depth));
+			scope.width = Math.round(scope.width / value) * value;
+			scope.height = Math.round(scope.height / value) * value;
+			NodeTree.minSize = _rulerValue / value;
+			NodeTree.minWidth = scope.width / value;
+			NodeTree.minHeight = scope.height / value;
 			NodeTree.doubleMinWidth = (minWidth * 2);
 			NodeTree.doubleMinHeight = (minHeight * 2);
 			
 			_topNode = new Node();
-			if (subNodes) {
+			if (subNoders) {
 				var idx:int = 0;
-				var len:int = subNodes.length;
+				var len:int = subNoders.length;
 				while (idx < len) {
-					subNodes[idx].coder::_tid = this.id;
-					_topNode.addChild(subNodes[idx].node.id, subNodes[idx]);
+					subNoders[idx].coder::_tid = this.id;
+					_topNode.addChild(subNoders[idx].node.id, subNoders[idx]);
 					idx++;
 				}
 			}
 			_topNode.setUp(this.id, null, scope, _depth);
-			_topNode.coder::id = int(scope.x + scope.width / 2) + Core.SIGN + int(scope.y + scope.height / 2);
 			this.initialized = true;
 		}
 
@@ -156,6 +154,7 @@
 			var tmp:Number;
 			var dep:int = 1;
 			while (true) {
+				// 深度即迭代次数
 				tmp = Math.round(rulerValue / Math.pow(2, dep));
 				if (tmp <= size) {
 					return dep;

@@ -40,7 +40,6 @@
 			this.coder::_tid_ = tid;
 			this.coder::_rect = area;
 			
-			var nextDepth:int = depth - 1;
 			var nextRect:Rectangle;
 			var rectX:int = area.x;
 			var rectY:int = area.y;
@@ -53,26 +52,27 @@
 			$oid = oid;
 			_tree = NodeTreePool.getInstance().take(tid) as NodeTree;
 			_tree.addNode($id, this);
-			if (nextDepth > 0) {
+			var restDepth:int = depth - 1;
+			if (restDepth > 0) {
 				if (_nodeA == null) {
 					_nodeA = new Node();
 					nextRect = new Rectangle(rectX, rectY, rectHW, rectHH);
-					_nodeA.setUp(tid, $id, nextRect, nextDepth);
+					_nodeA.setUp(tid, $id, nextRect, restDepth);
 				}
 				if (_nodeB == null) {
 					_nodeB = new Node();
 					nextRect = new Rectangle(rectX, (rectY + rectHH), rectHW, rectHH);
-					_nodeB.setUp(tid, $id, nextRect, nextDepth);
+					_nodeB.setUp(tid, $id, nextRect, restDepth);
 				}
 				if (_nodeC == null) {
 					_nodeC = new Node();
 					nextRect = new Rectangle((rectX + rectHW), rectY, rectHW, rectHH);
-					_nodeC.setUp(tid, $id, nextRect, nextDepth);
+					_nodeC.setUp(tid, $id, nextRect, restDepth);
 				}
 				if (_nodeD == null) {
 					_nodeD = new Node();
 					nextRect = new Rectangle((rectX + rectHW), (rectY + rectHH), rectHW, rectHH);
-					_nodeD.setUp(tid, $id, nextRect, nextDepth);
+					_nodeD.setUp(tid, $id, nextRect, restDepth);
 				}
 				this.project();
 			}
@@ -81,16 +81,15 @@
 		private function project():void
 		{
 			if (this.coder::_depth_ > 0) {
-				var subNode:INoder;
-				for each (subNode in _nodes) {
-					if (_nodeA.coder::_rect.contains(subNode.x, subNode.y)) {
-						_nodeA.addChild(subNode.id, subNode);
-					} else if (_nodeB.coder::_rect.contains(subNode.x, subNode.y)) {
-						_nodeB.addChild(subNode.id, subNode);
-					} else if (_nodeC.coder::_rect.contains(subNode.x, subNode.y)) {
-						_nodeC.addChild(subNode.id, subNode);
-					} else if (_nodeD.coder::_rect.contains(subNode.x, subNode.y)) {
-						_nodeD.addChild(subNode.id, subNode);
+				for each (var subNoder:INoder in _nodes) {
+					if (_nodeA.coder::_rect.contains(subNoder.x, subNoder.y)) {
+						_nodeA.addChild(subNoder.id, subNoder);
+					} else if (_nodeB.coder::_rect.contains(subNoder.x, subNoder.y)) {
+						_nodeB.addChild(subNoder.id, subNoder);
+					} else if (_nodeC.coder::_rect.contains(subNoder.x, subNoder.y)) {
+						_nodeC.addChild(subNoder.id, subNoder);
+					} else if (_nodeD.coder::_rect.contains(subNoder.x, subNoder.y)) {
+						_nodeD.addChild(subNoder.id, subNoder);
 					}
 				}
 			}
@@ -165,10 +164,10 @@
 			return _nodes;
 		}
 
-		public function addChild(id:String, node:INoder):void
+		public function addChild(id:String, noder:INoder):void
 		{
 			if (_nodes[id] == null) {
-				_nodes[id] = node;
+				_nodes[id] = noder;
 				_length++;
 			}
 		}

@@ -23,8 +23,8 @@
 		
 		private static var time_dur:int;
 		private static var robot_quene:Array = [];
-		private static var action_index:int;
 		private static var robot_index:int = 0;
+		private static var action_index:int;
 
 		private var scene:GameScene;
 		private var text:TextField;
@@ -47,7 +47,7 @@
 			if (this.stage) {
 				this.setup(null);
 			} else {
-				this.addEventListener(Event.ADDED_TO_STAGE, this.setup);
+				this.addEventListener(Event.ADDED_TO_STAGE, setup);
 			}
 		}
 
@@ -156,13 +156,7 @@
 		protected function clickFunc3(evt:MouseEvent):void
 		{
 			this.openShadow = !this.openShadow;
-			var char:Avatar;
-			var idx:int = robot_quene.length - 1;
-			while (idx >= 0) {
-				char = robot_quene[idx] as Avatar;
-				char.openShadow = this.openShadow;
-				idx--;
-			}
+			this.scene.mainChar.openShadow = this.openShadow;
 		}
 
 		// 10机器人
@@ -222,12 +216,13 @@
 		{
 			if (this.robotReady) {
 				this.robotMove();
+				
+				var msg:String = "\n数字1：换装\n";
+				msg += "数字2：线性技能\n";
+				msg += "数字3：扇形连射\n";
+				msg += "Shift+左键：跳跃\n";
+				this.text.text = "fps:" + Core.fps + "\n机器人数：" + robot_quene.length + msg;
 			}
-			var msg:String = "\n数字1：换装\n";
-			msg += "数字2：线性技能\n";
-			msg += "数字3：扇形连射\n";
-			msg += "Shift+左键：跳跃\n";
-			this.text.text = "fps:" + Core.fps + "\n机器人数：" + robot_quene.length + msg;
 		}
 
 		private function robotMove():void
@@ -275,6 +270,7 @@
 			char.speed = 250;
 			char.headVisible = this.headVisible;
 			char.bodyVisible = this.bodyVisible;
+			char.openShadow = this.openShadow;
 			robot_quene.push(char);
 			this.scene.addItem(char, SceneConstant.MIDDLE_LAYER);
 			robot_index++;
@@ -285,10 +281,6 @@
 		{
 			var p:Point = new Point(stage.stageWidth / 2, stage.stageHeight / 2);
 			return new Point(3700, 1200);
-		}
-
-		public function sceneReadyFunc():void
-		{
 		}
 
 	}
