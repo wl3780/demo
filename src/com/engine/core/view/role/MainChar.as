@@ -36,6 +36,7 @@
 
 		public function MainChar()
 		{
+			super();
 			this.openShadow = true;
 			this.isMainChar = true;
 		}

@@ -27,6 +27,7 @@
 
 		public function GameScene()
 		{
+			super();
 			GameScene.scene = this;
 		}
 

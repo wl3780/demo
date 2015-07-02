@@ -16,6 +16,7 @@
 
 		public function NoderSprite()
 		{
+			super();
 			this.mouseChildren = this.mouseEnabled = false;
 			this.tabChildren = this.tabEnabled = false;
 		}
@@ -82,7 +83,7 @@
 
 		public function get node():Node
 		{
-			return (_node);
+			return _node;
 		}
 
 		private function get nodeKey():String
@@ -96,9 +97,8 @@
 		{
 			if (_tree.initialized) {
 				_isActivate = true;
-				var _local_1:Node = _tree.nodes.take(this.nodeKey) as Node;
-				_node = _local_1;
-				this.push(_local_1);
+				_node = _tree.nodes.take(this.nodeKey) as Node;
+				this.push(_node);
 			}
 		}
 
@@ -113,41 +113,42 @@
 
 		public function get isActivate():Boolean
 		{
-			return (_isActivate);
+			return _isActivate;
 		}
 
 		public function get tid():String
 		{
-			return (this.coder::_tid);
+			return this.coder::_tid;
 		}
 
-		public function push(_arg_1:Node):void
+		public function push(aNode:Node):void
 		{
-			if (_arg_1 == null) {
+			if (aNode == null) {
 				return;
 			}
-			_arg_1.addChild(this.id, this);
-			var _local_2:Node = _arg_1.parent;
-			if (_local_2) {
-				this.push(_local_2);
+			aNode.addChild(this.id, this);
+			var pNode:Node = aNode.parent;
+			if (pNode) {
+				this.push(pNode);
 			}
 		}
 
-		private function remove(_arg_1:Node):void
+		private function remove(aNode:Node):void
 		{
-			if (_arg_1 == null) {
+			if (aNode == null) {
 				return;
 			}
-			_arg_1.removeChild(this.id);
-			var _local_2:Node = _arg_1.parent;
-			if (_local_2) {
-				this.remove(_local_2);
+			aNode.removeChild(this.id);
+			var pNode:Node = aNode.parent;
+			if (pNode) {
+				this.remove(pNode);
 			}
 		}
 
 		override public function dispose():void
 		{
 			_isActivate = false;
+			_initialized = false;
 			this.remove(_node);
 			_node = null;
 			_tree = null;

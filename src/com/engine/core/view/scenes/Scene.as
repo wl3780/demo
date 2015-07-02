@@ -48,7 +48,6 @@
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
 	import flash.filters.BlurFilter;
 	import flash.filters.ColorMatrixFilter;
 	import flash.filters.GlowFilter;
@@ -58,7 +57,6 @@
 	import flash.system.System;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-	import flash.utils.Timer;
 	import flash.utils.getTimer;
 
 	public class Scene extends BaseSprite 
@@ -129,8 +127,6 @@
 			super();
 			this.init();
 			
-			var timer:Timer = new Timer(0);
-			timer.addEventListener(TimerEvent.TIMER, this.timerFunc);
 			SuperKey.getInstance().addEventListener(SuperKey.DEBUG, _saiman_debug_);
 			SuperKey.getInstance().addEventListener(SuperKey.GM, _saiman_GM_);
 		}
@@ -290,29 +286,7 @@
 		private function init():void
 		{
 			if (Core.char_shadow == null) {
-				var pen:Shape = new Shape();
-				pen.graphics.beginGradientFill(GradientType.LINEAR, [0, 0, 0, 0], [0.8, 0.7, 0.6, 0.6], [1, 1, 1, 1]);
-				pen.graphics.drawEllipse(0, 0, 60, 30);
-				pen.filters = [new BlurFilter(20, 10)];
-				var rect:Rectangle = pen.getBounds(pen);
-				var bmd:BitmapData = new BitmapData(80, 50, true, 0);
-				var mtx:Matrix = RecoverUtils.matrix;
-				mtx.tx = 10;
-				mtx.ty = 5;
-				bmd.draw(pen, mtx);
-				Core.char_shadow = bmd;
-				pen.graphics.clear();
-				pen.graphics.beginGradientFill(GradientType.LINEAR, [0, 0, 0, 0], [0.8, 0.7, 0.6, 0.6], [1, 1, 1, 1]);
-				pen.graphics.drawEllipse(0, 0, 100, 40);
-				pen.filters = [new BlurFilter(20, 10)];
-				rect = pen.getBounds(pen);
-				bmd = new BitmapData(120, 60, true, 0);
-				mtx = RecoverUtils.matrix;
-				mtx.tx = 10;
-				mtx.ty = 5;
-				bmd.draw(pen, mtx);
-				Core.char_big_shadow = bmd;
-				pen.graphics.clear();
+				this.drawShadow();
 			}
 			
 			coder::astar = new SquareAstar();
@@ -374,23 +348,23 @@
 		{
 		}
 
-		public function updataMainChar(_arg_1:int, _arg_2:int=0, _arg_3:int=0, _arg_4:int=0):void
+		public function updataMainChar(avatarID:int, _arg_2:int=0, _arg_3:int=0, _arg_4:int=0):void
 		{
 			if (_mainChar == null) {
 				_mainChar = new MainChar();
 				_mainChar.showBodyShoadw(true);
 				_mainChar.movePointChangeFunc = this.movePointChangeFunc;
 			}
-			if ((_arg_3 == 0)) {
-				scene.mainChar.hp_height = 120;
+			if (_arg_3 == 0) {
+				_mainChar.hp_height = 120;
 			} else {
-				scene.mainChar.hp_height = 150;
+				_mainChar.hp_height = 150;
 			}
 			_mainChar.type = SceneConstant.CHAR;
-			_mainChar.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "clothes/mid_") + _arg_1) + Core.TMP_FILE) + "?version=") + Core.version));
-			_mainChar.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "weapons/wid_") + _arg_2) + Core.TMP_FILE) + "?version=") + Core.version));
-			_mainChar.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "flys/fid_") + _arg_4) + Core.TMP_FILE) + "?version=") + Core.version));
-			_mainChar.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "mounts/midm_") + _arg_3) + Core.TMP_FILE) + "?version=") + Core.version));
+			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "clothes/mid_" + avatarID + Core.TMP_FILE + "?version=" + Core.version);
+			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "weapons/wid_" + _arg_2 + Core.TMP_FILE + "?version=" + Core.version);
+			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "flys/fid_" + _arg_4 + Core.TMP_FILE + "?version=" + Core.version);
+			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "mounts/midm_" + _arg_3 + Core.TMP_FILE + "?version=" + Core.version);
 			_mainChar.avatarParts.bodyRender(true);
 			if (_sceneFlyMode) {
 				this.addItem(_mainChar, SceneConstant.FLY_LAYER);
@@ -435,27 +409,27 @@
 
 		public function get mainChar():MainChar
 		{
-			return (_mainChar);
+			return _mainChar;
 		}
 
 		private function cleanMemory():void
 		{
-			var _local_1:int = (System.totalMemory / 0x100000);
-			if (_local_1 > 150) {
+			var ram:int = System.totalMemory / 0x100000;
+			if (ram > 150) {
 				AvatarManager.coder::getInstance().clean();
 				AvatarAssetManager.getInstance().clean();
 			}
 		}
 
-		public function changeScene(_arg_1:int):void
+		public function changeScene(sceneID:int):void
 		{
 			SquareGroup.getInstance().unload();
-			SquareGroup.getInstance().reset(new Dictionary());
+			SquareGroup.getInstance().reset(null);
 			this.cleanMemory();
 			InstancePool.coder::getInstance().reset();
 			this.$point = new Point(-1, -1);
 			if (this.$bottomLayer) {
-				this.$bottomLayer.clean(_arg_1);
+				this.$bottomLayer.clean(sceneID);
 			}
 			this.changing = true;
 			this.isReady = false;
@@ -488,9 +462,9 @@
 			return (null);
 		}
 
-		public function fine(_arg_1:Rectangle, _arg_2:Boolean, _arg_3:int=100):Array
+		public function fine(area:Rectangle, exact:Boolean, definition:int=100):Array
 		{
-			return this.$nodeTree.find(_arg_1, _arg_2, _arg_3);
+			return this.$nodeTree.find(area, exact, definition);
 		}
 
 		public function buildTree(area:Rectangle, size:int=50, subNodes:Vector.<INoder>=null):void
@@ -637,54 +611,49 @@
 			_arg_1.dispose();
 		}
 
-		public function addItem(_arg_1:IItem, _arg_2:String):void
+		public function addItem(sceneItem:IItem, layerName:String):void
 		{
-			var _local_3:DisplayObject;
-			var _local_4:Char;
-			if (_arg_1.char_id == null) {
+			if (sceneItem == null || sceneItem.char_id == null) {
 				log("saiman", "char_id属性不能为null!");
 			}
-			if (((_arg_1) && (_arg_1.char_id))) {
-				if (_arg_1) {
-					_arg_1.isSceneItem = true;
-				}
-				_arg_1.layer = _arg_2;
-				if ((((_arg_2 == null)) && ((_arg_1.type == null)))) {
-					_arg_1.type = SceneConstant.MIDDLE_LAYER;
-				}
-				_local_3 = (_arg_1 as DisplayObject);
-				_local_3.scaleX = (_local_3.scaleY = 1);
-				switch (_arg_2) {
-					case SceneConstant.TOP_LAYER:
-						this.$topLayer.addChild((_arg_1 as DisplayObject));
-						break;
-					case SceneConstant.MIDDLE_LAYER:
-						this.$middleLayer.addChild((_arg_1 as DisplayObject));
-						break;
-					case SceneConstant.BOTTOM_LAYER:
-						this.$itemLayer.addChild((_arg_1 as DisplayObject));
-						break;
-					case SceneConstant.ITEM_LAYER:
-						this.$itemLayer.addChild((_arg_1 as DisplayObject));
-						break;
-					case SceneConstant.FLY_LAYER:
-						_local_4 = (_arg_1 as Char);
-						if (_sceneFlyMode) {
-							_local_3.scaleX = (_local_3.scaleY = 2);
-							_local_4.hp_height = 140;
-						} else {
-							_local_4.hp_height = 80;
-						}
-						this.$flyLayer.addChild((_arg_1 as DisplayObject));
-						break;
-				}
-				this.avatarHash.put(_arg_1.char_id, _arg_1);
+			
+			sceneItem.isSceneItem = true;
+			sceneItem.layer = layerName;
+			if (layerName == null && sceneItem.type == null) {
+				sceneItem.type = SceneConstant.MIDDLE_LAYER;
 			}
+			var disItem:DisplayObject = sceneItem as DisplayObject;
+			disItem.scaleX = disItem.scaleY = 1;
+			switch (layerName) {
+				case SceneConstant.TOP_LAYER:
+					this.$topLayer.addChild(disItem);
+					break;
+				case SceneConstant.MIDDLE_LAYER:
+					this.$middleLayer.addChild(disItem);
+					break;
+				case SceneConstant.BOTTOM_LAYER:
+					this.$itemLayer.addChild(disItem);
+					break;
+				case SceneConstant.ITEM_LAYER:
+					this.$itemLayer.addChild(disItem);
+					break;
+				case SceneConstant.FLY_LAYER:
+					var charItem:Char = sceneItem as Char;
+					if (_sceneFlyMode) {
+						disItem.scaleX = disItem.scaleY = 2;
+						charItem.hp_height = 140;
+					} else {
+						charItem.hp_height = 80;
+					}
+					this.$flyLayer.addChild(disItem);
+					break;
+			}
+			this.avatarHash.put(sceneItem.char_id, sceneItem);
 		}
 
-		public function getChar(_arg_1:String):IAvatar
+		public function getChar(charID:String):IAvatar
 		{
-			return ((this.avatarHash.take(_arg_1) as IAvatar));
+			return this.avatarHash.take(charID) as IAvatar;
 		}
 
 		coder function removeRepeatObjectInAvatarHash(_arg_1:IAvatar):void
@@ -1350,13 +1319,6 @@
 			}
 		}
 
-		protected function timerFunc(_arg_1:TimerEvent):void
-		{
-			if (((!(this.stop)) && (this.mainChar))) {
-				this.mainChar.moving();
-			}
-		}
-
 		public function charMove():void
 		{
 			var _local_1:Dictionary;
@@ -1555,5 +1517,32 @@
 			this.$middleLayer.graphics.drawRect(_outsideRect.x, _outsideRect.y, _outsideRect.width, _outsideRect.height);
 		}
 
+		private function drawShadow():void
+		{
+			var pen:Shape = new Shape();
+			pen.graphics.beginGradientFill(GradientType.LINEAR, [0, 0, 0, 0], [0.8, 0.7, 0.6, 0.6], [1, 1, 1, 1]);
+			pen.graphics.drawEllipse(0, 0, 60, 30);
+			pen.filters = [new BlurFilter(20, 10)];
+			var rect:Rectangle = pen.getBounds(pen);
+			var bmd:BitmapData = new BitmapData(80, 50, true, 0);
+			var mtx:Matrix = RecoverUtils.matrix;
+			mtx.tx = 10;
+			mtx.ty = 5;
+			bmd.draw(pen, mtx);
+			Core.char_shadow = bmd;
+			pen.graphics.clear();
+			pen.graphics.beginGradientFill(GradientType.LINEAR, [0, 0, 0, 0], [0.8, 0.7, 0.6, 0.6], [1, 1, 1, 1]);
+			pen.graphics.drawEllipse(0, 0, 100, 40);
+			pen.filters = [new BlurFilter(20, 10)];
+			rect = pen.getBounds(pen);
+			bmd = new BitmapData(120, 60, true, 0);
+			mtx = RecoverUtils.matrix;
+			mtx.tx = 10;
+			mtx.ty = 5;
+			bmd.draw(pen, mtx);
+			Core.char_big_shadow = bmd;
+			pen.graphics.clear();
+		}
+		
 	}
 }

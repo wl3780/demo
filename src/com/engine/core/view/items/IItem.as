@@ -5,13 +5,16 @@
 	public interface IItem extends IBaseSprite 
 	{
 
-		function set layer(_arg_1:String):void;
+		function set layer(val:String):void;
 		function get layer():String;
+		
 		function get type():String;
-		function set type(_arg_1:String):void;
-		function set isSceneItem(_arg_1:Boolean):void;
+		function set type(val:String):void;
+		
 		function get char_id():String;
-		function set char_id(_arg_1:String):void;
+		function set char_id(val:String):void;
+		
+		function set isSceneItem(val:Boolean):void;
 
 	}
 }

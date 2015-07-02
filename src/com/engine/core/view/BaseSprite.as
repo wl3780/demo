@@ -22,6 +22,7 @@
 
 		public function BaseSprite()
 		{
+			super();
 			_id = Core.coder::nextInstanceIndex().toString(16);
 			DisplayObjectPort.coder::getInstance().put(this);
 		}

@@ -26,7 +26,7 @@
 		
 		function unactivate():void;
 		
-		function getBounds(dis:DisplayObject):Rectangle;
+		function getBounds(targetCoordinateSpace:DisplayObject):Rectangle;
 
 	}
 }

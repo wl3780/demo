@@ -4,6 +4,7 @@
 	import com.engine.namespaces.coder;
 	import com.engine.utils.Hash;
 	
+	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
@@ -74,7 +75,7 @@
 			return _hash;
 		}
 
-		public function find(rect:Rectangle, exact:Boolean=false, definition:Number=20):Array
+		public function find(area:Rectangle, exact:Boolean=false, definition:Number=20):Array
 		{
 			if (this.initialized) {
 				var dict:Dictionary = new Dictionary();
@@ -83,48 +84,49 @@
 					definition = minSize;
 				}
 				var tmpDepth:int = NodeTree.takeDepth(_rulerValue, definition);
-				this.cycleFind(ret, dict, _topNode, rect, (_depth - tmpDepth + 1), exact);
+				this.cycleFind(ret, dict, _topNode, area, (_depth - tmpDepth + 1), exact);
 				return ret;
 			}
 			return null;
 		}
 
-		private function cycleFind(arr:Array, dict:Dictionary, node:Node, rect:Rectangle, level:int, exact:Boolean):void
+		private function cycleFind(arr:Array, dict:Dictionary, head:Node, area:Rectangle, level:int, exact:Boolean):void
 		{
-			if (node) {
-				if (rect.intersects(node.rect) && node.length > 0) {
-					if (node.coder::_depth_ == level) {
-						var tmpDict:Dictionary = node.dic;
-						for each (var tmpNode:INoder in tmpDict) {
-							if (tmpNode.visible) {
-								if (exact) {
-									if (rect.intersects(tmpNode.getBounds(Object(tmpNode).parent))) {
-										if (dict[tmpNode.id] == null) {
-											dict[tmpNode.id] = tmpNode;
-											arr.push(tmpNode);
-										}
+			if (!head) {
+				return;
+			}
+			if (area.intersects(head.rect) && head.length > 0) {
+				if (head.coder::_depth_ == level) {
+					var noderDict:Dictionary = head.dic;
+					for each (var noderItem:INoder in noderDict) {
+						if (noderItem.visible) {
+							if (exact) {	// 精确查找
+								if (area.intersects(noderItem.getBounds(DisplayObject(noderItem).parent))) {
+									if (dict[noderItem.id] == null) {
+										dict[noderItem.id] = noderItem;
+										arr.push(noderItem);
 									}
-								} else {
-									if (dict[tmpNode.id] == null) {
-										dict[tmpNode.id] = tmpNode;
-										arr.push(tmpNode);
-									}
+								}
+							} else {
+								if (dict[noderItem.id] == null) {
+									dict[noderItem.id] = noderItem;
+									arr.push(noderItem);
 								}
 							}
 						}
-					} else {
-						if (node.nodeA) {
-							this.cycleFind(arr, dict, node.nodeA, rect, level, exact);
-						}
-						if (node.nodeB) {
-							this.cycleFind(arr, dict, node.nodeB, rect, level, exact);
-						}
-						if (node.nodeC) {
-							this.cycleFind(arr, dict, node.nodeC, rect, level, exact);
-						}
-						if (node.nodeD) {
-							this.cycleFind(arr, dict, node.nodeD, rect, level, exact);
-						}
+					}
+				} else {
+					if (head.nodeA) {
+						this.cycleFind(arr, dict, head.nodeA, area, level, exact);
+					}
+					if (head.nodeB) {
+						this.cycleFind(arr, dict, head.nodeB, area, level, exact);
+					}
+					if (head.nodeC) {
+						this.cycleFind(arr, dict, head.nodeC, area, level, exact);
+					}
+					if (head.nodeD) {
+						this.cycleFind(arr, dict, head.nodeD, area, level, exact);
 					}
 				}
 			}
