@@ -15,10 +15,7 @@
 		{
 			if (_instance == null) {
 				_instance = this;
-				if (this.$hash) {
-					this.$hash.dispose();
-					this.$hash = new Hash();
-				}
+				this.$hash = new Hash();
 			}
 		}
 
@@ -40,6 +37,7 @@
 		{
 			this.$hash.dispose();
 			this.$hash = null;
+			_instance = null;
 		}
 
 		public function unload():void
@@ -47,17 +45,12 @@
 			if (this.hash == null) {
 				return;
 			}
-			try {
-				var square:Square;
-				for (var key:String in this.hash.hash) {
-					square = this.hash.hash[key];
-					square.dispose();
-					delete this.hash.hash[key];
-				}
-				this.$hash = null;
-			} catch(e:Error) {
+			
+			var square:Square;
+			for (var key:String in this.hash.hash) {
+				square = this.hash.remove(key) as Square;
+				square.dispose();
 			}
-			_instance = null;
 		}
 
 		public function reset(source:Dictionary):void

@@ -1,19 +1,13 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.tile.Cell
-
-package com.engine.core.tile
+﻿package com.engine.core.tile
 {
-    import flash.net.registerClassAlias;
     import com.engine.utils.gome.TileUitls;
-    import flash.geom.Point;
-    import flash.geom.Rectangle;
+    
     import flash.display.Graphics;
-    import __AS3__.vec.Vector;
     import flash.display.GraphicsPathCommand;
     import flash.display.GraphicsPathWinding;
-    import __AS3__.vec.*;
+    import flash.geom.Point;
+    import flash.geom.Rectangle;
+    import flash.net.registerClassAlias;
 
     public class Cell 
     {
@@ -164,7 +158,5 @@ package com.engine.core.tile
             return ((("[Cell:" + this.indexKey) + "]"));
         }
 
-
     }
-}//package com.engine.core.tile
-
+}
