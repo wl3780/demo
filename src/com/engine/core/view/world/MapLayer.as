@@ -486,7 +486,7 @@
 			var _local_7:int;
 			var _local_8:int;
 			var _local_1:Rectangle = new Rectangle(0, 0, Core.stage.stageWidth, Core.stage.stageHeight);
-			var _local_3:Rectangle = new Rectangle(0, 0, Core.IMAGE_SZIE, Core.IMAGE_SZIE);
+			var _local_3:Rectangle = new Rectangle(0, 0, 300, 300);Core.IMAGE_SZIE
 			for (_local_4 in this.loadHash) {
 				_local_5 = this.loadHash[_local_4];
 				_local_2 = (_local_5.loader as Loader);
