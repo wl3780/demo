@@ -62,6 +62,7 @@
 			this.scene.updataMainChar(100000002, 0, 0);
 			this.scene.changeScene(5);
 			this.scene.$bottomLayer.init("scene_" + 4);
+			
 			this.scene.mainChar.speed = 270;
 			this.scene.mainChar.char_id = "saiman";
 			this.scene.mainChar.openShadow = true;

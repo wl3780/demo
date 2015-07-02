@@ -1,202 +1,195 @@
 ﻿package com.engine.core.view.base
 {
-    import com.engine.core.Core;
-    import com.engine.core.controls.IOrder;
-    import com.engine.core.controls.elisor.Elisor;
-    import com.engine.core.controls.elisor.EventOrder;
-    import com.engine.core.controls.elisor.FrameOrder;
-    import com.engine.core.controls.elisor.OrderMode;
-    import com.engine.core.model.IProto;
-    import com.engine.core.model.Proto;
-    import com.engine.core.view.DisplayObjectPort;
-    import com.engine.core.view.IBaseSprite;
-    import com.engine.namespaces.coder;
-    
-    import flash.display.Shape;
+	import com.engine.core.Core;
+	import com.engine.core.controls.IOrder;
+	import com.engine.core.controls.elisor.Elisor;
+	import com.engine.core.controls.elisor.EventOrder;
+	import com.engine.core.controls.elisor.FrameOrder;
+	import com.engine.core.controls.elisor.OrderMode;
+	import com.engine.core.model.IProto;
+	import com.engine.core.model.Proto;
+	import com.engine.core.view.DisplayObjectPort;
+	import com.engine.core.view.IBaseSprite;
+	import com.engine.namespaces.coder;
+	
+	import flash.display.Shape;
 
-    public class BaseShape extends Shape implements IBaseSprite 
-    {
+	public class BaseShape extends Shape implements IBaseSprite 
+	{
 
-        private var _id:String;
-        protected var $oid:String;
-        protected var $proto:Object;
+		protected var $oid:String;
+		protected var $proto:Object;
 
-        public function BaseShape()
-        {
-            this._id = Core.coder::nextInstanceIndex().toString(16);
-            DisplayObjectPort.coder::getInstance().put(this);
-        }
+		private var _id:String;
+		
+		public function BaseShape()
+		{
+			_id = Core.coder::nextInstanceIndex().toString(16);
+			DisplayObjectPort.coder::getInstance().put(this);
+		}
 
-        override public function addEventListener(_arg_1:String, _arg_2:Function, _arg_3:Boolean=false, _arg_4:int=0, _arg_5:Boolean=false):void
-        {
-            var _local_8:EventOrder;
-            var _local_6:Elisor = Elisor.getInstance();
-            var _local_7:String = ((this._id + Core.SIGN) + _arg_1);
-            if (_local_6.hasOrder(_local_7, OrderMode.EVENT_ORDER) == false){
-                _local_8 = _local_6.createEventOrder(this.id, _arg_1, _arg_2);
-                _local_6.addOrder(_local_8);
-                if (super.hasEventListener(_arg_1) == false){
-                    super.addEventListener(_arg_1, _arg_2, _arg_3);
-                };
-            };
-        }
+		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			var orderType:String = _id + Core.SIGN + type;
+			if (elisor.hasOrder(orderType, OrderMode.EVENT_ORDER) == false) {
+				var order:EventOrder = elisor.createEventOrder(this.id, type, listener);
+				elisor.addOrder(order);
+				if (super.hasEventListener(type) == false) {
+					super.addEventListener(type, listener, useCapture);
+				}
+			}
+		}
 
-        override public function removeEventListener(_arg_1:String, _arg_2:Function, _arg_3:Boolean=false):void
-        {
-            var _local_6:EventOrder;
-            var _local_4:Elisor = Elisor.getInstance();
-            var _local_5:String = ((this._id + Core.SIGN) + _arg_1);
-            if (_local_4.hasOrder(_local_5, OrderMode.EVENT_ORDER) == true){
-                _local_6 = (_local_4.removeOrder(_local_5, OrderMode.EVENT_ORDER) as EventOrder);
-                if (_local_6){
-                    _local_6.dispose();
-                };
-                _local_6 = null;
-            };
-            if (super.hasEventListener(_arg_1) == true){
-                super.removeEventListener(_arg_1, _arg_2);
-            };
-        }
+		override public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			var orderType:String = _id + Core.SIGN + type;
+			if (elisor.hasOrder(orderType, OrderMode.EVENT_ORDER) == true) {
+				var order:EventOrder = elisor.removeOrder(orderType, OrderMode.EVENT_ORDER) as EventOrder;
+				if (order) {
+					order.dispose();
+				}
+			}
+			if (super.hasEventListener(type) == true) {
+				super.removeEventListener(type, listener);
+			}
+		}
 
-        public function _setTimeOut_(_arg_1:int, _arg_2:Function, _arg_3:Array):void
-        {
-            var _local_4:Elisor = Elisor.getInstance();
-            var _local_5:FrameOrder = _local_4.setTimeOut(this.id, _arg_1, _arg_2, _arg_3);
-            _local_4.addOrder(_local_5);
-            _local_5.start();
-        }
+		public function _setTimeOut_(delay:int, closure:Function, parameters:Array):void
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			var order:FrameOrder = elisor.setTimeOut(this.id, delay, closure, parameters);
+			elisor.addOrder(order);
+			order.start();
+		}
 
-        public function onTimer(_arg_1:int, _arg_2:Function, _arg_3:Array, _arg_4:Function=null):FrameOrder
-        {
-            var _local_5:Elisor = Elisor.getInstance();
-            var _local_6:FrameOrder = _local_5.createFrameOrder(this.id, _arg_1, _arg_2, _arg_3, _arg_4, -1);
-            _local_5.addOrder(_local_6);
-            _local_6.start();
-            return (_local_6);
-        }
+		public function onTimer(delay:int, action:Function, parameters:Array, callback:Function=null):FrameOrder
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			var order:FrameOrder = elisor.createFrameOrder(this.id, delay, action, parameters, callback, -1);
+			elisor.addOrder(order);
+			order.start();
+			return order;
+		}
 
-        public function initialize():void
-        {
-        }
+		public function initialize():void
+		{
+		}
 
-        public function takeOrder(_arg_1:String, _arg_2:String):IOrder
-        {
-            var _local_3:Elisor = Elisor.getInstance();
-            return (_local_3.takeOrder(_arg_1, _arg_2));
-        }
+		public function takeOrder(id:String, _arg_2:String):IOrder
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.takeOrder(id, _arg_2);
+		}
 
-        public function hasOrder(_arg_1:String, _arg_2:String):Boolean
-        {
-            var _local_3:Elisor = Elisor.getInstance();
-            return (_local_3.hasOrder(_arg_1, _arg_2));
-        }
+		public function hasOrder(id:String, _arg_2:String):Boolean
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.hasOrder(id, _arg_2);
+		}
 
-        public function removeOrder(_arg_1:String, _arg_2:String):IOrder
-        {
-            var _local_3:Elisor = Elisor.getInstance();
-            return (_local_3.removeOrder(_arg_1, _arg_2));
-        }
+		public function removeOrder(id:String, _arg_2:String):IOrder
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.removeOrder(id, _arg_2);
+		}
 
-        public function addOrder(_arg_1:IOrder):Boolean
-        {
-            var _local_2:Elisor = Elisor.getInstance();
-            return (_local_2.addOrder(_arg_1));
-        }
+		public function addOrder(order:IOrder):Boolean
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.addOrder(order);
+		}
 
-        public function takeGroupOrders(_arg_1:String):Vector.<IOrder>
-        {
-            var _local_2:Elisor = Elisor.getInstance();
-            return (_local_2.takeGroupOrders(this._id, _arg_1));
-        }
+		public function takeGroupOrders(orderMode:String):Vector.<IOrder>
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.takeGroupOrders(_id, orderMode);
+		}
 
-        public function disposeGroupOrders(_arg_1:String):Vector.<IOrder>
-        {
-            var _local_2:Elisor = Elisor.getInstance();
-            return (_local_2.disposeGroupOrders(this._id, _arg_1));
-        }
+		public function disposeGroupOrders(orderMode:String):Vector.<IOrder>
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.disposeGroupOrders(_id, orderMode);
+		}
 
-        coder function set id(_arg_1:String):void
-        {
-            DisplayObjectPort.coder::getInstance().remove(this._id);
-            var _local_2:Vector.<IOrder> = Elisor.getInstance().disposeGroupOrders(this._id);
-            this._id = _arg_1;
-            DisplayObjectPort.coder::getInstance().put(this);
-            var _local_3:int;
-            while (_local_3 < _local_2.length) {
-                if (_local_2[_local_3]){
-                    Elisor.getInstance().addOrder(_local_2[_local_3]);
-                };
-                _local_3++;
-            };
-        }
+		coder function set id(val:String):void
+		{
+			DisplayObjectPort.coder::getInstance().remove(_id);
+			var list:Vector.<IOrder> = Elisor.getInstance().disposeGroupOrders(_id);
+			
+			_id = val;
+			DisplayObjectPort.coder::getInstance().put(this);
+			var idx:int;
+			while (idx < list.length) {
+				if (list[idx]) {
+					Elisor.getInstance().addOrder(list[idx]);
+				}
+				idx++;
+			}
+		}
 
-        public function get id():String
-        {
-            return (this._id);
-        }
+		public function get id():String
+		{
+			return _id;
+		}
 
-        public function set proto(_arg_1:Object):void
-        {
-            this.$proto = _arg_1;
-        }
+		public function set proto(val:Object):void
+		{
+			this.$proto = val;
+		}
 
-        public function get proto():Object
-        {
-            return (this.$proto);
-        }
+		public function get proto():Object
+		{
+			return this.$proto;
+		}
 
-        public function set oid(_arg_1:String):void
-        {
-            this.$oid = _arg_1;
-        }
+		public function set oid(val:String):void
+		{
+			this.$oid = val;
+		}
 
-        public function get oid():String
-        {
-            return (this.$oid);
-        }
+		public function get oid():String
+		{
+			return this.$oid;
+		}
 
-        public function clone():IProto
-        {
-            var _local_1:Proto = new Proto();
-            _local_1.coder::id = this._id;
-            _local_1.coder::oid = this.$oid;
-            _local_1.proto = this.$proto;
-            return (_local_1);
-        }
+		public function clone():IProto
+		{
+			var p:Proto = new Proto();
+			p.coder::id = this.id;
+			p.coder::oid = this.oid;
+			p.proto = this.proto;
+			return p;
+		}
 
-        public function dispose():void
-        {
-            var array:Vector.<IOrder>;
-            var i:int;
-            var order:IOrder;
-            try {
-                this.graphics.clear();
-                if (this.parent){
-                    this.parent.removeChild(this);
-                };
-                array = this.disposeGroupOrders(OrderMode.TOTAL);
-                if (array){
-                    i = 0;
-                    while (i < array.length) {
-                        order = array[i];
-                        if (order){
-                            order.dispose();
-                        };
-                        order = null;
-                        i = (i + 1);
-                    };
-                };
-                DisplayObjectPort.coder::getInstance().remove(this._id);
-                array = null;
-                this._id = null;
-                this.$oid = null;
-                this.$proto = null;
-            } catch(e:Error) {
-                throw (e);
-            };
-        }
+		public function dispose():void
+		{
+			try {
+				this.graphics.clear();
+				if (this.parent) {
+					this.parent.removeChild(this);
+				}
+				var array:Vector.<IOrder> = this.disposeGroupOrders(OrderMode.TOTAL);
+				if (array) {
+					var order:IOrder;
+					var i:int = 0;
+					while (i < array.length) {
+						order = array[i];
+						if (order) {
+							order.dispose();
+						}
+						i++;
+					}
+				}
+				DisplayObjectPort.coder::getInstance().remove(_id);
+				_id = null;
+				this.$oid = null;
+				this.$proto = null;
+			} catch(e:Error) {
+				throw (e);
+			}
+		}
 
-
-    }
-}//package com.engine.core.view.base
-
+	}
+}
