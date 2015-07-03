@@ -57,8 +57,8 @@
 			var _local_23:Square;
 			var _local_5 = 400;
 			GameScene.scene.$topLayer.graphics.clear();
-			var _local_6:Number = Point.distance(from, to);
-			var _local_7:int = Math.ceil((_local_6 / _arg_3));
+			var distance:Number = Point.distance(from, to);
+			var _local_7:int = Math.ceil(distance / _arg_3);
 			var _local_8:int = _local_7;
 			if (_local_8 > (_local_5 / _arg_3)) {
 				_local_8 = (_local_5 / _arg_3);
@@ -87,7 +87,7 @@
 			if (_local_14 >= _local_8) {
 				return ([]);
 			}
-			_local_6 = Point.distance(_local_10, _local_11);
+			distance = Point.distance(_local_10, _local_11);
 			var _local_17:Point = Point.interpolate(_local_10, _local_11, 0.5);
 			var _local_18:int = Math.abs((_local_10.x - _local_11.x));
 			var _local_19:int = Math.abs((_local_10.y - _local_11.y));
