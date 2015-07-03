@@ -50,31 +50,31 @@
 			GameScene.scene.charMoveTo(_arg_1, _arg_2.x, _arg_2.y);
 		}
 
-		public static function getJumpPath(_arg_1:Point, _arg_2:Point, _arg_3:int=5, _arg_4:int=300):Array
+		public static function getJumpPath(from:Point, to:Point, _arg_3:int=5, _arg_4:int=300):Array
 		{
 			var _local_9:Point;
 			var _local_22:SquarePt;
 			var _local_23:Square;
 			var _local_5 = 400;
 			GameScene.scene.$topLayer.graphics.clear();
-			var _local_6:Number = Point.distance(_arg_1, _arg_2);
+			var _local_6:Number = Point.distance(from, to);
 			var _local_7:int = Math.ceil((_local_6 / _arg_3));
 			var _local_8:int = _local_7;
 			if (_local_8 > (_local_5 / _arg_3)) {
 				_local_8 = (_local_5 / _arg_3);
 			}
-			var _local_10:Point = _arg_1;
-			var _local_11:Point = _arg_2;
+			var _local_10:Point = from;
+			var _local_11:Point = to;
 			var _local_12:SquarePt = SquareUitls.pixelsToSquare(_local_11);
 			var _local_13:Square = SquareGroup.getInstance().take(_local_12.key);
 			if ((((_local_13 == null)) || (((_local_13) && ((_local_13.type < 1)))))) {
-				_local_10 = _arg_1;
+				_local_10 = from;
 			}
 			var _local_14:int;
 			var _local_15:int;
 			var _local_16:int = _local_8;
 			while (_local_16 > 0) {
-				_local_9 = Point.interpolate(_arg_2, _arg_1, (_local_16 / _local_7));
+				_local_9 = Point.interpolate(to, from, (_local_16 / _local_7));
 				_local_22 = SquareUitls.pixelsToSquare(_local_9);
 				_local_23 = SquareGroup.getInstance().take(_local_22.key);
 				_local_14++;
