@@ -102,7 +102,7 @@
 					if (_avatarIndex >= _avatarArray.length) {
 						_avatarIndex = 0;
 					}
-					GameScene.scene.updataCharAvatarPart(mainChar, _avatarArray[this._avatarIndex]);
+					GameScene.scene.updateCharAvatarPart(mainChar, _avatarArray[this._avatarIndex]);
 					break;
 				case Keyboard.NUMBER_2:
 					if (this.mainChar && this.selectAvatar) {

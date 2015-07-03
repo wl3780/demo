@@ -55,12 +55,11 @@
 		public static var screenShaking:Boolean = true;
 		
 		public static var fps:int;
+		public static var mainCharId:String = "haha";
 		
 		private static var coreTarget:DisplayObjectContainer;
 		private static var INSTANCE_INDEX:int = 0;
 		private static var _instance:Core;
-
-		protected var $initialized:Boolean;
 
 		coder static function nextInstanceIndex():int
 		{

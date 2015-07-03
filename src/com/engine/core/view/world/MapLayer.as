@@ -30,21 +30,15 @@
 		public var inited:Boolean = true;
 		
 		private var loader:Loader;
-		private var firstLoad:Boolean = false;
-		private var bmd:BitmapData;
-		private var map_id:String;
-		private var mapBitmapData:BitmapData;
-		private var bg_bmd:BitmapData;
 		private var loader_:URLLoader;
+		private var map_id:String;
+		private var bg_bmd:BitmapData;
 		private var scene_data_path:String;
-		private var gid:String;
 		private var _bgHash:Array;
-		private var loadTime:int = 0;
 		private var _limitIndex_:int = 2;
 		private var wealthQuene:Array;
 		private var loadHash:Dictionary;
 		private var bgHash:Dictionary;
-		private var _time_:int = 10;
 		
 		private var _stageMinP:Point;
 		private var _stageMidP:Point;
@@ -52,11 +46,12 @@
 
 		public function MapLayer()
 		{
-			this.wealthQuene = [];
-			this.loadHash = new Dictionary();
 			super();
 			this.mouseChildren = this.mouseEnabled = false;
 			this.tabChildren = this.tabEnabled = false;
+			
+			this.wealthQuene = [];
+			this.loadHash = new Dictionary();
 		}
 
 		private function resizeFunc(evt:Event):void
@@ -317,7 +312,6 @@
 			}
 			TileGroup.getInstance().dispose();
 			TileGroup.getInstance().initialize();
-			this.firstLoad = true;
 		}
 
 		private function errorFunc(evt:IOErrorEvent):void
@@ -486,7 +480,7 @@
 			var _local_7:int;
 			var _local_8:int;
 			var _local_1:Rectangle = new Rectangle(0, 0, Core.stage.stageWidth, Core.stage.stageHeight);
-			var _local_3:Rectangle = new Rectangle(0, 0, Core.IMAGE_SZIE, Core.IMAGE_SZIE);
+			var _local_3:Rectangle = new Rectangle(0, 0, 300, 300);Core.IMAGE_SZIE
 			for (_local_4 in this.loadHash) {
 				_local_5 = this.loadHash[_local_4];
 				_local_2 = (_local_5.loader as Loader);

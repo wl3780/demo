@@ -59,7 +59,7 @@
 			Core.setup(this, "../", "zh_CN", "v1");
 			this.scene.buildTree(new Rectangle(0, 0, 10000, 10000));
 			this.scene.setup(Core.stage, this);
-			this.scene.updataMainChar(100000002, 0, 0);
+			this.scene.updateMainChar(100000002, 0, 0);
 			this.scene.changeScene(5);
 			this.scene.$bottomLayer.init("scene_" + 4);
 			
@@ -137,7 +137,13 @@
 		protected function clickFunc(btn:MouseEvent):void
 		{
 			this.bodyVisible = !this.bodyVisible;
-			this.setCharBodyVisible();
+			var char:Avatar;
+			var idx:int = robot_quene.length - 1;
+			while (idx >= 0) {
+				char = robot_quene[idx] as Avatar;
+				char.bodyVisible = this.bodyVisible;
+				idx--;
+			}
 		}
 
 		// 显示/隐藏名字
@@ -194,17 +200,6 @@
 		private function clickFunc9(evt:MouseEvent):void
 		{
 			this.resetNum(1000);
-		}
-
-		protected function setCharBodyVisible():void
-		{
-			var char:Avatar;
-			var idx:int = robot_quene.length - 1;
-			while (idx >= 0) {
-				char = robot_quene[idx] as Avatar;
-				char.bodyVisible = this.bodyVisible;
-				idx--;
-			}
 		}
 
 		private function setupReady():void
@@ -267,13 +262,11 @@
 			char.y = pos.y;
 			
 			var clothes:Array = [100000001, 100000002, 100000003, 100000004];
-			this.scene.updataCharAvatarPart(char, clothes[Math.random() * clothes.length >> 0], 0, 0);
+			this.scene.updateCharAvatarPart(char, clothes[Math.random() * clothes.length >> 0], 0, 0);
 			char.speed = 250;
 			char.headVisible = this.headVisible;
 			char.bodyVisible = this.bodyVisible;
-			char.openShadow = this.openShadow;
 			robot_quene.push(char);
-			this.scene.addItem(char, SceneConstant.MIDDLE_LAYER);
 			robot_index++;
 			return char;
 		}

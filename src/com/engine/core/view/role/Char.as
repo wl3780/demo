@@ -110,51 +110,50 @@
 
 		public static function createChar():Char
 		{
-			var _local_1:Char = (InstancePool.coder::getInstance().getAvatar(Char) as Char);
-			_local_1.reset();
-			return (_local_1);
+			var char:Char = InstancePool.coder::getInstance().getAvatar(Char) as Char;
+			char.reset();
+			return char;
 		}
 
 
 		public function get sceneFlyMode():Boolean
 		{
-			return (this._sceneFlyMode);
+			return _sceneFlyMode;
 		}
-
-		public function set sceneFlyMode(_arg_1:Boolean):void
+		public function set sceneFlyMode(val:Boolean):void
 		{
-			this._sceneFlyMode = _arg_1;
+			_sceneFlyMode = val;
 		}
 
 		public function get pathArr():Array
 		{
-			return (this._pathArr);
+			return (_pathArr);
 		}
 
 		public function set pathArr(_arg_1:Array):void
 		{
-			this._pathArr = _arg_1;
+			_pathArr = _arg_1;
 		}
 
 		public function get walkEndFunc():Function
 		{
-			return (this._walkEndFunc);
+			return (_walkEndFunc);
 		}
 
 		public function set walkEndFunc(_arg_1:Function):void
 		{
-			this._walkEndFunc = _arg_1;
+			_walkEndFunc = _arg_1;
 		}
 
 		public function get speed():Number
 		{
-			return (this._speed);
+			return (_speed);
 		}
 
 		public function set speed(_arg_1:Number):void
 		{
-			this._speed = _arg_1;
-			this._sp = _arg_1;
+			_speed = _arg_1;
+			_sp = _arg_1;
 		}
 
 		public function sayWord(_arg_1:String):void
@@ -231,69 +230,69 @@
 			if (!_arg_1) {
 				return;
 			}
-			if (((this._dropShape) && (this._dropShape.parent))) {
-				this._dropShape.parent.removeChild(this._dropShape);
+			if (((_dropShape) && (_dropShape.parent))) {
+				_dropShape.parent.removeChild(_dropShape);
 			}
-			this._dropShape = _arg_1;
-			this.addChild(this._dropShape);
+			_dropShape = _arg_1;
+			this.addChild(_dropShape);
 		}
 
 		public function showWing(_arg_1:String, _arg_2:String):void
 		{
-			if (this._wing_effect_1) {
-				this._wing_effect_1.dispose();
-				if (this._wing_effect_1.parent) {
-					this._wing_effect_1.parent.removeChild(this._wing_effect_1);
+			if (_wing_effect_1) {
+				_wing_effect_1.dispose();
+				if (_wing_effect_1.parent) {
+					_wing_effect_1.parent.removeChild(_wing_effect_1);
 				}
 			}
-			this._wing_effect_1 = new ItemAvatar();
+			_wing_effect_1 = new ItemAvatar();
 			if (this.isMainChar) {
-				this._wing_effect_1.isAutoDispose = false;
+				_wing_effect_1.isAutoDispose = false;
 			}
-			this._wing_effect_1.avatarParts.isTimeoutDelete = false;
-			this._wing_effect_1.avatarParts.lockEffectState = false;
-			this._wing_effect_1.isSceneItem = false;
-			this._wing_effect_1.loadAvatarPart(_arg_1);
-			this._wing_effect_1.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			this.addChildAt(this._wing_effect_1, 0);
-			this._wing_effect_1.visible = this.bodyVisible;
-			this._wing_effect_1.play(CharAction.STAND);
-			if (this._wing_effect_2) {
-				this._wing_effect_2.dispose();
-				if (this._wing_effect_2.parent) {
-					this._wing_effect_2.parent.removeChild(this._wing_effect_2);
+			_wing_effect_1.avatarParts.isTimeoutDelete = false;
+			_wing_effect_1.avatarParts.lockEffectState = false;
+			_wing_effect_1.isSceneItem = false;
+			_wing_effect_1.loadAvatarPart(_arg_1);
+			_wing_effect_1.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
+			this.addChildAt(_wing_effect_1, 0);
+			_wing_effect_1.visible = this.bodyVisible;
+			_wing_effect_1.play(CharAction.STAND);
+			if (_wing_effect_2) {
+				_wing_effect_2.dispose();
+				if (_wing_effect_2.parent) {
+					_wing_effect_2.parent.removeChild(_wing_effect_2);
 				}
 			}
-			this._wing_effect_2 = new ItemAvatar();
+			_wing_effect_2 = new ItemAvatar();
 			if (this.isMainChar) {
-				this._wing_effect_2.isAutoDispose = false;
+				_wing_effect_2.isAutoDispose = false;
 			}
-			this._wing_effect_2.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			this._wing_effect_2.avatarParts.isTimeoutDelete = false;
-			this._wing_effect_2.avatarParts.lockEffectState = false;
-			this._wing_effect_2.isSceneItem = false;
-			this._wing_effect_2.loadAvatarPart(_arg_2);
-			this.addChildAt(this._wing_effect_2, 0);
-			this._wing_effect_2.visible = this.bodyVisible;
-			this._wing_effect_2.play(CharAction.STAND);
+			_wing_effect_2.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
+			_wing_effect_2.avatarParts.isTimeoutDelete = false;
+			_wing_effect_2.avatarParts.lockEffectState = false;
+			_wing_effect_2.isSceneItem = false;
+			_wing_effect_2.loadAvatarPart(_arg_2);
+			this.addChildAt(_wing_effect_2, 0);
+			_wing_effect_2.visible = this.bodyVisible;
+			_wing_effect_2.play(CharAction.STAND);
 		}
 
 		public function removeWing():void
 		{
-			if (this._wing_effect_1) {
-				if (this._wing_effect_1.parent) {
-					removeChild(this._wing_effect_1);
+			if (_wing_effect_1) {
+				if (_wing_effect_1.parent) {
+					removeChild(_wing_effect_1);
 				}
-				this._wing_effect_1.dispose();
+				_wing_effect_1.dispose();
 			}
-			if (this._wing_effect_2) {
-				if (this._wing_effect_2.parent) {
-					removeChild(this._wing_effect_2);
+			if (_wing_effect_2) {
+				if (_wing_effect_2.parent) {
+					removeChild(_wing_effect_2);
 				}
-				this._wing_effect_2.dispose();
+				_wing_effect_2.dispose();
 			}
-			this._wing_effect_1 = null;
-			this._wing_effect_2 = null;
+			_wing_effect_1 = null;
+			_wing_effect_2 = null;
 		}
 
 		override public function get transform():Transform
@@ -308,42 +307,42 @@
 
 		public function setSuitVisible(_arg_1:Boolean):void
 		{
-			this._suitVisible = _arg_1;
-			if (this._suit_effect) {
-				this._suit_effect.visible = _arg_1;
+			_suitVisible = _arg_1;
+			if (_suit_effect) {
+				_suit_effect.visible = _arg_1;
 			}
 		}
 
 		public function showSuit(_arg_1:String):void
 		{
 			this.suitURL = _arg_1;
-			if (this._suit_effect) {
-				this._suit_effect.dispose();
-				if (this._suit_effect.parent) {
-					this._suit_effect.parent.removeChild(this._suit_effect);
+			if (_suit_effect) {
+				_suit_effect.dispose();
+				if (_suit_effect.parent) {
+					_suit_effect.parent.removeChild(_suit_effect);
 				}
 			}
-			this._suit_effect = new ItemAvatar();
+			_suit_effect = new ItemAvatar();
 			if (this.isMainChar) {
-				this._suit_effect.isAutoDispose = false;
+				_suit_effect.isAutoDispose = false;
 			}
-			this._suit_effect.isSceneItem = false;
-			this._suit_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			this._suit_effect.loadAvatarPart(_arg_1);
-			this.addChild(this._suit_effect);
-			this._suit_effect.visible = this.bodyVisible;
+			_suit_effect.isSceneItem = false;
+			_suit_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
+			_suit_effect.loadAvatarPart(_arg_1);
+			this.addChild(_suit_effect);
+			_suit_effect.visible = this.bodyVisible;
 		}
 
 		public function removeSuit():void
 		{
 			this.suitURL = null;
-			if (this._suit_effect) {
-				if (this._suit_effect.parent) {
-					removeChild(this._suit_effect);
+			if (_suit_effect) {
+				if (_suit_effect.parent) {
+					removeChild(_suit_effect);
 				}
-				this._suit_effect.dispose();
+				_suit_effect.dispose();
 			}
-			this._suit_effect = null;
+			_suit_effect = null;
 		}
 
 		public function showHaloBuffEffect(_arg_1:String, _arg_2:String=null):void
@@ -389,11 +388,11 @@
 		override public function loadAvatarPart(_arg_1:String, _arg_2:AvatarRestrict=null):String
 		{
 			var _local_3:String = super.loadAvatarPart(_arg_1, _arg_2);
-			if (this._halo_effect) {
+			if (_halo_effect) {
 				if (isOnMonut) {
-					this._halo_effect.y = 20;
+					_halo_effect.y = 20;
 				} else {
-					this._halo_effect.y = 0;
+					_halo_effect.y = 0;
 				}
 			}
 			return (_local_3);
@@ -402,21 +401,21 @@
 		public function showHalo(_arg_1:String):void
 		{
 			this.haloURL = _arg_1;
-			if (this._halo_effect) {
-				this._halo_effect.dispose();
-				if (this._halo_effect.parent) {
-					this._halo_effect.parent.removeChild(this._halo_effect);
+			if (_halo_effect) {
+				_halo_effect.dispose();
+				if (_halo_effect.parent) {
+					_halo_effect.parent.removeChild(_halo_effect);
 				}
 			}
-			this._halo_effect = new ItemAvatar();
+			_halo_effect = new ItemAvatar();
 			if (this.isMainChar) {
-				this._halo_effect.isAutoDispose = false;
+				_halo_effect.isAutoDispose = false;
 			}
-			this._halo_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			this._halo_effect.isSceneItem = false;
-			this._halo_effect.loadAvatarPart(_arg_1);
-			this._halo_effect.visible = this.bodyVisible;
-			shape.addChild(this._halo_effect);
+			_halo_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
+			_halo_effect.isSceneItem = false;
+			_halo_effect.loadAvatarPart(_arg_1);
+			_halo_effect.visible = this.bodyVisible;
+			shape.addChild(_halo_effect);
 		}
 
 		override public function set shoadw(_arg_1:BitmapData):void
@@ -444,72 +443,72 @@
 		public function removeHalo():void
 		{
 			this.haloURL = null;
-			if (this._halo_effect) {
-				if (this._halo_effect.parent) {
-					this._halo_effect.parent.removeChild(this._halo_effect);
+			if (_halo_effect) {
+				if (_halo_effect.parent) {
+					_halo_effect.parent.removeChild(_halo_effect);
 				}
-				this._halo_effect.dispose();
+				_halo_effect.dispose();
 			}
-			this._halo_effect = null;
+			_halo_effect = null;
 		}
 
 		public function removeSongEffect():void
 		{
-			if (this._song_effect) {
-				if (this._song_effect.parent) {
-					this._song_effect.parent.removeChild(this._song_effect);
+			if (_song_effect) {
+				if (_song_effect.parent) {
+					_song_effect.parent.removeChild(_song_effect);
 				}
-				this._song_effect.dispose();
+				_song_effect.dispose();
 			}
-			if (this._song_effect2) {
-				this._song_effect2.dispose();
-				if (this._song_effect2.parent) {
-					this._song_effect2.parent.removeChild(this._song_effect2);
+			if (_song_effect2) {
+				_song_effect2.dispose();
+				if (_song_effect2.parent) {
+					_song_effect2.parent.removeChild(_song_effect2);
 				}
 			}
-			this._song_effect2 = null;
-			this._song_effect = null;
+			_song_effect2 = null;
+			_song_effect = null;
 		}
 
 		public function showSongEffect(_arg_1:String, _arg_2:String):void
 		{
-			if (this._song_effect) {
-				this._song_effect.dispose();
-				if (this._song_effect.parent) {
-					this.removeChild(this._song_effect);
+			if (_song_effect) {
+				_song_effect.dispose();
+				if (_song_effect.parent) {
+					this.removeChild(_song_effect);
 				}
 			}
-			if (this._song_effect2) {
-				this._song_effect2.dispose();
-				if (this._song_effect2.parent) {
-					this._song_effect2.parent.removeChild(this._song_effect2);
+			if (_song_effect2) {
+				_song_effect2.dispose();
+				if (_song_effect2.parent) {
+					_song_effect2.parent.removeChild(_song_effect2);
 				}
 			}
 			if (((_arg_1) && (!((_arg_1 == ""))))) {
-				this._song_effect = new ItemAvatar();
+				_song_effect = new ItemAvatar();
 				if (this.isMainChar) {
-					this._song_effect.isAutoDispose = false;
+					_song_effect.isAutoDispose = false;
 				}
-				this._song_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-				this._song_effect.isSceneItem = false;
-				this._song_effect.loadAvatarPart(_arg_1);
-				this._song_effect.dir = this.dir;
-				this._song_effect.y = this.onMonutHeight;
-				this.addChildAt(this._song_effect, 0);
-				this._song_effect.visible = this.bodyVisible;
+				_song_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
+				_song_effect.isSceneItem = false;
+				_song_effect.loadAvatarPart(_arg_1);
+				_song_effect.dir = this.dir;
+				_song_effect.y = this.onMonutHeight;
+				this.addChildAt(_song_effect, 0);
+				_song_effect.visible = this.bodyVisible;
 			}
 			if (((_arg_2) && (!((_arg_2 == ""))))) {
-				this._song_effect2 = new ItemAvatar();
+				_song_effect2 = new ItemAvatar();
 				if (this.isMainChar) {
-					this._song_effect2.isAutoDispose = false;
+					_song_effect2.isAutoDispose = false;
 				}
-				this._song_effect2.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-				this._song_effect2.isSceneItem = false;
-				this._song_effect2.loadAvatarPart(_arg_2);
-				this._song_effect2.dir = this.dir;
-				this._song_effect2.y = this.onMonutHeight;
-				this.addChild(this._song_effect2);
-				this._song_effect2.visible = this.bodyVisible;
+				_song_effect2.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
+				_song_effect2.isSceneItem = false;
+				_song_effect2.loadAvatarPart(_arg_2);
+				_song_effect2.dir = this.dir;
+				_song_effect2.y = this.onMonutHeight;
+				this.addChild(_song_effect2);
+				_song_effect2.visible = this.bodyVisible;
 			}
 		}
 
@@ -517,23 +516,23 @@
 		{
 			var _local_2:ItemAvatar;
 			super.bodyVisible = _arg_1;
-			if (this._song_effect) {
-				this._song_effect.visible = _arg_1;
+			if (_song_effect) {
+				_song_effect.visible = _arg_1;
 			}
-			if (this._song_effect2) {
-				this._song_effect2.visible = _arg_1;
+			if (_song_effect2) {
+				_song_effect2.visible = _arg_1;
 			}
-			if (this._halo_effect) {
-				this._halo_effect.visible = _arg_1;
+			if (_halo_effect) {
+				_halo_effect.visible = _arg_1;
 			}
-			if (this._suit_effect) {
-				this._suit_effect.visible = _arg_1;
+			if (_suit_effect) {
+				_suit_effect.visible = _arg_1;
 			}
-			if (this._wing_effect_1) {
-				this._wing_effect_1.visible = _arg_1;
+			if (_wing_effect_1) {
+				_wing_effect_1.visible = _arg_1;
 			}
-			if (this._wing_effect_2) {
-				this._wing_effect_2.visible = _arg_1;
+			if (_wing_effect_2) {
+				_wing_effect_2.visible = _arg_1;
 			}
 			if (this.buffSprite) {
 				this.buffSprite.visible = _arg_1;
@@ -587,45 +586,45 @@
 				return;
 			}
 			if (((((avatarParts) && (!((avatarParts.state == CharAction.STAND))))) && ((((((((this.type == SceneConstant.CAR)) || ((this.type == SceneConstant.MONSTER)))) || ((this.type == SceneConstant.PET)))) || ((this.type == SceneConstant.SUMMON_MONSTER)))))) {
-				avatarParts.acce = (this._speed / 120);
+				avatarParts.acce = (_speed / 120);
 				if (avatarParts.acce < 1) {
 					avatarParts.acce = 1;
 				}
 			}
 			super.onRender(_arg_1, _arg_2, _arg_3, _arg_4, _arg_5, _arg_6, _arg_7, _arg_8, _arg_9);
 			this.updateWord();
-			if (this._suit_effect) {
-				if (this._suit_effect.parent) {
-					this.addChild(this._suit_effect);
+			if (_suit_effect) {
+				if (_suit_effect.parent) {
+					this.addChild(_suit_effect);
 				}
-				if (this._suit_effect.y != this.onMonutHeight) {
-					this._suit_effect.y = this.onMonutHeight;
-				}
-			}
-			if (this._song_effect2) {
-				if (this._song_effect2.y != this.onMonutHeight) {
-					this._song_effect2.y = this.onMonutHeight;
+				if (_suit_effect.y != this.onMonutHeight) {
+					_suit_effect.y = this.onMonutHeight;
 				}
 			}
-			if (this._song_effect) {
-				if (this._song_effect.y != this.onMonutHeight) {
-					this._song_effect.y = this.onMonutHeight;
+			if (_song_effect2) {
+				if (_song_effect2.y != this.onMonutHeight) {
+					_song_effect2.y = this.onMonutHeight;
 				}
 			}
-			if (this._wing_effect_1) {
-				if (this._wing_effect_1.dir != this.dir) {
-					this._wing_effect_1.dir = this.dir;
-				}
-				if (this._wing_effect_1.y != this.onMonutHeight) {
-					this._wing_effect_1.y = this.onMonutHeight;
+			if (_song_effect) {
+				if (_song_effect.y != this.onMonutHeight) {
+					_song_effect.y = this.onMonutHeight;
 				}
 			}
-			if (this._wing_effect_2) {
-				if (this._wing_effect_2.dir != this.dir) {
-					this._wing_effect_2.dir = this.dir;
+			if (_wing_effect_1) {
+				if (_wing_effect_1.dir != this.dir) {
+					_wing_effect_1.dir = this.dir;
 				}
-				if (this._wing_effect_2.y != this.onMonutHeight) {
-					this._wing_effect_2.y = this.onMonutHeight;
+				if (_wing_effect_1.y != this.onMonutHeight) {
+					_wing_effect_1.y = this.onMonutHeight;
+				}
+			}
+			if (_wing_effect_2) {
+				if (_wing_effect_2.dir != this.dir) {
+					_wing_effect_2.dir = this.dir;
+				}
+				if (_wing_effect_2.y != this.onMonutHeight) {
+					_wing_effect_2.y = this.onMonutHeight;
 				}
 			}
 			this.wingDepth();
@@ -652,14 +651,14 @@
 
 		private function wingDepth():void
 		{
-			if (this._wing_effect_1) {
+			if (_wing_effect_1) {
 				if (((((((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) && (this.bitmapdata_fid))) && (bitmapdata_fid.parent))) {
 					if ((((((dir == 0)) || ((dir == 1)))) || ((dir == 7)))) {
-						if (((this._wing_effect_1) && (this._wing_effect_1.stage))) {
-							this.addChild(this._wing_effect_1);
+						if (((_wing_effect_1) && (_wing_effect_1.stage))) {
+							this.addChild(_wing_effect_1);
 						}
-						if (((this._wing_effect_2) && (this._wing_effect_2.stage))) {
-							this.addChild(this._wing_effect_2);
+						if (((_wing_effect_2) && (_wing_effect_2.stage))) {
+							this.addChild(_wing_effect_2);
 						}
 					} else {
 						if (dir == 2) {
@@ -669,19 +668,19 @@
 							if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
 								this.addChild(bitmapdata_mid);
 							}
-							if (((this._wing_effect_1) && (this._wing_effect_1.stage))) {
-								this.addChild(this._wing_effect_1);
+							if (((_wing_effect_1) && (_wing_effect_1.stage))) {
+								this.addChild(_wing_effect_1);
 							}
-							if (((this._wing_effect_2) && (this._wing_effect_2.stage))) {
-								this.addChild(this._wing_effect_2);
+							if (((_wing_effect_2) && (_wing_effect_2.stage))) {
+								this.addChild(_wing_effect_2);
 							}
 							if (((bitmapdata_fid) && (bitmapdata_fid.stage))) {
 								this.addChild(this.bitmapdata_fid);
 							}
 						} else {
 							if (dir == 3) {
-								if (((this._wing_effect_1) && (this._wing_effect_1.stage))) {
-									this.addChild(this._wing_effect_1);
+								if (((_wing_effect_1) && (_wing_effect_1.stage))) {
+									this.addChild(_wing_effect_1);
 								}
 								if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
 									this.addChild(bitmapdata_mid);
@@ -689,8 +688,8 @@
 								if (((bitmapdata_midm) && (bitmapdata_midm.stage))) {
 									this.addChild(this.bitmapdata_midm);
 								}
-								if (((this._wing_effect_2) && (this._wing_effect_2.stage))) {
-									this.addChild(this._wing_effect_2);
+								if (((_wing_effect_2) && (_wing_effect_2.stage))) {
+									this.addChild(_wing_effect_2);
 								}
 								if (((bitmapdata_fid) && (bitmapdata_fid.stage))) {
 									this.addChild(this.bitmapdata_fid);
@@ -700,11 +699,11 @@
 									if (((bitmapdata_midm) && (bitmapdata_midm.stage))) {
 										this.addChild(this.bitmapdata_midm);
 									}
-									if (((this._wing_effect_1) && (this._wing_effect_1.stage))) {
-										this.addChild(this._wing_effect_1);
+									if (((_wing_effect_1) && (_wing_effect_1.stage))) {
+										this.addChild(_wing_effect_1);
 									}
-									if (((this._wing_effect_2) && (this._wing_effect_2.stage))) {
-										this.addChild(this._wing_effect_2);
+									if (((_wing_effect_2) && (_wing_effect_2.stage))) {
+										this.addChild(_wing_effect_2);
 									}
 									if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
 										this.addChild(bitmapdata_mid);
@@ -714,8 +713,8 @@
 									}
 								} else {
 									if ((((dir == 5)) || ((dir == 6)))) {
-										if (((this._wing_effect_1) && (this._wing_effect_1.stage))) {
-											this.addChild(this._wing_effect_1);
+										if (((_wing_effect_1) && (_wing_effect_1.stage))) {
+											this.addChild(_wing_effect_1);
 										}
 										if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
 											this.addChild(this.bitmapdata_mid);
@@ -726,8 +725,8 @@
 										if (((bitmapdata_fid) && (bitmapdata_fid.stage))) {
 											this.addChild(this.bitmapdata_fid);
 										}
-										if (((this._wing_effect_2) && (this._wing_effect_2.stage))) {
-											this.addChild(this._wing_effect_2);
+										if (((_wing_effect_2) && (_wing_effect_2.stage))) {
+											this.addChild(_wing_effect_2);
 										}
 									}
 								}
@@ -743,9 +742,9 @@
 			if (this.isBackMoving == false) {
 				clearTimeout(this.jumpTimerIndex);
 				super.play(action, _arg_2, _arg_3, _arg_4, _arg_5);
-				if (this._wing_effect_1) {
-					this._wing_effect_1.play(action);
-					this._wing_effect_2.play(action);
+				if (_wing_effect_1) {
+					_wing_effect_1.play(action);
+					_wing_effect_2.play(action);
 				}
 			}
 		}
@@ -928,33 +927,33 @@
 			this.meditation = false;
 			this.speed = 0;
 			this.tar_point = null;
-			this._point = new Point();
+			_point = new Point();
 			this.openShadow = false;
 			this.x = 0;
 			this.y = 0;
-			if (this._halo_effect) {
-				if (this._halo_effect.parent) {
-					this._halo_effect.parent.removeChild(this._halo_effect);
+			if (_halo_effect) {
+				if (_halo_effect.parent) {
+					_halo_effect.parent.removeChild(_halo_effect);
 				}
-				this._halo_effect.dispose();
+				_halo_effect.dispose();
 			}
-			if (this._wing_effect_1) {
-				if (this._wing_effect_1.parent) {
-					this._wing_effect_1.parent.removeChild(this._wing_effect_1);
+			if (_wing_effect_1) {
+				if (_wing_effect_1.parent) {
+					_wing_effect_1.parent.removeChild(_wing_effect_1);
 				}
-				this._wing_effect_1.dispose();
+				_wing_effect_1.dispose();
 			}
-			if (this._wing_effect_2) {
-				if (this._wing_effect_2.parent) {
-					this._wing_effect_2.parent.removeChild(this._wing_effect_2);
+			if (_wing_effect_2) {
+				if (_wing_effect_2.parent) {
+					_wing_effect_2.parent.removeChild(_wing_effect_2);
 				}
-				this._wing_effect_2.dispose();
+				_wing_effect_2.dispose();
 			}
-			this._song_effect = null;
-			this._halo_effect = null;
-			this._suit_effect = null;
-			this._wing_effect_1 = null;
-			this._wing_effect_2 = null;
+			_song_effect = null;
+			_halo_effect = null;
+			_suit_effect = null;
+			_wing_effect_1 = null;
+			_wing_effect_2 = null;
 			this.buffSprite = null;
 			this.cur_point = null;
 			this.curr_rect = null;
@@ -966,7 +965,7 @@
 			this.jumping = false;
 			this.pathArr = [];
 			this.layer = null;
-			this._suitVisible = true;
+			_suitVisible = true;
 			this.char_id = null;
 			this.jump_deafult_speed = 335;
 			this.jumpQuene = [];
@@ -1019,29 +1018,29 @@
 				return;
 			}
 			if (this.jumping) {
-				this._speed_ = this.jump_deafult_speed;
+				_speed_ = this.jump_deafult_speed;
 			} else {
-				this._speed_ = this.speed;
+				_speed_ = this.speed;
 			}
 			if (jumping) {
 				if (this.pathArr.length <= (this.jumpIndex / 2)) {
-					this._speed_ = (this._speed_ + (((this.jumpIndex / 2) - this.pathArr.length) * 2));
+					_speed_ = (_speed_ + (((this.jumpIndex / 2) - this.pathArr.length) * 2));
 				} else {
-					this._speed_ = (this._speed_ - ((this.pathArr.length - (this.jumpIndex / 2)) * 2));
+					_speed_ = (_speed_ - ((this.pathArr.length - (this.jumpIndex / 2)) * 2));
 				}
 				if (this.pathArr.length > 1) {
 					this.createShoawBitmap();
 				}
 			}
 			var _local_2:Number = Point.distance(this.point, this.tar_point);
-			var _local_3:Number = ((_local_2 / this._speed_) * 1000);
+			var _local_3:Number = ((_local_2 / _speed_) * 1000);
 			if (this.totalTime >= _local_3) {
 				this.totalTime = (this.totalTime - _local_3);
 			} else {
 				_local_3 = this.totalTime;
 				this.totalTime = 0;
 			}
-			var _local_4:Number = ((this._speed_ * _local_3) / 1000);
+			var _local_4:Number = ((_speed_ * _local_3) / 1000);
 			var _local_5:Number = (this.tar_point.x - point.x);
 			var _local_6:Number = (this.tar_point.y - point.y);
 			var _local_7:Number = Number(Math.atan2(_local_6, _local_5).toFixed(2));
@@ -1271,10 +1270,10 @@
 					_local_1.dispose();
 				}
 			}
-			if (this._dropShape) {
-				this._dropShape.parent.removeChild(this._dropShape);
+			if (_dropShape) {
+				_dropShape.parent.removeChild(_dropShape);
 			}
-			this._dropShape = null;
+			_dropShape = null;
 			this.headArray = null;
 			this.isGroupSongModel = false;
 			this.stopMove();
@@ -1294,48 +1293,48 @@
 				}
 			}
 			this.effectDic = null;
-			if (this._song_effect) {
-				if (this._song_effect.parent) {
-					this.removeChild(this._song_effect);
+			if (_song_effect) {
+				if (_song_effect.parent) {
+					this.removeChild(_song_effect);
 				}
-				this._song_effect.dispose();
+				_song_effect.dispose();
 			}
-			this._song_effect = null;
-			if (this._song_effect2) {
-				this._song_effect2.dispose();
-				if (this._song_effect2.parent) {
-					this._song_effect2.parent.removeChild(this._song_effect2);
+			_song_effect = null;
+			if (_song_effect2) {
+				_song_effect2.dispose();
+				if (_song_effect2.parent) {
+					_song_effect2.parent.removeChild(_song_effect2);
 				}
 			}
-			this._song_effect2 = null;
-			if (this._halo_effect) {
-				if (this._halo_effect.parent) {
-					this._halo_effect.parent.removeChild(this._halo_effect);
+			_song_effect2 = null;
+			if (_halo_effect) {
+				if (_halo_effect.parent) {
+					_halo_effect.parent.removeChild(_halo_effect);
 				}
-				this._halo_effect.dispose();
+				_halo_effect.dispose();
 			}
-			this._halo_effect = null;
-			if (this._wing_effect_1) {
-				if (this._wing_effect_1.parent) {
-					this._wing_effect_1.parent.removeChild(this._wing_effect_1);
+			_halo_effect = null;
+			if (_wing_effect_1) {
+				if (_wing_effect_1.parent) {
+					_wing_effect_1.parent.removeChild(_wing_effect_1);
 				}
-				this._wing_effect_1.dispose();
+				_wing_effect_1.dispose();
 			}
-			this._wing_effect_1 = null;
-			if (this._wing_effect_2) {
-				if (this._wing_effect_2.parent) {
-					this._wing_effect_2.parent.removeChild(this._wing_effect_2);
+			_wing_effect_1 = null;
+			if (_wing_effect_2) {
+				if (_wing_effect_2.parent) {
+					_wing_effect_2.parent.removeChild(_wing_effect_2);
 				}
-				this._wing_effect_2.dispose();
+				_wing_effect_2.dispose();
 			}
-			this._wing_effect_2 = null;
-			if (this._suit_effect) {
-				if (this._suit_effect.parent) {
-					removeChild(this._suit_effect);
+			_wing_effect_2 = null;
+			if (_suit_effect) {
+				if (_suit_effect.parent) {
+					removeChild(_suit_effect);
 				}
-				this._suit_effect.dispose();
+				_suit_effect.dispose();
 			}
-			this._suit_effect = null;
+			_suit_effect = null;
 			if (((this.wordShape) && (this.wordShape.parent))) {
 				this.wordShape.graphics.clear();
 				this.removeChild(this.wordShape);
@@ -1360,7 +1359,7 @@
 			this.suitURL = null;
 			this.headVisible = true;
 			this.pathArr = [];
-			this._point = new Point();
+			_point = new Point();
 			this.speed = 0;
 			this.visible = true;
 			this.isTeleporting = false;
@@ -1398,10 +1397,10 @@
 				}
 			}
 			this.headArray = null;
-			if (this._dropShape) {
-				this._dropShape.parent.removeChild(this._dropShape);
+			if (_dropShape) {
+				_dropShape.parent.removeChild(_dropShape);
 			}
-			this._dropShape = null;
+			_dropShape = null;
 			super.dispose();
 			if (this.effectDic) {
 				for each (_local_2 in this.effectDic) {
@@ -1412,46 +1411,46 @@
 				}
 			}
 			this.effectDic = null;
-			if (this._song_effect) {
-				this.removeChild(this._song_effect);
-				this._song_effect.dispose();
+			if (_song_effect) {
+				this.removeChild(_song_effect);
+				_song_effect.dispose();
 			}
-			this._song_effect = null;
-			if (this._song_effect2) {
-				this._song_effect2.dispose();
-				if (this._song_effect2.parent) {
-					this._song_effect2.parent.removeChild(this._song_effect2);
+			_song_effect = null;
+			if (_song_effect2) {
+				_song_effect2.dispose();
+				if (_song_effect2.parent) {
+					_song_effect2.parent.removeChild(_song_effect2);
 				}
 			}
-			this._song_effect2 = null;
-			if (this._halo_effect) {
-				if (this._halo_effect.parent) {
-					this.removeChild(this._halo_effect);
+			_song_effect2 = null;
+			if (_halo_effect) {
+				if (_halo_effect.parent) {
+					this.removeChild(_halo_effect);
 				}
-				this._halo_effect.dispose();
+				_halo_effect.dispose();
 			}
-			this._halo_effect = null;
-			if (this._wing_effect_1) {
-				if (this._wing_effect_1.parent) {
-					this.removeChild(this._wing_effect_1);
+			_halo_effect = null;
+			if (_wing_effect_1) {
+				if (_wing_effect_1.parent) {
+					this.removeChild(_wing_effect_1);
 				}
-				this._wing_effect_1.dispose();
+				_wing_effect_1.dispose();
 			}
-			this._wing_effect_1 = null;
-			if (this._wing_effect_2) {
-				if (this._wing_effect_2.parent) {
-					this.removeChild(this._wing_effect_2);
+			_wing_effect_1 = null;
+			if (_wing_effect_2) {
+				if (_wing_effect_2.parent) {
+					this.removeChild(_wing_effect_2);
 				}
-				this._wing_effect_2.dispose();
+				_wing_effect_2.dispose();
 			}
-			this._wing_effect_2 = null;
-			if (this._suit_effect) {
-				if (this._suit_effect.parent) {
-					removeChild(this._suit_effect);
+			_wing_effect_2 = null;
+			if (_suit_effect) {
+				if (_suit_effect.parent) {
+					removeChild(_suit_effect);
 				}
-				this._suit_effect.dispose();
+				_suit_effect.dispose();
 			}
-			this._suit_effect = null;
+			_suit_effect = null;
 			if (((this.wordShape) && (this.wordShape.parent))) {
 				this.removeChild(this.wordShape);
 			}
@@ -1473,8 +1472,8 @@
 			this.overPoint = null;
 			this.tar_point = null;
 			this.cur_point = null;
-			this._pt = null;
-			this._point = null;
+			_pt = null;
+			_point = null;
 			this.jumpQuene = [];
 			this.hp_height = 110;
 		}

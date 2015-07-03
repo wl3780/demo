@@ -6,10 +6,10 @@
 	public class NoderItem extends NoderSprite implements IItem 
 	{
 
-		private var _layer:String;
 		private var _type:String;
-		private var _isSceneItem:Boolean = true;
 		private var _char_id:String;
+		private var _layer:String;
+		private var _isSceneItem:Boolean = true;
 
 		public function NoderItem()
 		{
@@ -20,7 +20,6 @@
 		{
 			return _char_id;
 		}
-
 		public function set char_id(val:String):void
 		{
 			_char_id = val;
@@ -30,7 +29,6 @@
 		{
 			return _layer;
 		}
-
 		public function set layer(val:String):void
 		{
 			_layer = val;
@@ -40,7 +38,6 @@
 		{
 			return _isSceneItem;
 		}
-
 		public function set isSceneItem(val:Boolean):void
 		{
 			_isSceneItem = val;
@@ -50,7 +47,6 @@
 		{
 			return _type;
 		}
-
 		public function set type(val:String):void
 		{
 			_type = val;

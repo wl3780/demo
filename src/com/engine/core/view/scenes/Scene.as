@@ -105,7 +105,7 @@
 		private var container:DisplayObjectContainer;
 		private var timeNum:int = 0;
 		private var _time:int = 0;
-		private var _selectAvatar;
+		private var _selectAvatar:*;
 		private var time_1:Number;
 		private var time_2:Number;
 		private var timeCounter:int;
@@ -138,39 +138,39 @@
 
 		public function getSceneFlyMode():Boolean
 		{
-			return (_sceneFlyMode);
+			return _sceneFlyMode;
 		}
-
 		public function setSceneFlyMode(value:Boolean, playEndFunc:Function=null):Boolean
 		{
-			var char:Char;
-			var data:Object;
 			if (_flying) {
-				return (false);
+				return false;
 			}
 			if (value) {
 				this.mainChar.layer = SceneConstant.FLY_LAYER;
 				this.mainChar.sceneFlyMode = true;
 				this.$flyLayer.addChild(this.mainChar);
 			} else {
-				this.mainChar.sceneFlyMode = false;
 				this.mainChar.layer = SceneConstant.MIDDLE_LAYER;
+				this.mainChar.sceneFlyMode = false;
 				this.$middleLayer.addChild(this.mainChar);
 			}
+			
+			var char:Char;
+			var data:Object;
 			var chars:Array = this.avatarHash.coder::values();
 			var i:int;
 			while (i < chars.length) {
-				char = (chars[i] as Char);
-				if (((((!((char == this.mainChar))) && (char))) && (char.sceneFlyMode))) {
+				char = chars[i] as Char;
+				if (char != this.mainChar && char && char.sceneFlyMode) {
 					char.layer = SceneConstant.FLY_LAYER;
 					this.$flyLayer.addChild(this.mainChar);
 					if (value) {
-						char.scaleX = (char.scaleY = 2);
+						char.scaleX = char.scaleY = 2;
 					} else {
-						char.scaleX = (char.scaleY = 1);
+						char.scaleX = char.scaleY = 1;
 					}
 				}
-				i = (i + 1);
+				i++;
 			}
 			if (_sceneFlyMode != value) {
 				if (value) {
@@ -221,7 +221,7 @@
 				}
 			}
 			_sceneFlyMode = value;
-			return (true);
+			return true;
 		}
 
 		protected function _saiman_GM_(_arg_1:Event):void
@@ -235,19 +235,17 @@
 
 		public function get walkEndFunc():Function
 		{
-			return (_walkEndFunc_);
+			return _walkEndFunc_;
 		}
-
-		public function set walkEndFunc(_arg_1:Function):void
+		public function set walkEndFunc(val:Function):void
 		{
-			_walkEndFunc_ = _arg_1;
+			_walkEndFunc_ = val;
 		}
 
-		public function get selectAvatar()
+		public function get selectAvatar():*
 		{
-			return (_selectAvatar);
+			return _selectAvatar;
 		}
-
 		public function set selectAvatar(target:*):void
 		{
 			_selectAvatar = target;
@@ -255,14 +253,12 @@
 
 		public function get lingthMode():int
 		{
-			return (_lingthMode);
+			return _lingthMode;
 		}
-
-		public function set lingthMode(_arg_1:int):void
+		public function set lingthMode(val:int):void
 		{
-			var _local_2:int;
-			_lingthMode = _arg_1;
-			if (_arg_1 <= 0) {
+			_lingthMode = val;
+			if (val <= 0) {
 				this.shadowShape.blendMode = BlendMode.NORMAL;
 				this.maskShape.blendMode = BlendMode.NORMAL;
 				if (this.maskShape.parent) {
@@ -271,16 +267,20 @@
 			} else {
 				this.shadowShape.blendMode = BlendMode.ERASE;
 				this.maskShape.blendMode = BlendMode.LAYER;
-				if ((((this.contains(this.maskShape) == false)) && ((this.contains(this.$middleLayer) == true)))) {
-					_local_2 = this.getChildIndex(this.$middleLayer);
-					this.addChildAt(this.maskShape, (_local_2 + 1));
+				if (this.contains(this.maskShape) == false && this.contains(this.$middleLayer) == true) {
+					var idx:int = this.getChildIndex(this.$middleLayer);
+					this.addChildAt(this.maskShape, (idx + 1));
 				}
 			}
 		}
 
-		public function liangdu(_arg_1:Number):Array
+		public function liangdu(num:Number):Array
 		{
-			return ([1, 0, 0, 0, _arg_1, 0, 1, 0, 0, _arg_1, 0, 0, 1, 0, _arg_1, 0, 0, 0, 1, 0]);
+			return [
+				1, 0, 0, 0, num, 
+				0, 1, 0, 0, num, 
+				0, 0, 1, 0, num, 
+				0, 0, 0, 1, 0];
 		}
 
 		private function init():void
@@ -348,48 +348,35 @@
 		{
 		}
 
-		public function updataMainChar(avatarID:int, _arg_2:int=0, _arg_3:int=0, _arg_4:int=0):void
+		public function updateMainChar(avatarID:int, weaponID:int=0, mountID:int=0, wingID:int=0):void
 		{
 			if (_mainChar == null) {
 				_mainChar = new MainChar();
+				_mainChar.type = SceneConstant.CHAR;
+				_mainChar.char_id = Core.mainCharId;
 				_mainChar.showBodyShoadw(true);
 				_mainChar.movePointChangeFunc = this.movePointChangeFunc;
 			}
-			if (_arg_3 == 0) {
-				_mainChar.hp_height = 120;
-			} else {
-				_mainChar.hp_height = 150;
-			}
-			_mainChar.type = SceneConstant.CHAR;
-			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "clothes/mid_" + avatarID + Core.TMP_FILE + "?version=" + Core.version);
-			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "weapons/wid_" + _arg_2 + Core.TMP_FILE + "?version=" + Core.version);
-			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "flys/fid_" + _arg_4 + Core.TMP_FILE + "?version=" + Core.version);
-			_mainChar.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "mounts/midm_" + _arg_3 + Core.TMP_FILE + "?version=" + Core.version);
-			_mainChar.avatarParts.bodyRender(true);
-			if (_sceneFlyMode) {
-				this.addItem(_mainChar, SceneConstant.FLY_LAYER);
-			} else {
-				this.addItem(_mainChar, SceneConstant.MIDDLE_LAYER);
-			}
+			this.updateCharAvatarPart(_mainChar, avatarID, weaponID, mountID, wingID);
 		}
 
-		public function updataCharAvatarPart(_arg_1:Char, _arg_2:int, _arg_3:int=0, _arg_4:int=0, _arg_5:int=0):void
+		public function updateCharAvatarPart(char:Char, avatarID:int, weaponID:int=0, mountID:int=0, wingID:int=0):void
 		{
-			if (_arg_1) {
-				if ((_arg_4 == 0)) {
-					_arg_1.hp_height = 120;
+			if (char) {
+				if (mountID == 0) {
+					char.hp_height = 120;
 				} else {
-					_arg_1.hp_height = 150;
+					char.hp_height = 150;
 				}
-				_arg_1.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "clothes/mid_") + _arg_2) + Core.TMP_FILE) + "?version=") + Core.version));
-				_arg_1.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "weapons/wid_") + _arg_3) + Core.TMP_FILE) + "?version=") + Core.version));
-				_arg_1.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "flys/fid_") + _arg_5) + Core.TMP_FILE) + "?version=") + Core.version));
-				_arg_1.loadAvatarPart(((((((Core.hostPath + Core.avatarAssetsPath) + "mounts/midm_") + _arg_4) + Core.TMP_FILE) + "?version=") + Core.version));
-				_arg_1.avatarParts.bodyRender(true);
+				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "clothes/mid_" + avatarID + Core.TMP_FILE + "?version=" + Core.version);
+				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "weapons/wid_" + weaponID + Core.TMP_FILE + "?version=" + Core.version);
+				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "flys/fid_" + wingID + Core.TMP_FILE + "?version=" + Core.version);
+				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "mounts/midm_" + mountID + Core.TMP_FILE + "?version=" + Core.version);
+				char.avatarParts.bodyRender(true);
 				if (_sceneFlyMode) {
-					this.addItem(_mainChar, SceneConstant.FLY_LAYER);
+					this.addItem(char, SceneConstant.FLY_LAYER);
 				} else {
-					this.addItem(_mainChar, SceneConstant.MIDDLE_LAYER);
+					this.addItem(char, SceneConstant.MIDDLE_LAYER);
 				}
 			}
 		}
@@ -477,7 +464,7 @@
 
 		public function get shiftKey():Boolean
 		{
-			return (_shiftKey);
+			return _shiftKey;
 		}
 
 		public function addNumShow(_arg_1:HeadShowShape, _arg_2:int, _arg_3:int):void

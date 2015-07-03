@@ -33,8 +33,8 @@
 	public class Avatar extends NoderItem implements IAvatar 
 	{
 
-		public static const _radian_:Number = (180 / Math.PI);
-		public static const _angle_:Number = (Math.PI / 180);
+		public static const _radian_:Number = 180 / Math.PI;
+		public static const _angle_:Number = Math.PI / 180;
 		
 		public static var stageRect:Rectangle = new Rectangle();
 		
@@ -101,40 +101,39 @@
 
 		public function Avatar()
 		{
-			this._point = new Point();
 			super();
 			this.playEndHash = new Hash();
-			this._point = new Point();
+			_point = new Point();
 			this.setup();
 		}
 
 		public static function createAvatar():Avatar
 		{
-			var _local_1:Avatar = (InstancePool.coder::getInstance().getAvatar(Avatar) as Avatar);
-			_local_1.point = new Point();
-			_local_1.avatarParts = new AvatartParts();
-			_local_1.isSceneItem = true;
-			_local_1.avatarParts.type = "Avatar";
-			_local_1.avatarParts.onRender = _local_1.onRender;
-			_local_1.avatarParts.playEndFunc = _local_1.playEndFunc;
-			_local_1.avatarParts.playEffectFunc = _local_1.playEeffectFunc;
-			_local_1.avatarParts.setupReady = coder::setupReady;
-			_local_1.avatarParts.disposeEffectsFunc = _local_1.disposeEffects;
-			_local_1.avatarParts.coder::oid = _local_1.id;
-			_local_1.dir = 0;
-			_local_1.isDisposed = false;
-			return (_local_1);
+			var avatar:Avatar = InstancePool.coder::getInstance().getAvatar(Avatar) as Avatar;
+			avatar.point = new Point();
+			avatar.avatarParts = new AvatartParts();
+			avatar.isSceneItem = true;
+			avatar.avatarParts.type = "Avatar";
+			avatar.avatarParts.onRender = avatar.onRender;
+			avatar.avatarParts.playEndFunc = avatar.playEndFunc;
+			avatar.avatarParts.playEffectFunc = avatar.playEeffectFunc;
+			avatar.avatarParts.setupReady = coder::setupReady;
+			avatar.avatarParts.disposeEffectsFunc = avatar.disposeEffects;
+			avatar.avatarParts.coder::oid = avatar.id;
+			avatar.dir = 0;
+			avatar.isDisposed = false;
+			return (avatar);
 		}
 
 
 		public function get isFlyMode():Boolean
 		{
-			return (this._isFlyMode);
+			return (_isFlyMode);
 		}
 
 		public function set isFlyMode(_arg_1:Boolean):void
 		{
-			this._isFlyMode = _arg_1;
+			_isFlyMode = _arg_1;
 			if (this.avatarParts) {
 				this.avatarParts.isFlyMode = _arg_1;
 			}
@@ -147,7 +146,7 @@
 
 		public function set monutHeight(_arg_1:int):void
 		{
-			this._monutHeight = -(Math.abs(_arg_1));
+			_monutHeight = -(Math.abs(_arg_1));
 		}
 
 		coder function get bodyBitmap():Bitmap
@@ -169,21 +168,21 @@
 		public function get flying():Boolean
 		{
 			if ((this.onMonutHeight == 0)) {
-				this._flying = false;
+				_flying = false;
 			} else {
-				this._flying = true;
+				_flying = true;
 			}
-			return (this._flying);
+			return (_flying);
 		}
 
 		public function get jumping():Boolean
 		{
-			return (this._jumping);
+			return (_jumping);
 		}
 
 		public function set jumping(_arg_1:Boolean):void
 		{
-			this._jumping = _arg_1;
+			_jumping = _arg_1;
 			if (this.avatarParts) {
 				this.avatarParts.jumping = _arg_1;
 			}
@@ -192,14 +191,14 @@
 		public function get runing():Boolean
 		{
 			if (((this.avatarParts) && (!((this.avatarParts.state == CharAction.WALK))))) {
-				this._runing = false;
+				_runing = false;
 			}
-			return (this._runing);
+			return (_runing);
 		}
 
 		public function set runing(_arg_1:Boolean):void
 		{
-			this._runing = _arg_1;
+			_runing = _arg_1;
 			if (this.avatarParts) {
 				this.avatarParts.runing = _arg_1;
 			}
@@ -215,27 +214,27 @@
 
 		public function set isAutoDispose(_arg_1:Boolean):void
 		{
-			this._isAutoDispose = _arg_1;
-			if (this._ap) {
-				this._ap.isAutoDispose = _arg_1;
+			_isAutoDispose = _arg_1;
+			if (_ap) {
+				_ap.isAutoDispose = _arg_1;
 			}
 		}
 
 		public function get headShape():HeadShape
 		{
 			if (!this.isDisposed) {
-				if (this._headShape == null) {
-					this._headShape = new HeadShape();
-					this._headShape.owner = this;
+				if (_headShape == null) {
+					_headShape = new HeadShape();
+					_headShape.owner = this;
 				}
-				if ((((this._headShape.parent == null)) && (((this.parent) || (this._headVisible))))) {
+				if ((((_headShape.parent == null)) && (((this.parent) || (_headVisible))))) {
 					if (Scene.scene.getSceneFlyMode()) {
-						Scene.scene.$flyLayer.addChild(this._headShape);
+						Scene.scene.$flyLayer.addChild(_headShape);
 					} else {
-						Scene.scene.$topLayer.addChild(this._headShape);
+						Scene.scene.$topLayer.addChild(_headShape);
 					}
 				}
-				return (this._headShape);
+				return (_headShape);
 			}
 			return (null);
 		}
@@ -243,16 +242,16 @@
 		override public function set scaleX(_arg_1:Number):void
 		{
 			super.scaleX = _arg_1;
-			if (this._headShape) {
-				this._headShape.scaleX = _arg_1;
+			if (_headShape) {
+				_headShape.scaleX = _arg_1;
 			}
 		}
 
 		override public function set scaleY(_arg_1:Number):void
 		{
 			super.scaleY = _arg_1;
-			if (this._headShape) {
-				this._headShape.scaleY = _arg_1;
+			if (_headShape) {
+				_headShape.scaleY = _arg_1;
 			}
 		}
 
@@ -322,30 +321,30 @@
 				this.isShowbodyShoadw = false;
 			}
 			this.deayTime = getTimer();
-			if (this._ap) {
-				this._ap.type = _arg_1;
+			if (_ap) {
+				_ap.type = _arg_1;
 			}
 		}
 
 		public function get isOnMonut():Boolean
 		{
-			return (this._isOnMonut);
+			return (_isOnMonut);
 		}
 
 		public function set isOnMonut(_arg_1:Boolean):void
 		{
 			this.avatarParts.isOnMonut = _arg_1;
-			this._isOnMonut = _arg_1;
+			_isOnMonut = _arg_1;
 		}
 
 		public function setIcon(_arg_1:Bitmap):void
 		{
-			if (this._iconSprite) {
-				this.removeChild(this._iconSprite);
+			if (_iconSprite) {
+				this.removeChild(_iconSprite);
 			}
-			this._iconSprite = _arg_1;
+			_iconSprite = _arg_1;
 			if (_arg_1) {
-				this.addChild(this._iconSprite);
+				this.addChild(_iconSprite);
 				this.updateUiPos();
 			}
 		}
@@ -353,11 +352,11 @@
 		public function hitIcon():Boolean
 		{
 			var _local_1:Point;
-			if (((this._iconSprite) && (this.contains(this._iconSprite)))) {
+			if (((_iconSprite) && (this.contains(_iconSprite)))) {
 				_local_1 = new Point();
 				_local_1.x = mouseX;
 				_local_1.y = mouseY;
-				if (HitTest.getChildUnderPoint(this, _local_1, [this._iconSprite])) {
+				if (HitTest.getChildUnderPoint(this, _local_1, [_iconSprite])) {
 					return (true);
 				}
 			}
@@ -400,7 +399,7 @@
 
 		public function get headIconVisible():Boolean
 		{
-			return (this._headIconVisible);
+			return (_headIconVisible);
 		}
 
 		public function get specialMode():int
@@ -421,12 +420,12 @@
 
 		public function get isDeath():Boolean
 		{
-			return (this._isDeath);
+			return (_isDeath);
 		}
 
 		public function set isDeath(_arg_1:Boolean):void
 		{
-			this._isDeath = _arg_1;
+			_isDeath = _arg_1;
 		}
 
 		override public function set blendMode(_arg_1:String):void
@@ -461,13 +460,13 @@
 
 		override public function get name():String
 		{
-			return (this._name);
+			return (_name);
 		}
 
 		override public function set name(_arg_1:String):void
 		{
-			if (_arg_1 != this._name) {
-				this._name = _arg_1;
+			if (_arg_1 != _name) {
+				_name = _arg_1;
 				if (this.headShape) {
 					this.headShape.name = _arg_1;
 				}
@@ -493,8 +492,8 @@
 
 		public function set headVisible(_arg_1:Boolean):void
 		{
-			this._headVisible = _arg_1;
-			if (this._headShape) {
+			_headVisible = _arg_1;
+			if (_headShape) {
 				this.headShape.visible = _arg_1;
 				this.updateUiPos();
 			}
@@ -527,7 +526,7 @@
 
 		override public function get visible():Boolean
 		{
-			return (this._visible);
+			return (_visible);
 		}
 
 		override public function get filters():Array
@@ -558,13 +557,13 @@
 
 		public function set pt(_arg_1:SquarePt):void
 		{
-			this._pt = _arg_1;
+			_pt = _arg_1;
 			var _local_2:Point = SquareUitls.squareTopixels(_arg_1);
 			super.x = _local_2.x;
 			super.y = _local_2.y;
 			_local_2.x = super.x;
 			_local_2.y = super.y;
-			this._point = _local_2;
+			_point = _local_2;
 			if (((this.shape) && ((this.jumping == false)))) {
 				if (this.shape.x != this.x) {
 					this.shape.x = this.x;
@@ -585,24 +584,24 @@
 
 		public function get pt():SquarePt
 		{
-			return (this._pt);
+			return (_pt);
 		}
 
 		public function set bodyVisible(_arg_1:Boolean):void
 		{
 			this.stop = !(_arg_1);
-			this._bodyVisible = _arg_1;
+			_bodyVisible = _arg_1;
 			super.visible = _arg_1;
 		}
 
 		public function get bodyVisible():Boolean
 		{
-			return (this._bodyVisible);
+			return (_bodyVisible);
 		}
 
 		override public function set visible(_arg_1:Boolean):void
 		{
-			this._visible = _arg_1;
+			_visible = _arg_1;
 			super.visible = _arg_1;
 			if (this.shape) {
 				this.shape.visible = _arg_1;
@@ -610,91 +609,87 @@
 			this.headVisible = _arg_1;
 		}
 
-		public function set point(_arg_1:Point):void
+		public function set point(val:Point):void
 		{
-			var _local_2:int;
-			if (_arg_1) {
-				super.x = Number(_arg_1.x.toFixed(2));
-				super.y = Number(_arg_1.y.toFixed(2));
-				if ((this._point == null)) {
-					this._point = _arg_1;
+			if (val) {
+				super.x = Number(val.x.toFixed(2));
+				super.y = Number(val.y.toFixed(2));
+				if (_point == null) {
+					_point = val;
 				}
-				this._point.x = super.x;
-				this._point.y = super.y;
-				this._pt = SquareUitls.pixelsToSquare(_arg_1);
+				_point.x = super.x;
+				_point.y = super.y;
+				_pt = SquareUitls.pixelsToSquare(val);
 			}
-			if (((this.shape) && ((this.jumping == false)))) {
+			if (this.shape && this.jumping == false) {
 				this.shape.x = this.x;
 				this.shape.y = this.y;
 			}
 			if (this.headShape) {
-				_local_2 = ((this.onMonutHeight - this.height_old) + y);
-				if (_local_2 != this.headShape.y) {
-					this.headShape.y = _local_2;
+				var headY:int = this.onMonutHeight - this.height_old + this.y;
+				if (headY != this.headShape.y) {
+					this.headShape.y = headY;
 				}
 				this.headShape.x = x;
 			}
 			this.setAlpha();
 		}
-
 		public function get point():Point
 		{
-			return (this._point);
+			return _point;
 		}
 
-		override public function set x(_arg_1:Number):void
+		override public function set x(val:Number):void
 		{
-			if (this._point) {
-				super.x = _arg_1;
-				this._point.x = super.x;
-				this._pt = SquareUitls.pixelsToSquare(this._point);
+			if (_point) {
+				super.x = val;
+				_point.x = super.x;
+				_pt = SquareUitls.pixelsToSquare(_point);
 			}
-			if (((this.shape) && ((this.jumping == false)))) {
+			if (this.shape && this.jumping == false) {
 				this.shape.x = this.x;
 			}
 			if (this.headShape) {
-				this.headShape.x = _arg_1;
+				this.headShape.x = val;
 			}
 			this.setAlpha();
 		}
 
-		override public function set y(_arg_1:Number):void
+		override public function set y(val:Number):void
 		{
-			var _local_2:int;
-			if (this._point) {
-				super.y = _arg_1;
-				this._point.y = super.y;
-				this._pt = SquareUitls.pixelsToSquare(this._point);
+			if (_point) {
+				super.y = val;
+				_point.y = super.y;
+				_pt = SquareUitls.pixelsToSquare(_point);
 			}
 			if (this.headShape) {
-				_local_2 = ((this.onMonutHeight - this.height_old) + y);
-				if (_local_2 != this.headShape.y) {
-					this.headShape.y = _local_2;
+				var headY:int = this.onMonutHeight - this.height_old + this.y;
+				if (headY != this.headShape.y) {
+					this.headShape.y = headY;
 				}
 			}
-			if (((this.shape) && ((this.jumping == false)))) {
-				this.shape.y = this.y;
+			if (this.shape && this.jumping == false) {
+				this.shape.y = val;
 			}
 			this.setAlpha();
 		}
 
 		public function reset():void
 		{
-			if (this._ap) {
-				this._ap.dispose();
+			if (_ap) {
+				_ap.dispose();
 			}
-			this._ap = null;
-			this._ap = new AvatartParts();
-			this._ap.type = "Avatar";
-			this._ap.onRender = this.onRender;
-			this._ap.onRendStart = coder::onRendStart;
-			this._ap.playEndFunc = coder::playEndFunc;
-			this._ap.playEffectFunc = coder::playEffectFunc;
-			this._ap.setupReady = coder::setupReady;
-			this._ap.disposeEffectsFunc = this.disposeEffects;
+			_ap = new AvatartParts();
+			_ap.type = "Avatar";
+			_ap.onRender = this.onRender;
+			_ap.onRendStart = coder::onRendStart;
+			_ap.playEndFunc = coder::playEndFunc;
+			_ap.playEffectFunc = coder::playEffectFunc;
+			_ap.setupReady = coder::setupReady;
+			_ap.disposeEffectsFunc = this.disposeEffects;
 			this.bodyVisible = true;
-			this._isAutoDispose = true;
-			this._ap.coder::oid = this.id;
+			_isAutoDispose = true;
+			_ap.coder::oid = this.id;
 			this.$playEndFunc = null;
 			this.$playEndHash = null;
 			this.playEndHash = new Hash();
@@ -708,13 +703,13 @@
 			this.deayState = null;
 			this.isDeath = false;
 			this.isDisposed = false;
-			if (((this._headShape) && (this._headShape.parent))) {
-				this._headShape.parent.removeChild(this._headShape);
+			if (((_headShape) && (_headShape.parent))) {
+				_headShape.parent.removeChild(_headShape);
 			}
-			if (this._headShape) {
-				this._headShape.dispose();
+			if (_headShape) {
+				_headShape.dispose();
 			}
-			this._headShape = null;
+			_headShape = null;
 			this.effectPlayEndDic = null;
 			this.eid_avatarBitmaps = null;
 			this.dir = 0;
@@ -790,12 +785,12 @@
 
 		public function get avatarParts():AvatartParts
 		{
-			return (this._ap);
+			return (_ap);
 		}
 
 		public function set avatarParts(_arg_1:AvatartParts):void
 		{
-			this._ap = _arg_1;
+			_ap = _arg_1;
 		}
 
 		public function setup():void
@@ -815,7 +810,7 @@
 			var _local_2:int;
 			while (_local_2 < _local_1) {
 				_local_3 = this.getChildAt(_local_2);
-				if (((((((((((!((_local_3 == this.bitmapdata_wgid))) && (!((_local_3 == this.bitmapdata_fid))))) && (!((_local_3 == this.bitmapdata_wid))))) && (!((_local_3 == this.bitmapdata_mid))))) && (!((_local_3 == this.bitmapdata_midm))))) && (!((_local_3 == this._headShape))))) {
+				if (((((((((((!((_local_3 == this.bitmapdata_wgid))) && (!((_local_3 == this.bitmapdata_fid))))) && (!((_local_3 == this.bitmapdata_wid))))) && (!((_local_3 == this.bitmapdata_mid))))) && (!((_local_3 == this.bitmapdata_midm))))) && (!((_local_3 == _headShape))))) {
 					this.removeChildAt(_local_2);
 					_local_2--;
 				}
@@ -843,13 +838,13 @@
 
 		public function set fuzzyMode(_arg_1:Boolean):void
 		{
-			this._fuzzyMode = _arg_1;
+			_fuzzyMode = _arg_1;
 			super.filters = [new BlurFilter(20, 2)];
 		}
 
 		public function get fuzzyMode():Boolean
 		{
-			return (this._fuzzyMode);
+			return (_fuzzyMode);
 		}
 
 		coder function playEndFunc(_arg_1:Object):void
@@ -987,7 +982,7 @@
 					this.onMonutHeight = 0;
 				} else {
 					this.isOnMonut = true;
-					this.onMonutHeight = this._monutHeight;
+					this.onMonutHeight = _monutHeight;
 				}
 			}
 			if (_local_8 > 0) {
@@ -1196,7 +1191,7 @@
 		{
 			var _local_1:Square;
 			if (this.pt) {
-				this._pt = SquareUitls.pixelsToSquare(this._point);
+				_pt = SquareUitls.pixelsToSquare(_point);
 				_local_1 = SquareGroup.getInstance().take(this.pt.key);
 				if (_local_1) {
 					if (_local_1.isAlpha) {
@@ -1215,7 +1210,7 @@
 		coder function flyerMove():void
 		{
 			var _local_1:Point;
-			if (!this._isFlyMode) {
+			if (!_isFlyMode) {
 				return;
 			}
 			if (((((this.jumping) && (this.bitmapdata_midm))) && (this.bitmapdata_midm.bitmapData))) {
@@ -1256,7 +1251,7 @@
 				this.loadCharActionAssets(this.avatarParts.state);
 			}
 			if (((!(this.isDisposed)) && (this.stage))) {
-				if (this._bodyVisible == false) {
+				if (_bodyVisible == false) {
 					if (((this.bitmapdata_fid) && (!((this.bitmapdata_fid.bitmapData == null))))) {
 						this.bitmapdata_fid.bitmapData = null;
 					}
@@ -1495,7 +1490,7 @@
 								_local_10.bitmapData = _arg_3;
 							}
 							_local_15 = true;
-							if ((((((_local_10 == this.bitmapdata_midm)) && (this.bitmapdata_midm.parent))) && (this._isFlyMode))) {
+							if ((((((_local_10 == this.bitmapdata_midm)) && (this.bitmapdata_midm.parent))) && (_isFlyMode))) {
 								this.fly_vx = _local_12;
 								this.fly_vy = _local_13;
 								if (this.jumping) {
@@ -1569,7 +1564,7 @@
 			var _local_2:Point;
 			var _local_3:Number;
 			var _local_4:Number;
-			if (this._visible == false) {
+			if (_visible == false) {
 				return (false);
 			}
 			var _local_1:Boolean = true;
@@ -1628,32 +1623,32 @@
 			if (this.shape) {
 				this.shape.dispose();
 			}
-			if (((this._headShape) && (this._headShape.parent))) {
-				this._headShape.parent.removeChild(this._headShape);
+			if (((_headShape) && (_headShape.parent))) {
+				_headShape.parent.removeChild(_headShape);
 			}
-			if (this._headShape) {
-				this._headShape.dispose();
+			if (_headShape) {
+				_headShape.dispose();
 			}
-			this._headShape = null;
+			_headShape = null;
 			this.shape = null;
-			this._bodyVisible = true;
+			_bodyVisible = true;
 			this.effectPlayEndDic = null;
 			InstancePool.coder::getInstance().remove(this);
 			this.shoadw = null;
-			if (this._iconSprite) {
-				this.removeChild(this._iconSprite);
-				this._iconSprite = null;
+			if (_iconSprite) {
+				this.removeChild(_iconSprite);
+				_iconSprite = null;
 			}
 			this.headIconUrl = null;
-			this._isOnMonut = false;
+			_isOnMonut = false;
 			this.onMonutHeight = 0;
-			this._point = null;
-			this._pt = null;
+			_point = null;
+			_pt = null;
 			this.playEndHash = null;
-			if (this._ap) {
-				this._ap.dispose();
+			if (_ap) {
+				_ap.dispose();
 			}
-			this._ap = null;
+			_ap = null;
 			if (this.bitmapdata_wid) {
 				this.bitmapdata_wid.bitmapData = null;
 			}
@@ -1709,7 +1704,7 @@
 			this.isSceneItem = false;
 			this.runing = false;
 			this.jumping = false;
-			this._monutHeight = -80;
+			_monutHeight = -80;
 			InstancePool.coder::getInstance().recover(this);
 		}
 
@@ -1718,28 +1713,28 @@
 			var _local_1:Bitmap;
 			this.showBodyShoadw(false);
 			this.effectPlayEndDic = null;
-			if (this._headShape) {
-				this._headShape.dispose();
+			if (_headShape) {
+				_headShape.dispose();
 			}
-			this._headShape = null;
+			_headShape = null;
 			this.shoadw = null;
-			if (this._iconSprite) {
-				this.removeChild(this._iconSprite);
-				this._iconSprite = null;
+			if (_iconSprite) {
+				this.removeChild(_iconSprite);
+				_iconSprite = null;
 			}
-			this._isAutoDispose = false;
+			_isAutoDispose = false;
 			this.headIconUrl = null;
-			this._isOnMonut = false;
+			_isOnMonut = false;
 			this.onMonutHeight = 0;
-			this._monutHeight = -80;
-			this._point = null;
-			this._pt = null;
+			_monutHeight = -80;
+			_point = null;
+			_pt = null;
 			this.playEndHash = null;
-			this._name = "";
-			if (this._ap) {
-				this._ap.dispose();
+			_name = "";
+			if (_ap) {
+				_ap.dispose();
 			}
-			this._ap = null;
+			_ap = null;
 			if (this.bitmapdata_wid) {
 				this.bitmapdata_wid.bitmapData = null;
 			}
