@@ -36,9 +36,9 @@
 
 		public function demo()
 		{
+			super();
 			this.scene = new GameScene();
 			this.text = new TextField();
-			super();
 			this.init();
 		} 
 
