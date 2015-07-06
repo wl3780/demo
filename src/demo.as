@@ -40,7 +40,7 @@
 			this.text = new TextField();
 			super();
 			this.init();
-		}
+		} 
 
 		private function init():void
 		{
