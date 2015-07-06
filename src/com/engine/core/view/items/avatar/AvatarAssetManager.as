@@ -1,33 +1,28 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.view.items.avatar.AvatarAssetManager
-
-package com.engine.core.view.items.avatar
+﻿package com.engine.core.view.items.avatar
 {
-    import flash.display.BitmapData;
-    import com.engine.core.controls.wealth.WealthQuene;
-    import flash.utils.Dictionary;
     import com.engine.core.Core;
-    import flash.system.LoaderContext;
-    import flash.system.ApplicationDomain;
-    import flash.system.SecurityDomain;
+    import com.engine.core.ItemConst;
     import com.engine.core.controls.events.WealthEvent;
-    import flash.utils.Timer;
-    import flash.events.TimerEvent;
-    import com.engine.namespaces.coder;
-    import com.engine.core.model.wealth.WealthGroupVo;
     import com.engine.core.controls.wealth.WealthConstant;
-    import com.engine.core.controls.wealth.loader.DisplayLoader;
     import com.engine.core.controls.wealth.WealthPool;
-    import __AS3__.vec.Vector;
+    import com.engine.core.controls.wealth.WealthQuene;
+    import com.engine.core.controls.wealth.loader.BingLoader;
+    import com.engine.core.controls.wealth.loader.DisplayLoader;
+    import com.engine.core.model.wealth.WealthGroupVo;
     import com.engine.core.view.role.MainChar;
     import com.engine.core.view.scenes.Scene;
-    import flash.utils.ByteArray;
-    import com.engine.core.controls.wealth.loader.BingLoader;
-    import flash.geom.Matrix;
+    import com.engine.namespaces.coder;
+    
+    import flash.display.BitmapData;
     import flash.display.LoaderInfo;
-    import com.engine.core.ItemConst;
+    import flash.events.TimerEvent;
+    import flash.geom.Matrix;
+    import flash.system.ApplicationDomain;
+    import flash.system.LoaderContext;
+    import flash.system.SecurityDomain;
+    import flash.utils.ByteArray;
+    import flash.utils.Dictionary;
+    import flash.utils.Timer;
 
     public class AvatarAssetManager 
     {

@@ -49,8 +49,6 @@
 		private static var matrix:Matrix = new Matrix();
 		
 		public var popsinger:int;
-		public var degree:Number;
-		public var skill_tar_point:Point;
 		public var suitURL:String;
 		public var haloURL:String;
 		public var isTeleporting:Boolean = false;
@@ -79,13 +77,13 @@
 		
 		private var buffSprite:Item;
 		private var _walkEndFunc:Function;
-		private var totlaNeedTime:int;
-		private var _song_effect2:ItemAvatar;
 		private var _song_effect:ItemAvatar;
+		private var _song_effect2:ItemAvatar;
 		private var _halo_effect:ItemAvatar;
 		private var _suit_effect:ItemAvatar;
 		private var _wing_effect_1:ItemAvatar;
 		private var _wing_effect_2:ItemAvatar;
+		
 		private var _dropShape:Shape;
 		private var _suitVisible:Boolean = true;
 		private var effectDic:Dictionary;
@@ -98,14 +96,13 @@
 		private var showTime:int = 0;
 		private var actionPlaySpeed:int;
 		private var jumpStartTime:int;
-		private var tmp:int;
 
 		public function Char()
 		{
-			this.jumpQuene = [];
-			this.overPoint = new Point();
 			super();
 			this.type = SceneConstant.CHAR;
+			this.jumpQuene = [];
+			this.overPoint = new Point();
 		}
 
 		public static function createChar():Char
@@ -1595,7 +1592,6 @@
 					return;
 				}
 			}
-			this.tmp = getTimer();
 			if (!avatarParts) {
 				return;
 			}

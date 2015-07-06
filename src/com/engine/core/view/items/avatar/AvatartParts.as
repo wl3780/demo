@@ -48,8 +48,8 @@
 		private var counter:int;
 		private var _stop:Boolean = false;
 		private var _effectRestricts:Dictionary;
-		private var _state:String = "stand";
-		private var oldState:String = "stand";
+		private var _state:String = CharAction.STAND;
+		private var oldState:String = CharAction.STAND
 		private var _currRestrict:AvatarRestrict;
 		private var _currentFrame:int = 0;
 		private var _fly_currentFrame:int = 0;
@@ -65,7 +65,6 @@
 		private var _isLockEffectPlaySpeed:Boolean;
 		private var _lockEffectPlaySpeed:int;
 		private var lockSpeedValue:int;
-		private var timerId:int = 0;
 
 		public function AvatartParts()
 		{
@@ -179,142 +178,146 @@
 
 		public function bodyRender(_arg_1:Boolean=false):void
 		{
-			var _local_2:AvatarParam;
-			var _local_3:BitmapData;
-			var _local_4:Rectangle;
-			var _local_5:BitmapData;
-			var _local_6:int;
-			var _local_7:String;
-			var _local_8:String;
-			var _local_9:String;
-			var _local_10:Dictionary;
-			var _local_11:Boolean;
-			var _local_12:int;
-			var _local_13:int;
-			var _local_14:Boolean;
-			var _local_15:Boolean;
-			var _local_16:Object;
-			var _local_17:int;
-			if (((((this.isDisposed) || (_stop))) || ((this.avatarParts == null)))) {
+			if (this.isDisposed || _stop || this.avatarParts == null) {
 				return;
 			}
-			if (this.avatarParts != null) {
-				_local_9 = this.state;
-				if (((((((this.isFlyMode) && (this.isOnMonut))) && (!((_local_9 == CharAction.MEDITATION))))) && (!((_local_9 == CharAction.SKILL2))))) {
-					_local_9 = CharAction.STAND;
+			
+			var _local_9:String = this.state;
+			if (this.isFlyMode && this.isOnMonut && _local_9 != CharAction.MEDITATION && _local_9 != CharAction.SKILL2) {
+				_local_9 = CharAction.STAND;
+			}
+			if (this.specialMode == 1) {
+				_local_9 = "skill2";
+			}
+			var _local_10:Dictionary = this.avatarParts[_local_9] as Dictionary;
+			if (this.oldState != this.state) {
+				this.counter = 0;
+				_currentFrame = 0;
+			}
+			if (_local_10) {
+				if (this.clear != null) {
+					this.clear();
 				}
-				if (this.specialMode == 1) {
-					_local_9 = "skill2";
-				}
-				_local_10 = (this.avatarParts[_local_9] as Dictionary);
-				if (this.oldState != this.state) {
-					this.counter = 0;
-					_currentFrame = 0;
-				}
-				if (_local_10) {
-					if (this.clear != null) {
-						this.clear();
-					}
-					_local_11 = false;
-					_local_2 = _local_10[this.mid_id];
+				var _local_11:Boolean = false;
+				var _local_2:AvatarParam = _local_10[this.mid_id];
+				if (_local_2 == null) {
+					_local_2 = _local_10[this.midm_id];
 					if (_local_2 == null) {
-						_local_2 = _local_10[this.midm_id];
-						if (!_local_2) {
-							(_local_2 == _local_10[this.wid_id]);
-							if (!_local_2) {
-								return;
-							}
+						_local_2 == _local_10[this.wid_id];
+						if (_local_2 == null) {
+							return;
 						}
 					}
-					_speed = (_local_2.speed * (1 / this.acce));
-					if (((_isLockSpeed) && ((((_lockSpeedState == "all")) || ((_lockSpeedState == this.state)))))) {
-						_speed = this.lockSpeedValue;
+				}
+				_speed = _local_2.speed * (1 / this.acce);
+				if (_isLockSpeed && (_lockSpeedState == "all" || _lockSpeedState == this.state)) {
+					_speed = this.lockSpeedValue;
+				}
+				if (this.runing == false && this.state == CharAction.WALK) {
+					this.state = CharAction.STAND;
+				}
+				var _local_12:int = (_speed - this.vs);
+				if (this.state == CharAction.ATTACK || this.state == CharAction.QUNGONG || this.state == CharAction.SKILL1 || this.state == CharAction.MEDITATION || this.state == CharAction.MEDITATION) {
+					_local_12 = this.attackSpeed * _speed;
+				}
+				var _local_13:int = Core.delayTime - this.counter;
+				if ((((_local_13 >= _local_12)) || (_arg_1))) {
+					this.counter = Core.delayTime;
+					this.oldState = this.state;
+					var _local_14:Boolean = true;
+					var _local_15:Boolean = true;
+					if (this.onRendStart != null) {
+						this.onRendStart();
 					}
-					if ((((this.runing == false)) && ((this.state == CharAction.WALK)))) {
-						this.state = "stand";
-					}
-					_local_12 = (_speed - this.vs);
-					if ((((((((((this.state == CharAction.ATTACK)) || ((this.state == CharAction.QUNGONG)))) || ((this.state == CharAction.SKILL1)))) || ((this.state == CharAction.MEDITATION)))) || ((this.state == CharAction.MEDITATION)))) {
-						_local_12 = (this.attackSpeed * _speed);
-					}
-					_local_13 = (Core.delayTime - this.counter);
-					if ((((_local_13 >= _local_12)) || (_arg_1))) {
-						this.counter = Core.delayTime;
-						this.oldState = this.state;
-						_local_14 = true;
-						_local_15 = true;
-						if (this.onRendStart != null) {
-							this.onRendStart();
+					for each (_local_2 in _local_10) {
+						_local_11 = true;
+						var _local_16:Object = {
+							"assets_id":_local_2.coder::assets_id,
+							"link":_local_2.link,
+							"type":_local_2.type,
+							"avatarParm_oid":_local_2.oid,
+							"avatarParm_id":_local_2.id
 						}
-						for each (_local_2 in _local_10) {
-							_local_11 = true;
-							_local_16 = {
-								"assets_id":_local_2.coder::assets_id,
-								"link":_local_2.link,
-								"type":_local_2.type,
-								"avatarParm_oid":_local_2.oid,
-								"avatarParm_id":_local_2.id
-							}
-							_totalFrames = _local_2.frames;
-							_local_8 = _local_2.type;
-							if ((((_currentFrame >= _local_2.frames)) && (((!(this.isFlyMode)) || (((this.isFlyMode) && (!((_local_8 == "midm"))))))))) {
-								if ((((this.specialMode == 1)) && ((_currentFrame >= _local_2.frames)))) {
+						_totalFrames = _local_2.frames;
+						var _local_8:String = _local_2.type;
+						if ((((_currentFrame >= _local_2.frames)) && (((!(this.isFlyMode)) || (((this.isFlyMode) && (!((_local_8 == "midm"))))))))) {
+							if ((((this.specialMode == 1)) && ((_currentFrame >= _local_2.frames)))) {
+								_currentFrame = 0;
+							} else {
+								if (!((((_currRestrict) && ((_currRestrict.state == _local_9)))) && (_currRestrict.stopInLastFrame))) {
 									_currentFrame = 0;
+									if (this.playEndFunc != null) {
+										this.playEndFunc(_local_16);
+									}
 								} else {
-									if (!((((_currRestrict) && ((_currRestrict.state == _local_9)))) && (_currRestrict.stopInLastFrame))) {
-										_currentFrame = 0;
+									if (((((((_currRestrict) && (_currRestrict.state))) && (!((_local_9 == CharAction.DEATH))))) && (!((_local_9 == CharAction.MEDITATION))))) {
 										if (this.playEndFunc != null) {
 											this.playEndFunc(_local_16);
 										}
-									} else {
-										if (((((((_currRestrict) && (_currRestrict.state))) && (!((_local_9 == CharAction.DEATH))))) && (!((_local_9 == CharAction.MEDITATION))))) {
-											if (this.playEndFunc != null) {
-												this.playEndFunc(_local_16);
-											}
-											if (this.isPalyStandDeay) {
-												this.play(CharAction.STAND);
-											} else {
-												_currentFrame = (_local_2.frames - 1);
-											}
+										if (this.isPalyStandDeay) {
+											this.play(CharAction.STAND);
 										} else {
 											_currentFrame = (_local_2.frames - 1);
 										}
+									} else {
+										_currentFrame = (_local_2.frames - 1);
 									}
 								}
 							}
-							if (_currentFrame == (_local_2.frames - 2)) {
-								if (this.playEffectFunc != null) {
-									this.playEffectFunc(_local_2);
+						}
+						if (_currentFrame == (_local_2.frames - 2)) {
+							if (this.playEffectFunc != null) {
+								this.playEffectFunc(_local_2);
+							}
+						}
+						var _local_3:BitmapData;
+						var _local_5:BitmapData;
+						if ((((_local_8 == "midm")) && (this.isFlyMode))) {
+							var _local_17:int = (_local_2.frames - 1);
+							if (_fly_currentFrame > _local_17) {
+								_fly_currentFrame = 0;
+							}
+							_local_3 = _local_2.getBitmapData(this.dir, _fly_currentFrame);
+						} else {
+							_local_3 = _local_2.getBitmapData(this.dir, _currentFrame);
+						}
+						if (((((this.isFlyMode) && ((_local_8 == "midm")))) && ((_local_17 < _currentFrame)))) {
+							_local_3 = _local_2.getBitmapData(this.dir, _fly_currentFrame);
+						}
+						if (_local_2.maxRects[this.dir] == null) {
+							_local_2.maxRects[this.dir] = new Rectangle(0, 0, 0, 110);
+						}
+						if (_local_3 == Core.shadow_bitmapData) {
+						}
+						if (((((((_local_3) && (!((_local_3 == Core.shadow_bitmapData))))) && ((_local_3.width > 0)))) && ((_local_3.height > 0)))) {
+							_local_2.maxRects[this.dir] = _local_3.rect.union(_local_2.maxRects[this.dir]);
+						}
+						var _local_4:Rectangle = _local_2.maxRects[this.dir];
+						if (_local_2.replay == 0) {
+							var _local_7:String = _local_2.oid;
+							delete this.avatarParts[_local_7];
+							_local_2.dispose();
+							break;
+						}
+						if (_local_2.replay > 0) {
+							if (!((((((this.hiedBody) && ((_local_2.type == ItemConst.BODY_TYPE)))) || (((this.hiedWeapon) && ((_local_2.type == ItemConst.WEAPON_TYPE)))))) || (((this.hiedMount) && ((_local_2.type == ItemConst.MOUNT_TYPE)))))) {
+								if (_local_2.type == ItemConst.BODY_TYPE) {
+									_local_14 = false;
+								}
+								if (_local_2.type == ItemConst.MOUNT_TYPE) {
+									_local_15 = false;
+								}
+								if (((this.isFlyMode) && ((_local_8 == "midm")))) {
+									this.onRender(this.id, _dir, _local_3, _local_4, _local_2.type, _local_2.id, _local_2.txs[_dir][_fly_currentFrame], _local_2.tys[_dir][_fly_currentFrame], _local_5);
+								} else {
+									this.onRender(this.id, _dir, _local_3, _local_4, _local_2.type, _local_2.id, _local_2.txs[_dir][_currentFrame], _local_2.tys[_dir][_currentFrame], _local_5);
 								}
 							}
-							if ((((_local_8 == "midm")) && (this.isFlyMode))) {
-								_local_17 = (_local_2.frames - 1);
-								if (_fly_currentFrame > _local_17) {
-									_fly_currentFrame = 0;
-								}
-								_local_3 = _local_2.getBitmapData(this.dir, _fly_currentFrame);
-							} else {
-								_local_3 = _local_2.getBitmapData(this.dir, _currentFrame);
+							if (_currentFrame >= _local_2.frames) {
+								_local_2.replay--;
 							}
-							if (((((this.isFlyMode) && ((_local_8 == "midm")))) && ((_local_17 < _currentFrame)))) {
-								_local_3 = _local_2.getBitmapData(this.dir, _fly_currentFrame);
-							}
-							if (_local_2.maxRects[this.dir] == null) {
-								_local_2.maxRects[this.dir] = new Rectangle(0, 0, 0, 110);
-							}
-							if (_local_3 == Core.shadow_bitmapData) {
-							}
-							if (((((((_local_3) && (!((_local_3 == Core.shadow_bitmapData))))) && ((_local_3.width > 0)))) && ((_local_3.height > 0)))) {
-								_local_2.maxRects[this.dir] = _local_3.rect.union(_local_2.maxRects[this.dir]);
-							}
-							_local_4 = _local_2.maxRects[this.dir];
-							if (_local_2.replay == 0) {
-								_local_7 = _local_2.oid;
-								delete this.avatarParts[_local_7];
-								_local_2.dispose();
-								break;
-							}
-							if (_local_2.replay > 0) {
+						} else {
+							if (_local_2.replay == -1) {
 								if (!((((((this.hiedBody) && ((_local_2.type == ItemConst.BODY_TYPE)))) || (((this.hiedWeapon) && ((_local_2.type == ItemConst.WEAPON_TYPE)))))) || (((this.hiedMount) && ((_local_2.type == ItemConst.MOUNT_TYPE)))))) {
 									if (_local_2.type == ItemConst.BODY_TYPE) {
 										_local_14 = false;
@@ -328,36 +331,17 @@
 										this.onRender(this.id, _dir, _local_3, _local_4, _local_2.type, _local_2.id, _local_2.txs[_dir][_currentFrame], _local_2.tys[_dir][_currentFrame], _local_5);
 									}
 								}
-								if (_currentFrame >= _local_2.frames) {
-									_local_2.replay--;
-								}
-							} else {
-								if (_local_2.replay == -1) {
-									if (!((((((this.hiedBody) && ((_local_2.type == ItemConst.BODY_TYPE)))) || (((this.hiedWeapon) && ((_local_2.type == ItemConst.WEAPON_TYPE)))))) || (((this.hiedMount) && ((_local_2.type == ItemConst.MOUNT_TYPE)))))) {
-										if (_local_2.type == ItemConst.BODY_TYPE) {
-											_local_14 = false;
-										}
-										if (_local_2.type == ItemConst.MOUNT_TYPE) {
-											_local_15 = false;
-										}
-										if (((this.isFlyMode) && ((_local_8 == "midm")))) {
-											this.onRender(this.id, _dir, _local_3, _local_4, _local_2.type, _local_2.id, _local_2.txs[_dir][_fly_currentFrame], _local_2.tys[_dir][_fly_currentFrame], _local_5);
-										} else {
-											this.onRender(this.id, _dir, _local_3, _local_4, _local_2.type, _local_2.id, _local_2.txs[_dir][_currentFrame], _local_2.tys[_dir][_currentFrame], _local_5);
-										}
-									}
-								}
 							}
 						}
-						if (_local_14) {
-							this.onRender(this.id, 0, null, _local_4, ItemConst.BODY_TYPE);
-						}
-						if (_local_15) {
-							this.onRender(this.id, 0, null, _local_4, ItemConst.WEAPON_TYPE);
-						}
-						_currentFrame = (_currentFrame + 1);
-						_fly_currentFrame = (_fly_currentFrame + 1);
 					}
+					if (_local_14) {
+						this.onRender(this.id, 0, null, _local_4, ItemConst.BODY_TYPE);
+					}
+					if (_local_15) {
+						this.onRender(this.id, 0, null, _local_4, ItemConst.WEAPON_TYPE);
+					}
+					_currentFrame = (_currentFrame + 1);
+					_fly_currentFrame = (_fly_currentFrame + 1);
 				}
 			}
 		}
@@ -607,23 +591,23 @@
 			_effectRestricts[_arg_1.oid][_arg_1.id] = _arg_1;
 		}
 
-		coder function addAvatarPart(_arg_1:AvatarParam):void
+		coder function addAvatarPart(param:AvatarParam):void
 		{
-			if (_arg_1 == null) {
+			if (param == null) {
 				return;
 			}
-			var _local_2:String = _arg_1.link;
-			var _local_3:String = _arg_1.oid;
+			var _local_2:String = param.link;
+			var _local_3:String = param.oid;
 			var _local_4:String = _local_3.split("_")[0];
 			if (_local_3) {
-				if (_arg_1.type == ItemConst.EFFECT_TYPE) {
+				if (param.type == ItemConst.EFFECT_TYPE) {
 					if (this.effectsParts == null) {
 						this.effectsParts = new Dictionary();
 					}
 					if (this.effectsParts[_local_2] == null) {
 						this.effectsParts[_local_2] = new Dictionary();
 					}
-					this.effectsParts[_local_2][(_arg_1.id + _local_3)] = _arg_1;
+					this.effectsParts[_local_2][(param.id + _local_3)] = param;
 					this.eid_len++;
 				} else {
 					if (_local_4 == "mid") {
@@ -644,7 +628,7 @@
 					if (this.avatarParts[_local_2][_local_3]) {
 						delete this.avatarParts[_local_2][_local_3];
 					}
-					this.avatarParts[_local_2][_local_3] = _arg_1;
+					this.avatarParts[_local_2][_local_3] = param;
 				}
 			}
 		}
