@@ -15,25 +15,6 @@
 	public class SceneUtil 
 	{
 
-
-		public static function interpolateForSize(_arg_1:Point, _arg_2:Point, _arg_3:int):Point
-		{
-			var _local_4:Number = Point.distance(_arg_1, _arg_2);
-			var _local_5:Number = (_arg_3 / _local_4);
-			return (Point.interpolate(_arg_1, _arg_2, _local_5));
-		}
-
-		private static function getPoints(_arg_1:Point, _arg_2:Point, _arg_3:int):Array
-		{
-			var _local_4:Array = [];
-			var _local_5:int;
-			while (_local_5 < _arg_3) {
-				_local_4.push(Point.interpolate(_arg_1, _arg_2, (1 / _arg_3)));
-				_local_5++;
-			}
-			return (_local_4);
-		}
-
 		public static function updataCharParts(_arg_1:Avatar, _arg_2:int=0, _arg_3:int=0, _arg_4:int=0):void
 		{
 			if (((!(_arg_1)) || (!(_arg_1.avatarParts)))) {
@@ -50,62 +31,64 @@
 			GameScene.scene.charMoveTo(_arg_1, _arg_2.x, _arg_2.y);
 		}
 
-		public static function getJumpPath(from:Point, to:Point, _arg_3:int=5, _arg_4:int=300):Array
+		public static function getJumpPath(from:Point, to:Point, time:int=5, _arg_4:int=300):Array
 		{
-			var _local_9:Point;
-			var _local_22:SquarePt;
-			var _local_23:Square;
-			var _local_5 = 400;
+			var range:int = 400;
 			GameScene.scene.$topLayer.graphics.clear();
 			var distance:Number = Point.distance(from, to);
-			var _local_7:int = Math.ceil(distance / _arg_3);
-			var _local_8:int = _local_7;
-			if (_local_8 > (_local_5 / _arg_3)) {
-				_local_8 = (_local_5 / _arg_3);
+			var speed:int = Math.ceil(distance / time);
+			var sp:int = speed;
+			if (sp > (range / time)) {
+				sp = (range / time);
 			}
-			var _local_10:Point = from;
-			var _local_11:Point = to;
-			var _local_12:SquarePt = SquareUitls.pixelsToSquare(_local_11);
-			var _local_13:Square = SquareGroup.getInstance().take(_local_12.key);
-			if ((((_local_13 == null)) || (((_local_13) && ((_local_13.type < 1)))))) {
-				_local_10 = from;
+			var pstart:Point = from;
+			var pend:Point = to;
+			var ptend:SquarePt = SquareUitls.pixelsToSquare(pend);
+			var sq:Square = SquareGroup.getInstance().take(ptend.key);
+			if (sq == null || sq.type < 1) {
+				pstart = from;
 			}
+			
+			var p:Point;
+			var pt:SquarePt;
+			var _local_23:Square;
 			var _local_14:int;
 			var _local_15:int;
-			var _local_16:int = _local_8;
-			while (_local_16 > 0) {
-				_local_9 = Point.interpolate(to, from, (_local_16 / _local_7));
-				_local_22 = SquareUitls.pixelsToSquare(_local_9);
-				_local_23 = SquareGroup.getInstance().take(_local_22.key);
+			var tmp:int = sp;
+			while (tmp > 0) {
+				p = Point.interpolate(to, from, (tmp / speed));
+				pt = SquareUitls.pixelsToSquare(p);
+				_local_23 = SquareGroup.getInstance().take(pt.key);
 				_local_14++;
 				if (((_local_23) && ((int(_local_23.type) > 0)))) {
-					_local_11 = _local_9;
-					if (++_local_15 > 1) break;
+					pend = p;
+					if (++_local_15 > 1)
+						break;
 				}
-				_local_16--;
+				tmp--;
 			}
-			if (_local_14 >= _local_8) {
+			if (_local_14 >= sp) {
 				return ([]);
 			}
-			distance = Point.distance(_local_10, _local_11);
-			var _local_17:Point = Point.interpolate(_local_10, _local_11, 0.5);
-			var _local_18:int = Math.abs((_local_10.x - _local_11.x));
-			var _local_19:int = Math.abs((_local_10.y - _local_11.y));
-			var _local_20:int = (_local_10.y - _local_11.y);
+			distance = Point.distance(pstart, pend);
+			var _local_17:Point = Point.interpolate(pstart, pend, 0.5);
+			var _local_18:int = Math.abs((pstart.x - pend.x));
+			var _local_19:int = Math.abs((pstart.y - pend.y));
+			var _local_20:int = (pstart.y - pend.y);
 			if ((_local_20 > 0)) {
 				_local_20 = 1;
 			} else {
 				_local_20 = -1;
 			}
 			if ((_local_20 > 0)) {
-				_local_17.y = _local_11.y;
+				_local_17.y = pend.y;
 			} else {
-				_local_17.y = _local_11.y;
+				_local_17.y = pend.y;
 			}
 			_local_17.y = (_local_17.y - _arg_4);
-			var _local_21:Array = Bezier.drawBezier(_local_10, _local_11, _local_17, 50);
-			if (_local_21[(_local_21.length - 1)].toString() != _local_11.toString()) {
-				_local_21.push(_local_11);
+			var _local_21:Array = Bezier.drawBezier(pstart, pend, _local_17, 50);
+			if (_local_21[(_local_21.length - 1)].toString() != pend.toString()) {
+				_local_21.push(pend);
 			}
 			return (_local_21);
 		}

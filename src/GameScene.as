@@ -33,26 +33,30 @@
 
 		override protected function mouseDownFunc(evt:MouseEvent):void
 		{
+			if (Scene.clickEnbeled == false) {
+				return;
+			}
+			
 			_shiftKey = evt.shiftKey;
-			isMouseDown = true;
-			mouseDownTime = getTimer();
+			this.isMouseDown = true;
+			this.mouseDownTime = getTimer();
 			this.mouseDownPoint = new Point(this.mouseX, this.mouseY);
 			if (_shiftKey) {
-				var path:Array = SceneUtil.getJumpPath(this.mainChar.point, mouseDownPoint);
+				var path:Array = SceneUtil.getJumpPath(this.mainChar.point, this.mouseDownPoint);
 				this.mainChar.jump(path);
 			} else {
 				var area:Rectangle = new Rectangle(this.mouseX - 100, this.mouseY - 100, 200, 200);
-				var arr:Array = this.fine(area, false, 100);
-				selectAvatar = HitTest.getChildUnderPoint(this, mouseDownPoint, arr) as Avatar;
+				var arr:Array = this.find(area, false, 100);
+				this.selectAvatar = HitTest.getChildUnderPoint(this, this.mouseDownPoint, arr) as Avatar;
 				if (selectAvatar) {
-					var keys:Array = [Keyboard.B, Keyboard.C, Keyboard.N];
+					var keys:Array = [Keyboard.NUMBER_2, Keyboard.NUMBER_3];
 					var keyEvent:KeyboardEvent = new KeyboardEvent(KeyboardEvent.KEY_DOWN);
 					keyEvent.keyCode = keys[(Math.random() * keys.length) >> 0];
 					this.keyDownFunc(keyEvent);
 				} else {
-					if ((getTimer() - time) > 500) {
-						this.mainCharWalk(mouseDownPoint);
-						time = getTimer();
+					if ((getTimer() - this.time) > 500) {
+						this.mainCharWalk(this.mouseDownPoint);
+						this.time = getTimer();
 					}
 				}
 			}
@@ -60,7 +64,7 @@
 
 		override public function mainCharWalk(_arg_1:Point, _arg_2:Function=null, _arg_3:int=1000, _arg_4:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
 		{
-			if (mainChar.lockMove) {
+			if (this.mainChar.lockMove) {
 				return;
 			}
 			MainCharWalkManager.getInstance().mainCharWalk(_arg_1, _arg_2, _arg_3, _arg_4, _arg_5);

@@ -16,7 +16,6 @@
 	public class FightUtils 
 	{
 
-
 		public static function areaAttack(effect_id:int, point:Point, area:int=100, num:int=4, delay:int=150, points:Array=null):void
 		{
 			var num_:int;
@@ -52,25 +51,6 @@
 			timer = new Timer(delay);
 			timer.addEventListener(TimerEvent.TIMER, timeFunc);
 			timer.start();
-		}
-
-		public static function getPoints(_arg_1:Number, _arg_2:Number, _arg_3:int):Array
-		{
-			var _local_4:int = 50;
-			var _local_5:Array = [];
-			var _local_6:Point = new Point((_arg_1 - _arg_3), _arg_2);
-			_local_5.push(_local_6);
-			_local_6 = new Point((_arg_1 + _local_4), (_arg_2 - (_arg_3 / 2)));
-			_local_5.push(_local_6);
-			_local_6 = new Point((_arg_1 - _local_4), (_arg_2 - (_arg_3 / 2)));
-			_local_5.push(_local_6);
-			_local_6 = new Point((_arg_1 + _arg_3), _arg_2);
-			_local_5.push(_local_6);
-			_local_6 = new Point((_arg_1 + _local_4), (_arg_2 + (_arg_3 / 2)));
-			_local_5.push(_local_6);
-			_local_6 = new Point((_arg_1 - _local_4), (_arg_2 + (_arg_3 / 2)));
-			_local_5.push(_local_6);
-			return (_local_5);
 		}
 
 		public static function lineAttack(effect_id:int, startPoint:Point, endPoint:Point, delay:int=100, interval:int=45, playEndFunc:Function=null):void

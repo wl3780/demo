@@ -1,5 +1,7 @@
 ﻿package com.engine.utils
 {
+	import com.engine.core.RecoverUtils;
+	
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -16,155 +18,140 @@
 		private static var pixelRect:Rectangle = new Rectangle(0, 0, 1, 1);
 		private static var recovery_point:Point = new Point();
 
-		private static function replacColor(_arg_1:BitmapData, _arg_2:uint):BitmapData
+		private static function replacColor(bmd:BitmapData, replaceColor:uint):BitmapData
 		{
-			var _local_3:BitmapData = new BitmapData(_arg_1.width, _arg_1.height);
-			var _local_4:uint = 0x22000000;
-			_arg_2 = 0xFFFF0000;
-			_local_3.threshold(_arg_1, _arg_1.rect, recovery_point, ">=", _local_4, _arg_2, 0xFFFFFFFF, true);
-			return (_local_3);
+			var clone:BitmapData = new BitmapData(bmd.width, bmd.height);
+			var threshold:int = 0x22000000;
+			replaceColor = 0xFFFF0000;
+			clone.threshold(bmd, bmd.rect, RecoverUtils.point, ">=", threshold, replaceColor, 4294967295, true);
+			return clone;
 		}
 
-		public static function getChildUnderPoint(_arg_1:DisplayObjectContainer, _arg_2:Point, _arg_3:Array=null, _arg_4:Class=null, _arg_5:int=10):DisplayObject
+		public static function getChildUnderPoint(layer:DisplayObjectContainer, point:Point, childs:Array=null, target:Class=null, checkAlpha:int=10):DisplayObject
 		{
-			var _local_6:DisplayObject;
-			var _local_9:*;
-			var _local_10:Rectangle;
-			var _local_11:BitmapData;
-			var _local_12:Matrix;
-			var _local_14:uint;
-			if (_arg_3) {
-				_arg_3.sortOn("y", Array.NUMERIC);
+			var ret:DisplayObject;
+			var bounds:Rectangle;
+			var bmd:BitmapData;
+			var mtx:Matrix;
+			var alphaVal:uint;
+			if (childs) {
+				childs.sortOn("y", Array.NUMERIC);
 			}
-			if (_arg_4 == null) {
-				_arg_4 = DisplayObject;
+			if (target == null) {
+				target = DisplayObject;
 			}
 			var _local_7:Array = [];
-			var _local_8:int = (_arg_3.length - 1);
-			var _local_13:int = _local_8;
-			while (_local_13 >= 0) {
-				_local_9 = _arg_3[_local_13];
-				if ((_local_9 as _arg_4)) {
-					_local_10 = _arg_3[_local_13].getBounds(_arg_1);
-					if (_local_10.containsPoint(_arg_2)) {
-						_local_11 = new BitmapData(1, 1, true, 0);
-						_local_12 = new Matrix();
-						_local_12.tx = -(int(_local_9.mouseX));
-						_local_12.ty = -(int(_local_9.mouseY));
-						_local_11.draw(_local_9, _local_12, null, null, pixelRect);
-						_local_14 = ((_local_11.getPixel32(0, 0) >> 24) & 0xFF);
-						if (_local_14 > _arg_5) {
-							_local_6 = _local_9;
+			var idx:int = childs.length - 1;
+			var item:*;
+			while (idx >= 0) {
+				item = childs[idx];
+				if (item as target) {
+					bounds = childs[idx].getBounds(layer);
+					if (bounds.containsPoint(point)) {
+						bmd = new BitmapData(1, 1, true, 0);
+						mtx = new Matrix();
+						mtx.tx = -int(item.mouseX);
+						mtx.ty = -int(item.mouseY);
+						bmd.draw(item, mtx, null, null, pixelRect);
+						alphaVal = (bmd.getPixel32(0, 0) >> 24) & 0xFF;
+						if (alphaVal > checkAlpha) {
+							ret = item;
 							break;
 						}
 					}
 				}
-				_local_13--;
+				idx--;
 			}
-			return (_local_6);
+			return ret;
 		}
 
-		public static function getChildUnderPointWithDifferentLayer(_arg_1:DisplayObjectContainer, _arg_2:Point, _arg_3:Array=null, _arg_4:Class=null):DisplayObject
-		{
-			var _local_5:DisplayObject;
-			var _local_10:DisplayObject;
-			var _local_11:int;
-			var _local_12:int;
-			var _local_13:*;
-			var _local_14:BitmapData;
-			var _local_15:Matrix;
-			var _local_16:uint;
-			if (_arg_3 == null) {
-				return (null);
+		public static function getChildUnderPointWithDifferentLayer(parent:DisplayObjectContainer, point:Point, items:Array=null, className:Class=null):DisplayObject{
+			if (items == null) {
+				return null;
 			}
-			var _local_6:Array = [];
-			var _local_7:int;
-			while (_local_7 < _arg_3.length) {
-				_local_10 = _arg_3[_local_7];
-				_local_11 = (_local_10.parent.parent.getChildIndex(_local_10.parent) * 1000000);
-				_local_12 = _local_10.y;
-				_local_6.push({
-					"target":_local_10,
-					"depth":(_local_11 + _local_12)
-				});
-				_local_7++;
+			if (className == null) {
+				className = DisplayObject;
 			}
-			_local_6.sortOn("depth", (Array.NUMERIC | Array.DESCENDING));
-			if (_arg_4 == null) {
-				_arg_4 = DisplayObject;
-			}
-			var _local_8:Array = [];
-			var _local_9:int = (_local_6.length - 1);
-			while (_local_9 >= 0) {
-				_local_13 = _local_6[_local_9].target;
-				if ((_local_13 as _arg_4)) {
-					_local_14 = new BitmapData(1, 1, true, 0);
-					_local_15 = new Matrix();
-					_local_15.tx = -(int(_local_13.mouseX));
-					_local_15.ty = -(int(_local_13.mouseY));
-					_local_14.draw(_local_13, _local_15, null, null, new Rectangle(0, 0, 1, 1));
-					_local_16 = ((_local_14.getPixel32(0, 0) >> 24) & 0xFF);
-					if (_local_16 > 40) {
-						_local_5 = _local_13;
-						break;
-					}
+			var result:DisplayObject = null;
+			var child:DisplayObject = null;
+			var infos:Array = [];
+			for (var i:int = 0; i < items.length; i++) {
+				child = items[i];
+				if (child is className) {
+					var pIndex:int = child.parent.parent.getChildIndex(child.parent) * 1000000;
+					infos.push({
+						target:child,
+						depth:pIndex + child.y
+					});
 				}
-				_local_9--;
 			}
-			return (_local_5);
-		}
-
-		public static function getChildAtPoint(_arg_1:DisplayObjectContainer, _arg_2:Point, _arg_3:Array=null):DisplayObject
-		{
-			var _local_14:DisplayObject;
-			var _local_15:Rectangle;
-			if (_arg_3 == null) {
-				_arg_3 = new Array();
-				_arg_3 = _arg_1.getObjectsUnderPoint(_arg_2);
-			}
-			var _local_4:Array = [];
-			var _local_5:int;
-			while (_local_5 < _arg_3.length) {
-				_local_14 = _arg_3[_local_5];
-				_local_15 = _local_14.getBounds(_arg_1);
-				if (_local_15.containsPoint(_arg_2)) {
-					_local_4.push(_local_14);
+			infos.sortOn("depth", (Array.NUMERIC | Array.DESCENDING));
+			
+			var tmpData:BitmapData = null;
+			var mtx:Matrix = null;
+			for (i = infos.length - 1; i >= 0; i--) {
+				child = infos[i].target;
+				tmpData = new BitmapData(1, 1, true, 0);
+				mtx = new Matrix();
+				mtx.tx = -(child.mouseX);
+				mtx.ty = -(child.mouseY);
+				tmpData.draw(child, mtx, null, null, pixelRect);
+				var targetAlpha:int = (tmpData.getPixel32(0, 0) >> 24) & 0xFF;
+				if (targetAlpha > 40) {
+					result = child;
+					break;
 				}
-				_local_5++;
 			}
-			_arg_3 = _local_4;
-			var _local_6:ColorTransform = new ColorTransform();
-			var _local_7:Matrix = new Matrix();
-			_local_7.tx = -(int(_arg_2.x));
-			_local_7.ty = -(int(_arg_2.y));
-			var _local_8:BitmapData = new BitmapData(1, 1);
-			var _local_9:Array = new Array();
-			var _local_10:Rectangle = new Rectangle(0, 0, _local_8.width, _local_8.height);
-			var _local_11:int;
-			while (_local_11 < _arg_3.length) {
-				_local_6.color = _local_11;
-				_local_9.push(_arg_3[_local_11].transform.colorTransform);
-				_arg_3[_local_11].transform.colorTransform = _local_6;
-				_local_11++;
+			return result;
+		}
+		
+		public static function getChildAtPoint(targetParent:DisplayObjectContainer, point:Point, elements:Array=null):DisplayObject
+		{
+			if (elements == null) {
+				elements = targetParent.getObjectsUnderPoint(point);
 			}
-			_local_8.draw(_arg_1, _local_7, null, null, _local_10);
-			var _local_12:int = _local_8.getPixel(0, 0);
-			var _local_13:int;
-			while (_local_13 < _arg_3.length) {
-				_arg_3[_local_13].transform.colorTransform = _local_9[_local_13];
-				_local_13++;
+			var tmpList:Array = [];
+			var bounds:Rectangle = null;
+			for each (var item:DisplayObject in elements) {
+				bounds = item.getBounds(targetParent);
+				if (bounds.containsPoint(point)) {
+					tmpList.push(item);
+				}
 			}
-			return (_arg_3[_local_12]);
+			elements = tmpList;
+			
+			tmpList = [];
+			var index:int = 0;
+			var cf:ColorTransform = new ColorTransform();
+			// 设置颜色，getPixel时需要使用
+			for (index = 0; index < elements.length; index++) {
+				cf.color = index;
+				tmpList.push(elements[index].transform.colorTransform);
+				elements[index].transform.colorTransform = cf;
+			}
+			
+			var mtx:Matrix = new Matrix();
+			mtx.tx = -point.x;
+			mtx.ty = -point.y;
+			var tmpData:BitmapData = new BitmapData(1, 1);
+			var orgRect:Rectangle = new Rectangle(0, 0, tmpData.width, tmpData.height);
+			tmpData.draw(targetParent, mtx, null, null, orgRect);
+			var colorIndex:int = tmpData.getPixel(0, 0);
+			// 颜色重置回去
+			for (index = 0; index < elements.length; index++) {
+				elements[index].transform.colorTransform = tmpList[index];
+			}
+			return elements[colorIndex];
 		}
 
-		private static function setfilter(_arg_1:int):ColorMatrixFilter
+		private static function setfilter(index:int):ColorMatrixFilter
 		{
-			var _local_2:Array = new Array();
-			_local_2 = _local_2.concat([1, 0, 0, 2, 0]);
-			_local_2 = _local_2.concat([1, 0, 0, 2, 0]);
-			_local_2 = _local_2.concat([1, 0, 0, 2, 0]);
-			_local_2 = _local_2.concat([1, 0, 0, 1, 0]);
-			return (new ColorMatrixFilter(_local_2));
+			var params:Array = [];
+			params = params.concat([1, 0, 0, 2, 0]);
+			params = params.concat([1, 0, 0, 2, 0]);
+			params = params.concat([1, 0, 0, 2, 0]);
+			params = params.concat([1, 0, 0, 1, 0]);
+			return new ColorMatrixFilter(params);
 		}
 
 	}

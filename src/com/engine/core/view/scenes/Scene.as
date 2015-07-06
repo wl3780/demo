@@ -26,7 +26,6 @@
 	import com.engine.core.view.role.MainChar;
 	import com.engine.core.view.world.MapLayer;
 	import com.engine.namespaces.coder;
-	import com.engine.utils.Bezier;
 	import com.engine.utils.Hash;
 	import com.engine.utils.HitTest;
 	import com.engine.utils.SuperKey;
@@ -428,7 +427,7 @@
 			var _local_7:Char;
 			var _local_8:int;
 			var _local_3:Rectangle = new Rectangle((this.mainChar.x - _arg_1), (this.mainChar.y - _arg_1), (_arg_1 * 2), (_arg_1 * 2));
-			var _local_4:Array = this.fine(_local_3, true);
+			var _local_4:Array = this.find(_local_3, true);
 			var _local_5:Array = [];
 			var _local_6:int;
 			while (_local_6 < _local_4.length) {
@@ -449,7 +448,7 @@
 			return (null);
 		}
 
-		public function fine(area:Rectangle, exact:Boolean, definition:int=100):Array
+		public function find(area:Rectangle, exact:Boolean, definition:int=100):Array
 		{
 			return this.$nodeTree.find(area, exact, definition);
 		}
@@ -682,14 +681,14 @@
 			}
 		}
 
-		protected function keyDownFunc(_arg_1:KeyboardEvent):void
+		protected function keyDownFunc(evt:KeyboardEvent):void
 		{
-			_shiftKey = _arg_1.shiftKey;
+			_shiftKey = evt.shiftKey;
 			Core.stage.removeEventListener(KeyboardEvent.KEY_DOWN, this.keyDownFunc);
 			Core.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.keyDownFunc);
 		}
 
-		protected function keyUpFunc(_arg_1:KeyboardEvent):void
+		protected function keyUpFunc(evt:KeyboardEvent):void
 		{
 			_shiftKey = false;
 			Core.stage.removeEventListener(KeyboardEvent.KEY_UP, this.keyUpFunc);
@@ -699,40 +698,23 @@
 		public function getSkillTile(_arg_1:Point):Avatar
 		{
 			var _local_2:Rectangle = new Rectangle((this.mouseX - 100), (this.mouseY - 100), 200, 200);
-			var _local_3:Array = this.fine(_local_2, false, 150);
+			var _local_3:Array = this.find(_local_2, false, 150);
 			return ((HitTest.getChildUnderPoint(this, _arg_1, _local_3) as Avatar));
 		}
 
-		protected function mouseDownFunc(_arg_1:MouseEvent):void
+		protected function mouseUpFunc(evt:MouseEvent):void
 		{
-			var _local_3:Point;
-			var _local_4:Point;
-			var _local_5:Point;
-			var _local_6:Array;
-			var _local_7:Rectangle;
-			var _local_8:Array;
-			if (clickEnbeled == false) {
+			this.isMouseDown = false;
+			this.autoWalk = false;
+			if (Core.sceneClickAbled == false) {
 				return;
 			}
-			this.isMouseDown = true;
-			this.mouseDownTime = getTimer();
-			var _local_2:Point = new Point();
-			_local_2.x = mouseX;
-			_local_2.y = mouseY;
-			this.mouseDownPoint = _local_2;
-			if (_shiftKey) {
-				_local_3 = new Point(this.mainChar.x, this.mainChar.y);
-				_local_4 = this.mouseDownPoint;
-				_local_5 = new Point(this.mouseX, 0);
-				_local_6 = Bezier.drawBezier(_local_3, _local_4, _local_5);
-			} else {
-				_local_7 = new Rectangle((this.mouseX - 100), (this.mouseY - 100), 200, 200);
-				_local_8 = this.fine(_local_7, false, 100);
-				this.selectAvatar = (HitTest.getChildUnderPoint(this, this.mouseDownPoint, _local_8) as Avatar);
-				if ((getTimer() - this.time) > 500) {
-					this.mainCharWalk(this.mouseDownPoint);
-					this.time = getTimer();
-				}
+		}
+		
+		protected function mouseDownFunc(evt:MouseEvent):void
+		{
+			if (Scene.clickEnbeled == false) {
+				return;
 			}
 		}
 
@@ -1158,15 +1140,6 @@
 			return (new Point(_local_7, _local_8));
 		}
 
-		protected function mouseUpFunc(_arg_1:MouseEvent):void
-		{
-			this.isMouseDown = false;
-			this.autoWalk = false;
-			if (Core.sceneClickAbled == false) {
-				return;
-			}
-		}
-
 		protected function zuobi():Boolean
 		{
 			var _local_1:Date = new Date();
@@ -1229,7 +1202,7 @@
 				this.autoWalk = false;
 			}
 			var _local_2:Rectangle = new Rectangle((this.mouseX - 200), (this.mouseY - 280), 400, 560);
-			var _local_3:Array = this.fine(_local_2, false, 150);
+			var _local_3:Array = this.find(_local_2, false, 150);
 			var _local_5:DisplayObject = (HitTest.getChildUnderPoint(this, new Point(mouseX, mouseY), _local_3) as DisplayObject);
 			_local_4 = (_local_5 as IAvatar);
 			if ((_local_5 as HeadShape)) {
