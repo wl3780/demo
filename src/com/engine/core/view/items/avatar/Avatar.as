@@ -571,7 +571,7 @@
 		}
 		public function get pt():SquarePt
 		{
-			return (_pt);
+			return _pt;
 		}
 
 		public function set bodyVisible(val:Boolean):void

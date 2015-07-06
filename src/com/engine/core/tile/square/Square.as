@@ -1,6 +1,6 @@
 ﻿package com.engine.core.tile.square
 {
-	import com.engine.core.tile.TileConstant;
+	import com.engine.core.tile.TileConst;
 	
 	import flash.display.Graphics;
 	import flash.display.GraphicsPathCommand;
@@ -113,45 +113,45 @@
 
 		public function get top_left():Point
 		{
-			var px:Number = TileConstant.TILE_SIZE * this.x;
-			var py:Number = TileConstant.TILE_SIZE * this.y;
+			var px:Number = TileConst.TILE_SIZE * this.x;
+			var py:Number = TileConst.TILE_SIZE * this.y;
 			return new Point(px, py);
 		}
 
 		public function get top_right():Point
 		{
-			var px:Number = TileConstant.TILE_SIZE * (this.x + 1);
-			var py:Number = TileConstant.TILE_SIZE * this.y;
+			var px:Number = TileConst.TILE_SIZE * (this.x + 1);
+			var py:Number = TileConst.TILE_SIZE * this.y;
 			return new Point(px, py);
 		}
 
 		public function get bottom_left():Point
 		{
-			var px:Number = TileConstant.TILE_SIZE * this.x;
-			var py:Number = TileConstant.TILE_SIZE * (this.y + 1);
+			var px:Number = TileConst.TILE_SIZE * this.x;
+			var py:Number = TileConst.TILE_SIZE * (this.y + 1);
 			return new Point(px, py);
 		}
 
 		public function get bottom_right():Point
 		{
-			var px:Number = TileConstant.TILE_SIZE * (this.x + 1);
-			var py:Number = TileConstant.TILE_SIZE * (this.y + 1);
+			var px:Number = TileConst.TILE_SIZE * (this.x + 1);
+			var py:Number = TileConst.TILE_SIZE * (this.y + 1);
 			return new Point(px, py);
 		}
 
 		public function get midVertex():Point
 		{
-			var midX:Number = (TileConstant.TILE_SIZE * this.x) - (TileConstant.TILE_SIZE / 2);
-			var midY:Number = (TileConstant.TILE_SIZE * this.y) - (TileConstant.TILE_SIZE / 2);
+			var midX:Number = (TileConst.TILE_SIZE * this.x) - (TileConst.TILE_SIZE / 2);
+			var midY:Number = (TileConst.TILE_SIZE * this.y) - (TileConst.TILE_SIZE / 2);
 			return new Point(midX, midY);
 		}
 
 		public function getBounds():Rectangle
 		{
-			var px:Number = this.x * TileConstant.TILE_SIZE;
-			var py:Number = this.y * TileConstant.TILE_SIZE;
-			var pw:Number = TileConstant.TILE_SIZE;
-			var ph:Number = TileConstant.TILE_SIZE;
+			var px:Number = this.x * TileConst.TILE_SIZE;
+			var py:Number = this.y * TileConst.TILE_SIZE;
+			var pw:Number = TileConst.TILE_SIZE;
+			var ph:Number = TileConst.TILE_SIZE;
 			return new Rectangle(px, py, pw, ph);
 		}
 

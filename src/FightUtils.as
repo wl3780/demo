@@ -4,7 +4,7 @@
 	import com.engine.core.view.items.avatar.ItemAvatar;
 	import com.engine.core.view.role.Char;
 	import com.engine.core.view.scenes.SceneConstant;
-	import com.engine.utils.gome.LinearAndFan;
+	import com.engine.utils.gome.LinearUtils;
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Linear;
 	
@@ -94,7 +94,7 @@
 				_local_1.y = (_local_1.y + (((Math.random() * 1) >> 0) * arr[((Math.random() * 2) >> 0)]));
 				var _local_2:ItemAvatar = getEffect(effect_id, _local_1, null, SceneConstant.BOTTOM_LAYER);
 			}
-			array = LinearAndFan.lineAttck(startPoint, endPoint, interval);
+			array = LinearUtils.lineAttck(startPoint, endPoint, interval);
 			arr = [1, -1];
 			timer = new Timer(delay);
 			timer.start();
@@ -119,7 +119,7 @@
 				}
 			}
 			_playEndFunc = playEndFunc;
-			var p:Point = LinearAndFan.pointBetweenPoint(endPoint, startPoint, -100);
+			var p:Point = LinearUtils.pointBetweenPoint(endPoint, startPoint, -100);
 			p.y = (p.y - 60);
 			effect = getEffect(pass_effect, p, startPoint, SceneConstant.TOP_LAYER);
 			var _x:int = endPoint.x;
@@ -208,7 +208,7 @@
 				return;
 			}
 			_playEndFunc = playEndFunc;
-			var p:Point = LinearAndFan.pointBetweenPoint(new Point(attatched.x, attatched.y), startPoint, -60);
+			var p:Point = LinearUtils.pointBetweenPoint(new Point(attatched.x, attatched.y), startPoint, -60);
 			p.y = (p.y - 60);
 			effect = getEffect(pass_effect, p, startPoint, SceneConstant.TOP_LAYER);
 			_x = attatched.x;
@@ -298,7 +298,7 @@
 				}
 				startPoint.y = (startPoint.y - 50);
 				endPoint.y = (endPoint.y - 50);
-				arr = LinearAndFan.sectorAttack(startPoint, endPoint, size, num, minRadius);
+				arr = LinearUtils.sectorAttack(startPoint, endPoint, size, num, minRadius);
 				timer = new Timer(delay);
 				timer.addEventListener(TimerEvent.TIMER, timeFunction);
 				timer.start();

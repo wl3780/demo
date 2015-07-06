@@ -2,8 +2,7 @@
 {
 	import com.engine.core.Core;
 	import com.engine.core.tile.Pt;
-	import com.engine.core.tile.TileConstant;
-	import com.engine.core.tile.square.SquarePt;
+	import com.engine.core.tile.TileConst;
 	import com.engine.core.view.BitmapScale9Grid;
 	import com.engine.core.view.items.HeadShowShape;
 	import com.engine.core.view.items.InstancePool;
@@ -18,7 +17,7 @@
 	import com.engine.core.view.scenes.SceneEvent;
 	import com.engine.core.view.scenes.SceneEventDispatcher;
 	import com.engine.namespaces.coder;
-	import com.engine.utils.gome.TileUitls;
+	import com.engine.utils.gome.TileUtils;
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Linear;
 	
@@ -839,28 +838,6 @@
 			this.stopMove();
 		}
 
-		override public function set pt(_arg_1:SquarePt):void
-		{
-			super.pt = _arg_1;
-		}
-
-		override public function set point(_arg_1:Point):void
-		{
-			super.point = _arg_1;
-		}
-
-		override public function set x(_arg_1:Number):void
-		{
-			super.x = _arg_1;
-			this.setAlpha();
-		}
-
-		override public function set y(_arg_1:Number):void
-		{
-			super.y = _arg_1;
-			this.setAlpha();
-		}
-
 		public function stopMove():void
 		{
 			if (!avatarParts) {
@@ -1179,7 +1156,7 @@
 				_local_3 = 0;
 				while (_local_3 < this.pathArr.length) {
 					_local_5 = this.pathArr[_local_3];
-					_local_6 = TileUitls.getIsoIndexMidVertex(_local_5);
+					_local_6 = TileUtils.getIsoIndexMidVertex(_local_5);
 					_local_2.push(_local_6);
 					_local_3++;
 				}
@@ -1585,10 +1562,10 @@
 			var _local_4:int;
 			var _local_5:int;
 			if (_arg_1.length == 1) {
-				_local_2 = (_arg_1[0].x / TileConstant.TILE_SIZE);
-				_local_3 = (_arg_1[0].y / TileConstant.TILE_SIZE);
-				_local_4 = (this.x / TileConstant.TILE_SIZE);
-				_local_5 = (this.y / TileConstant.TILE_SIZE);
+				_local_2 = (_arg_1[0].x / TileConst.TILE_SIZE);
+				_local_3 = (_arg_1[0].y / TileConst.TILE_SIZE);
+				_local_4 = (this.x / TileConst.TILE_SIZE);
+				_local_5 = (this.y / TileConst.TILE_SIZE);
 				if ((((_local_2 == _local_4)) && ((_local_3 == _local_5)))) {
 					return;
 				}

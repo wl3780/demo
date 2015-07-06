@@ -32,7 +32,7 @@
 	import com.engine.utils.SuperKey;
 	import com.engine.utils.astar.SquareAstar;
 	import com.engine.utils.gome.SquareUitls;
-	import com.engine.utils.gome.TileUitls;
+	import com.engine.utils.gome.TileUtils;
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Linear;
 	
@@ -825,11 +825,11 @@
 				_local_3 = this.coder::astar.getPath(SquareGroup.getInstance().hash.hash, _local_4, _local_5);
 				if (_local_3.length) {
 					_local_6 = _local_3[(_local_3.length - 1)];
-					if (TileUitls.getIndex(_local_6).key == _local_5.key) {
+					if (TileUtils.getIndex(_local_6).key == _local_5.key) {
 						_local_3[(_local_3.length - 1)] = _arg_2;
 					}
 					_local_7 = _local_3[0];
-					if (TileUitls.getIndex(_local_7).key == _local_4.key) {
+					if (TileUtils.getIndex(_local_7).key == _local_4.key) {
 						if (_local_4.toString() != _arg_1.toString()) {
 							_local_3[0] = _arg_1;
 						}
@@ -853,11 +853,11 @@
 			_local_3 = this.coder::astar.getPath(SquareGroup.getInstance().hash.hash, _local_4, _local_5);
 			if (_local_3.length) {
 				_local_6 = _local_3[(_local_3.length - 1)];
-				if (TileUitls.getIndex(_local_6).key == _local_5.key) {
+				if (TileUtils.getIndex(_local_6).key == _local_5.key) {
 					_local_3[(_local_3.length - 1)] = _arg_2;
 				}
 				_local_7 = _local_3[0];
-				if (TileUitls.getIndex(_local_7).key == _local_4.key) {
+				if (TileUtils.getIndex(_local_7).key == _local_4.key) {
 					if (_local_4.toString() != _arg_1.toString()) {
 						_local_3[0] = _arg_1;
 					}

@@ -1,58 +1,65 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.utils.Bezier
-
 package com.engine.utils
 {
-    import flash.geom.Point;
+	import flash.geom.Point;
 
-    public class Bezier 
-    {
-
-
-        public static function drawBezier3(_arg_1:Point, _arg_2:Point, _arg_3:Point, _arg_4:Point, _arg_5:int=10):Array
-        {
-            var _local_9:Number;
-            var _local_10:Number;
-            var _local_11:Number;
-            var _local_6:Number = (1 / _arg_5);
-            var _local_7:Array = [];
-            var _local_8:Number = 0;
-            while (_local_8 <= 1) {
-                _local_9 = (1 - _local_8);
-                _local_10 = ((((pow(_local_9, 3) * _arg_1.x) + (((3 * _arg_3.x) * _local_8) * pow(_local_9, 2))) + (((3 * _arg_4.x) * pow(_local_8, 2)) * _local_9)) + (_arg_2.x * pow(_local_8, 3)));
-                _local_11 = ((((pow(_local_9, 3) * _arg_1.y) + (((3 * _arg_3.y) * _local_8) * pow(_local_9, 2))) + (((3 * _arg_4.y) * pow(_local_8, 2)) * _local_9)) + (_arg_2.y * pow(_local_8, 3)));
-                _local_7.push(new Point(_local_10, _local_11));
-                _local_8 = (_local_8 + _local_6);
-            };
-            return (_local_7);
-        }
-
-        public static function drawBezier(_arg_1:Point, _arg_2:Point, _arg_3:Point, _arg_4:int=40):Array
-        {
-            var _local_8:Number;
-            var _local_9:Number;
-            var _local_10:Number;
-            var _local_5:Number = (1 / _arg_4);
-            var _local_6:Array = [];
-            var _local_7:Number = 0;
-            while (_local_7 <= 1) {
-                _local_8 = (1 - _local_7);
-                _local_9 = (((Math.pow((1 - _local_7), 2) * _arg_1.x) + (((2 * _local_7) * (1 - _local_7)) * _arg_3.x)) + (Math.pow(_local_7, 2) * _arg_2.x));
-                _local_10 = (((Math.pow((1 - _local_7), 2) * _arg_1.y) + (((2 * _local_7) * (1 - _local_7)) * _arg_3.y)) + (Math.pow(_local_7, 2) * _arg_2.y));
-                _local_6.push(new Point(_local_9, _local_10));
-                _local_7 = (_local_7 + _local_5);
-            };
-            return (_local_6);
-        }
-
-        public static function pow(_arg_1:Number, _arg_2:Number):Number
-        {
-            return (Math.pow(_arg_1, _arg_2));
-        }
-
-
-    }
-}//package com.engine.utils
-
+	/**
+	 * 贝塞尔曲线
+	 */	
+	public class Bezier
+	{
+		public function Bezier()
+		{
+		}
+		
+		/**
+		 * 三次贝塞尔曲线
+		 * @param p1
+		 * @param p2
+		 * @param c1
+		 * @param c2
+		 * @param num
+		 * @return 
+		 */		
+		public static function drawBezier3(p1:Point, p2:Point, c1:Point, c2:Point, num:int=10):Array
+		{
+			var t:Number = 0;
+			var rt:Number;
+			var pos_x:Number;
+			var pos_y:Number;
+			var delta:Number = 1 / num;
+			var result:Array = [];
+			while (t <= 1) {
+				rt = 1 - t;
+				pos_x = Math.pow(rt, 3) * p1.x + 3 * c1.x * t * Math.pow(rt, 2) + 3 * c2.x * Math.pow(t, 2) * rt + p2.x * Math.pow(t, 3);
+				pos_y = Math.pow(rt, 3) * p1.y + 3 * c1.y * t * Math.pow(rt, 2) + 3 * c2.y * Math.pow(t, 2) * rt + p2.y * Math.pow(t, 3);
+				result.push(new Point(pos_x, pos_y));
+				t = t + delta;
+			}
+			return result;
+		}
+		
+		/**
+		 * 二次贝塞尔曲线
+		 * @param p1
+		 * @param p2
+		 * @param c
+		 * @param num
+		 * @return 
+		 */		
+		public static function drawBezier(p1:Point, p2:Point, c:Point, num:int=40):Array
+		{
+			var pos_x:Number;
+			var pos_y:Number;
+			var delta:Number = 1 / num;
+			var t:Number = 0;
+			var path:Array = [];
+			while (t <= 1) {
+				pos_x = Math.pow((1 - t), 2) * p1.x + 2 * t * (1 - t) * c.x + Math.pow(t, 2) * p2.x;
+				pos_y = Math.pow((1 - t), 2) * p1.y + 2 * t * (1 - t) * c.y + Math.pow(t, 2) * p2.y;
+				path.push(new Point(pos_x, pos_y));
+				t = (t + delta);
+			}
+			return path;
+		}
+	}
+}

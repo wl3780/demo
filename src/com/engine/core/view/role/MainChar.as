@@ -6,7 +6,6 @@
 	import com.engine.core.tile.square.SquarePt;
 	import com.engine.core.view.items.avatar.CharAction;
 	import com.engine.core.view.scenes.Scene;
-	import com.engine.core.view.scenes.SceneConstant;
 	import com.engine.namespaces.coder;
 	
 	import flash.display.BitmapData;
@@ -141,12 +140,9 @@
 			}
 		}
 
-		override public function set char_id(_arg_1:String):void
+		override public function set char_id(val:String):void
 		{
-			super.char_id = _arg_1;
-			var _local_2 = Scene.scene;
-			(_local_2.coder::removeRepeatObjectInAvatarHash(this));
-			Scene.scene.addItem(this, SceneConstant.MIDDLE_LAYER);
+			super.char_id = val;
 		}
 
 		override public function set point(_arg_1:Point):void

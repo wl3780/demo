@@ -1,6 +1,6 @@
 ﻿package com.engine.core.tile
 {
-    import com.engine.utils.gome.TileUitls;
+    import com.engine.utils.gome.TileUtils;
     
     import flash.display.Graphics;
     import flash.display.GraphicsPathCommand;
@@ -60,7 +60,7 @@
             if (!this.index){
                 return (null);
             };
-            return (TileUitls.indexToFlat(new Pt(this.index.x, this.index.y, (this.index.z + 1))));
+            return (TileUtils.indexToFlat(new Pt(this.index.x, this.index.y, (this.index.z + 1))));
         }
 
         public function get rightVertex():Point
@@ -68,7 +68,7 @@
             if (!this.index){
                 return (null);
             };
-            return (TileUitls.indexToFlat(new Pt((this.index.x + 1), this.index.y, this.index.z)));
+            return (TileUtils.indexToFlat(new Pt((this.index.x + 1), this.index.y, this.index.z)));
         }
 
         public function get topVertex():Point
@@ -76,7 +76,7 @@
             if (!this.index){
                 return (null);
             };
-            return (TileUitls.indexToFlat(new Pt(this.index.x, this.index.y, this.index.z)));
+            return (TileUtils.indexToFlat(new Pt(this.index.x, this.index.y, this.index.z)));
         }
 
         public function get bottonVertex():Point
@@ -84,7 +84,7 @@
             if (!this.index){
                 return (null);
             };
-            return (TileUitls.indexToFlat(new Pt((this.index.x + 1), this.index.y, (this.index.z + 1))));
+            return (TileUtils.indexToFlat(new Pt((this.index.x + 1), this.index.y, (this.index.z + 1))));
         }
 
         public function get midVertex():Point
@@ -92,15 +92,15 @@
             if (!this.index){
                 return (null);
             };
-            return (TileUitls.getIsoIndexMidVertex(this.index));
+            return (TileUtils.getIsoIndexMidVertex(this.index));
         }
 
         public function getBounds():Rectangle
         {
             var _local_1:Number = this.leftVertex.x;
             var _local_2:Number = this.topVertex.y;
-            var _local_3:Number = (TileConstant.TILE_SIZE * 2);
-            var _local_4:Number = TileConstant.TILE_SIZE;
+            var _local_3:Number = (TileConst.TILE_SIZE * 2);
+            var _local_4:Number = TileConst.TILE_SIZE;
             return (new Rectangle(_local_1, _local_2, _local_3, _local_4));
         }
 
