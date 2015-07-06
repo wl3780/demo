@@ -89,12 +89,12 @@
 				this.heights[i][j]);
 		}
 
-		public function getBitmapData(_arg_1:int, _arg_2:int):BitmapData
+		public function getBitmapData(dir:int, frame:int):BitmapData
 		{
 			try {
-				var _local_3:String = this.oid + Core.SIGN + this.link + Core.SIGN + this.bitmapdatas[_arg_1];
+				var _local_3:String = this.oid + Core.SIGN + this.link + Core.SIGN + this.bitmapdatas[dir];
 				var manager:AvatarAssetManager = AvatarAssetManager.getInstance();
-				return manager.bitmapdatas[_local_3][_arg_2] as BitmapData;
+				return manager.bitmapdatas[_local_3][frame] as BitmapData;
 			} catch(e:Error) {
 			}
 			return null;

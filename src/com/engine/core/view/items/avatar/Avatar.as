@@ -110,7 +110,6 @@
 			var avatar:Avatar = InstancePool.coder::getInstance().getAvatar(Avatar) as Avatar;
 			avatar.point = new Point();
 			avatar.avatarParts = new AvatartParts();
-			avatar.isSceneItem = true;
 			avatar.avatarParts.type = "Avatar";
 			avatar.avatarParts.onRender = avatar.onRender;
 			avatar.avatarParts.playEndFunc = avatar.playEndFunc;
@@ -118,6 +117,7 @@
 			avatar.avatarParts.setupReady = coder::setupReady;
 			avatar.avatarParts.disposeEffectsFunc = avatar.disposeEffects;
 			avatar.avatarParts.coder::oid = avatar.id;
+			avatar.isSceneItem = true;
 			avatar.dir = 0;
 			avatar.isDisposed = false;
 			return avatar;
@@ -220,16 +220,16 @@
 					_headShape = new HeadShape();
 					_headShape.owner = this;
 				}
-				if ((((_headShape.parent == null)) && (((this.parent) || (_headVisible))))) {
+				if (_headShape.parent == null && (this.parent || _headVisible)) {
 					if (Scene.scene.getSceneFlyMode()) {
 						Scene.scene.$flyLayer.addChild(_headShape);
 					} else {
 						Scene.scene.$topLayer.addChild(_headShape);
 					}
 				}
-				return (_headShape);
+				return _headShape;
 			}
-			return (null);
+			return null;
 		}
 
 		override public function set scaleX(val:Number):void
@@ -253,10 +253,9 @@
 			return this.shape;
 		}
 
-		public function set openShadow(_arg_1:Boolean):void
+		public function set openShadow(val:Boolean):void
 		{
-			var _local_2:Matrix;
-			if (_arg_1) {
+			if (val) {
 				if (this.shape == null) {
 					this.shape = new ShoadwShape();
 					this.shape.moveFunc = coder::flyerMove;
@@ -264,10 +263,10 @@
 				this.shape.owner = this;
 				this.shape.graphics.clear();
 				Scene.scene.$itemLayer.addChild(this.shape);
-				_local_2 = RecoverUtils.matrix;
-				_local_2.tx = (-(Core.char_shadow.width) / 2);
-				_local_2.ty = (-(Core.char_shadow.height) / 2);
-				this.shape.graphics.beginBitmapFill(Core.char_shadow, _local_2);
+				var mtx:Matrix = RecoverUtils.matrix;
+				mtx.tx = (-(Core.char_shadow.width) / 2);
+				mtx.ty = (-(Core.char_shadow.height) / 2);
+				this.shape.graphics.beginBitmapFill(Core.char_shadow, mtx);
 				this.shape.graphics.drawRect((-(Core.char_shadow.width) / 2), (-(Core.char_shadow.height) / 2), Core.char_shadow.width, Core.char_shadow.height);
 				this.shape.cacheAsBitmap = true;
 				if (this.shape.parent == null) {
@@ -276,8 +275,8 @@
 			} else {
 				if (this.shape) {
 					this.shape.dispose();
+					this.shape = null;
 				}
-				this.shape = null;
 			}
 		}
 
@@ -305,9 +304,9 @@
 			}
 		}
 
-		override public function set type(_arg_1:String):void
+		override public function set type(val:String):void
 		{
-			super.type = _arg_1;
+			super.type = val;
 			if ((((((((this.type == SceneConstant.CHAR)) || ((this.type == SceneConstant.MONSTER)))) || ((this.type == SceneConstant.NPC)))) || ((this.type == SceneConstant.SPECIAL_NPC)))) {
 				this.isShowbodyShoadw = true;
 			} else {
@@ -315,7 +314,7 @@
 			}
 			this.deayTime = getTimer();
 			if (_ap) {
-				_ap.type = _arg_1;
+				_ap.type = val;
 			}
 		}
 
@@ -546,15 +545,13 @@
 				0, 0, 0, 1, 0];
 		}
 
-		public function set pt(_arg_1:SquarePt):void
+		public function set pt(val:SquarePt):void
 		{
-			_pt = _arg_1;
-			var _local_2:Point = SquareUitls.squareTopixels(_arg_1);
-			super.x = _local_2.x;
-			super.y = _local_2.y;
-			_local_2.x = super.x;
-			_local_2.y = super.y;
-			_point = _local_2;
+			_pt = val;
+			var ppt:Point = SquareUitls.squareTopixels(val);
+			super.x = ppt.x;
+			super.y = ppt.y;
+			_point = ppt;
 			if (((this.shape) && ((this.jumping == false)))) {
 				if (this.shape.x != this.x) {
 					this.shape.x = this.x;
@@ -572,32 +569,30 @@
 			}
 			this.headShape.stageIntersects();
 		}
-
 		public function get pt():SquarePt
 		{
 			return (_pt);
 		}
 
-		public function set bodyVisible(_arg_1:Boolean):void
+		public function set bodyVisible(val:Boolean):void
 		{
-			this.stop = !(_arg_1);
-			_bodyVisible = _arg_1;
-			super.visible = _arg_1;
+			this.stop = !(val);
+			_bodyVisible = val;
+			super.visible = val;
 		}
-
 		public function get bodyVisible():Boolean
 		{
 			return (_bodyVisible);
 		}
 
-		override public function set visible(_arg_1:Boolean):void
+		override public function set visible(val:Boolean):void
 		{
-			_visible = _arg_1;
-			super.visible = _arg_1;
+			_visible = val;
+			super.visible = val;
 			if (this.shape) {
-				this.shape.visible = _arg_1;
+				this.shape.visible = val;
 			}
-			this.headVisible = _arg_1;
+			this.headVisible = val;
 		}
 
 		public function set point(val:Point):void
@@ -776,12 +771,11 @@
 
 		public function get avatarParts():AvatartParts
 		{
-			return (_ap);
+			return _ap;
 		}
-
-		public function set avatarParts(_arg_1:AvatartParts):void
+		public function set avatarParts(val:AvatartParts):void
 		{
-			_ap = _arg_1;
+			_ap = val;
 		}
 
 		public function setup():void
@@ -908,8 +902,8 @@
 
 		coder function setupReady():void
 		{
-			var _local_1:String = this.avatarParts.state;
-			this.loadCharActionAssets(_local_1);
+			var state:String = this.avatarParts.state;
+			this.loadCharActionAssets(state);
 			this.setupReady();
 		}
 
@@ -917,33 +911,30 @@
 		{
 		}
 
-		public function loadCharActionAssets(_arg_1:String):void
+		public function loadCharActionAssets(state:String):void
 		{
-			var _local_3:AvatarParam;
-			var _local_4:String;
-			if ((((_arg_1 == null)) || ((_arg_1 == "")))) {
+			if (state == null || state == "") {
 				return;
 			}
 			if (this.avatarParts.avatarParts == null) {
 				return;
 			}
-			var _local_2:Dictionary = this.avatarParts.avatarParts[_arg_1];
-			for each (_local_3 in _local_2) {
-				_local_4 = _local_3.assetsPath;
-				if (AvatarAssetManager.getInstance().checkLoadedFunc(_local_4) == true) {
+			var assetPath:String;
+			var dict:Dictionary = this.avatarParts.avatarParts[state];
+			for each (var paramItem:AvatarParam in dict) {
+				assetPath = paramItem.assetsPath;
+				if (AvatarAssetManager.getInstance().checkLoadedFunc(assetPath) == true) {
 					return;
 				}
-				_local_4 = _local_4.split(Core.TMP_FILE).join((("_" + _arg_1) + Core.TMP_FILE));
-				AvatarAssetManager.getInstance().loadAvatarAssets(_local_4, _arg_1, this.avatarParts.id);
+				assetPath = assetPath.split(Core.TMP_FILE).join("_" + state + Core.TMP_FILE);
+				AvatarAssetManager.getInstance().loadAvatarAssets(assetPath, state, this.avatarParts.id);
 			}
 		}
 
 		public function loadAvatarPart(_arg_1:String, _arg_2:AvatarRestrict=null):String
 		{
-			if ((((this.type == SceneConstant.COLLECTION_ITEM)) && (this.bitmapdata_mid))) {
-			}
 			if (this.isDisposed) {
-				return (null);
+				return null;
 			}
 			var _local_3:String = _arg_1;
 			var _local_4:Array = _arg_1.split("/");
@@ -1023,11 +1014,9 @@
 
 		public function removeEffect(_arg_1:int):void
 		{
-			var _local_2:String;
-			var _local_3:String;
 			if (this.avatarParts) {
-				_local_2 = ("eid_" + _arg_1);
-				_local_3 = this.avatarParts.removeEffect(_local_2);
+				var _local_2:String = ("eid_" + _arg_1);
+				var _local_3:String = this.avatarParts.removeEffect(_local_2);
 				if (_local_3) {
 					this.disposeEffects(_local_3);
 				}
@@ -1103,14 +1092,21 @@
 			this.loadCharActionAssets(_arg_1);
 		}
 
-		public function set dir(_arg_1:int):void
+		public function set dir(val:int):void
 		{
-			if (((this.isDisposed) || (!(this.avatarParts)))) {
+			if (this.isDisposed || !this.avatarParts) {
 				return;
 			}
-			if (this.avatarParts.dir != _arg_1) {
-				this.avatarParts.dir = _arg_1;
+			if (this.avatarParts.dir != val) {
+				this.avatarParts.dir = val;
 			}
+		}
+		public function get dir():int
+		{
+			if (!this.avatarParts) {
+				return 0;
+			}
+			return this.avatarParts.dir;
 		}
 
 		public function jumpPoint(_arg_1:Point):void
@@ -1119,14 +1115,6 @@
 
 		public function jumpPt(_arg_1:SquarePt):void
 		{
-		}
-
-		public function get dir():int
-		{
-			if (!this.avatarParts) {
-				return (0);
-			}
-			return (this.avatarParts.dir);
 		}
 
 		public function clear():void
@@ -1151,31 +1139,30 @@
 
 		protected function getAngle(_arg_1:Point, _arg_2:Point):Number
 		{
-			var _local_3:Number;
-			var _local_4:int = (_arg_2.x - _arg_1.x);
-			var _local_5:int = (_arg_2.y - _arg_1.y);
-			return (Math.atan2(_local_5, _local_4));
+			var dx:int = (_arg_2.x - _arg_1.x);
+			var dy:int = (_arg_2.y - _arg_1.y);
+			return Math.atan2(dy, dx);
 		}
 
 		protected function getDegree(_arg_1:Point, _arg_2:Point):Number
 		{
-			var _local_3:int;
-			var _local_4:int = (_arg_2.x - _arg_1.x);
-			var _local_5:int = (_arg_1.y - _arg_2.y);
-			if (_local_5 == 0) {
-				if ((_local_4 > 0)) {
-					_local_3 = 90;
+			var ret:int;
+			var dx:int = (_arg_2.x - _arg_1.x);
+			var dy:int = (_arg_1.y - _arg_2.y);
+			if (dy == 0) {
+				if (dx > 0) {
+					ret = 90;
 				} else {
-					_local_3 = 270;
+					ret = 270;
 				}
 			} else {
-				if ((_local_5 > 0)) {
-					_local_3 = (Math.atan((_local_4 / _local_5)) * _radian_);
+				if ((dy > 0)) {
+					ret = Math.atan(dx / dy) * _radian_;
 				} else {
-					_local_3 = ((Math.atan((_local_4 / _local_5)) * _radian_) + 180);
+					ret = Math.atan(dx / dy) * _radian_ + 180;
 				}
 			}
-			return (_local_3);
+			return ret;
 		}
 
 		public function setAlpha():void

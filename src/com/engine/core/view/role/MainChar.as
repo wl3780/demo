@@ -41,9 +41,9 @@
 			this.isMainChar = true;
 		}
 
-		override public function set pt(_arg_1:SquarePt):void
+		override public function set pt(val:SquarePt):void
 		{
-			super.pt = _arg_1;
+			super.pt = val;
 			var _local_2:Square = SquareGroup.getInstance().take(pt.key);
 			if (((_local_2) && ((_local_2.type > 0)))) {
 				(Scene.scene.coder::astar.mode == _local_2.type);

@@ -1,83 +1,77 @@
 ﻿package com.engine.core.view.items.avatar
 {
 	import com.engine.core.Core;
-	import com.engine.core.controls.elisor.Elisor;
-	import com.engine.core.view.base.BaseShape;
 	import com.engine.core.view.role.MainChar;
 	import com.engine.core.view.scenes.Scene;
 	import com.engine.core.view.scenes.SceneConstant;
 	import com.engine.namespaces.coder;
 	
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 
-	public class AvatarManager extends BaseShape 
+	public class AvatarManager extends EventDispatcher 
 	{
 
 		private static var _instance:AvatarManager;
 
-		public var hashArray:Array;
+		public var effectHash:Dictionary;
 		public var avatarHash:Dictionary;
+		public var hashArray:Array;
 		
-		private var hash:Dictionary;
-		private var elisor:Elisor;
 		private var _avatarParams_:Array;
 		private var lex:int;
-		private var timer_1:Timer;
 		private var avatars_lengh:int;
 		private var effects_length:int;
 		private var onceTime:Number;
 		private var lastHandleTimer:int = 0;
-		private var time:int = 0;
 		private var num:int = 2;
 		private var tmpIndex:int = 0;
 
 		public function AvatarManager()
 		{
-			this.hash = new Dictionary();
+			this.effectHash = new Dictionary();
 			this.hashArray = [];
 			this.avatarHash = new Dictionary();
-			this.elisor = Elisor.getInstance();
 			_avatarParams_ = [];
-			this.onceTime = Math.ceil((1000 / 30));
+			this.onceTime = Math.ceil(1000 / 30);
 			super();
-			addEventListener(Event.ENTER_FRAME, this.onEnterFrame);
+			Core.stage.addEventListener(Event.ENTER_FRAME, this.onEnterFrame);
 		}
 
 		coder static function getInstance():AvatarManager
 		{
 			if (_instance == null) {
-				_instance = new (AvatarManager)();
+				_instance = new AvatarManager();
 			}
-			return (_instance);
+			return _instance;
 		}
 
-
-		private function onEnterFrame(_arg_1:Event):void
+		private function onEnterFrame(evt:Event):void
 		{
-			var _local_3:int;
 			Core.totalAvatarAssetsIndex = this.avatars_lengh;
 			Core.totalEffectAssetsIndex = this.effects_length;
-			var _local_2:int = (getTimer() - this.lastHandleTimer);
-			Core.handleCount = Math.ceil((_local_2 / this.onceTime));
-			if ((Core.fps > 10)) {
-				_local_3 = Core.handleCount;
+			var passTime:int = getTimer() - this.lastHandleTimer;
+			Core.handleCount = Math.ceil(passTime / this.onceTime);
+			var handleCount:int;
+			if (Core.fps > 10) {
+				handleCount = Core.handleCount;
 			} else {
-				_local_3 = 1;
+				handleCount = 1;
 			}
 			if (Core.fps <= 3) {
-				_local_3 = Core.handleCount;
+				handleCount = Core.handleCount;
 			}
-			while (_local_3 > 0) {
-				this.onRenderFunc(_arg_1);
-				_local_3--;
+			while (handleCount > 0) {
+				this.onRenderFunc(evt);
+				handleCount--;
 			}
-			_local_3 = Core.handleCount;
-			while (_local_3 > 0) {
-				this.onRenderFunc2(_arg_1);
-				_local_3--;
+			handleCount = Core.handleCount;
+			while (handleCount > 0) {
+				this.onRenderFunc2(evt);
+				handleCount--;
 			}
 			this.lastHandleTimer = getTimer();
 		}
@@ -102,10 +96,10 @@
 					}
 					_local_4++;
 				}
-				for (_local_5 in this.hash) {
-					_local_3 = this.hash[_local_5];
+				for (_local_5 in this.effectHash) {
+					_local_3 = this.effectHash[_local_5];
 					if (((!((_local_3 == _local_2))) && (_local_3.isAutoDispose))) {
-						delete this.hash[_local_5];
+						delete this.effectHash[_local_5];
 					}
 				}
 				for (_local_6 in this.avatarHash) {
@@ -119,13 +113,10 @@
 			}
 		}
 
-		private function onRenderFunc(... _args):void
+		private function onRenderFunc(... args):void
 		{
-			var _local_3:int;
-			var _local_4:int;
-			var _local_5:Object;
 			Core.delayTime = getTimer();
-			if (((Scene.scene) && (Scene.scene.mainChar))) {
+			if (Scene.scene && Scene.scene.mainChar) {
 				if (Scene.scene.mainChar.runing == false) {
 					this.num = 2;
 				} else {
@@ -134,118 +125,110 @@
 			} else {
 				this.num = 2;
 			}
-			if ((this.num > int.MAX_VALUE)) {
-				this.num = 0;
-			}
-			var _local_2:int = (this.lex % this.num);
+			
+			var numIndex:int = this.lex % this.num;	// 分批渲染？？
 			if (this.hashArray.length) {
+				var renderNum:int;
 				this.avatars_lengh = this.hashArray.length;
-				if ((this.hashArray.length < 30)) {
-					_local_3 = 30;
+				if (this.hashArray.length < 30) {
+					renderNum = 30;
 				} else {
-					_local_3 = int((this.hashArray.length * 0.8));
+					renderNum = int(this.hashArray.length * 0.8);
 				}
-				_local_4 = 0;
-				while (_local_4 < _local_3) {
+				var idx:int = 0;
+				var parats:AvatartParts;
+				while (idx < renderNum) {
 					if (this.tmpIndex >= this.hashArray.length) {
 						this.tmpIndex = 0;
 					}
-					_local_5 = this.hashArray[this.tmpIndex];
-					if (_local_5.type == SceneConstant.CHAR) {
-						_local_5.bodyRender();
-						_local_5.effectRender();
+					parats = this.hashArray[this.tmpIndex];
+					if (parats.type == SceneConstant.CHAR) {
+						parats.bodyRender();
+						parats.effectRender();
 					} else {
-						if (_local_2 == 0) {
-							_local_5.bodyRender();
-							_local_5.effectRender();
+						if (numIndex == 0) {
+							parats.bodyRender();
+							parats.effectRender();
 						}
 					}
 					this.tmpIndex++;
-					_local_4++;
+					idx++;
 				}
 			}
 			this.lex++;
 		}
 
-		private function onRenderFunc2(... _args):void
+		private function onRenderFunc2(... args):void
 		{
-			var _local_2:AvatartParts;
 			this.effects_length = 0;
-			for each (_local_2 in this.avatarHash) {
-				_local_2.effectRender();
-				_local_2.bodyRender();
+			for each (var parts:AvatartParts in this.avatarHash) {
+				parts.effectRender();
+				parts.bodyRender();
 				this.effects_length++;
 			}
 		}
 
-		public function put(_arg_1:AvatartParts):void
+		public function put(parts:AvatartParts):void
 		{
-			if (_arg_1) {
-				if (_arg_1.type == SceneConstant.EFFECT) {
-					if (this.hash[_arg_1.id] == null) {
-						this.hash[_arg_1.id] = _arg_1;
+			if (parts) {
+				if (parts.type == SceneConstant.EFFECT) {
+					if (this.effectHash[parts.id] == null) {
+						this.effectHash[parts.id] = parts;
 					}
 				} else {
-					if (this.hashArray.indexOf(_arg_1) == -1) {
-						this.hashArray.push(_arg_1);
+					if (this.hashArray.indexOf(parts) == -1) {
+						this.hashArray.push(parts);
 					}
 				}
-				if (this.avatarHash[_arg_1.id] == null) {
-					this.avatarHash[_arg_1.id] = _arg_1;
+				if (this.avatarHash[parts.id] == null) {
+					this.avatarHash[parts.id] = parts;
 				}
 			}
 		}
 
-		public function remove(_arg_1:String):void
+		public function remove(id:String):void
 		{
-			var _local_2:int;
-			if (this.hash[_arg_1]) {
-				delete this.hash[_arg_1];
+			if (this.effectHash[id]) {
+				delete this.effectHash[id];
 			} else {
-				_local_2 = this.hashArray.indexOf(this.avatarHash[_arg_1]);
-				if (_local_2 != -1) {
-					this.hashArray.splice(_local_2, 1);
+				var idx:int = this.hashArray.indexOf(this.avatarHash[id]);
+				if (idx != -1) {
+					this.hashArray.splice(idx, 1);
 				}
 			}
-			if (this.avatarHash[_arg_1]) {
-				delete this.avatarHash[_arg_1];
+			if (this.avatarHash[id]) {
+				delete this.avatarHash[id];
 			}
 		}
 
-		public function take(_arg_1:String):AvatartParts
+		public function take(id:String):AvatartParts
 		{
-			return (this.avatarHash[_arg_1]);
+			return this.avatarHash[id];
 		}
 
 		private function _loadedAvatar_():void
 		{
-			var _local_1:Object;
-			var _local_2:String;
-			var _local_3:String;
-			var _local_4:Dictionary;
-			var _local_5:AvatartParts;
-			var _local_6:AvatarParam;
-			var _local_7:AvatarParam;
 			if (_avatarParams_.length) {
-				_local_1 = _avatarParams_.shift();
-				_local_2 = _local_1.key;
-				_local_3 = _local_1.avatarParts_id;
-				_local_4 = _local_1.avatarParams;
-				_local_5 = (this.avatarHash[_local_3] as AvatartParts);
-				if (_local_5) {
-					var _local_8 = _local_5;
-					(_local_8.coder::setupStart(_local_2));
-					for each (_local_6 in _local_4) {
-						_local_7 = (_local_6.clone() as AvatarParam);
-						_local_7.coder::assets_id = _local_1.assets_id;
-						_local_7.startPlayTime = _local_1.startTime;
-						var _local_10 = _local_5;
-						(_local_10.coder::addAvatarPart(_local_7));
+				var next:Object = _avatarParams_.shift();
+				var key:String = next.key;
+				var parts_id:String = next.avatarParts_id;
+				var params:Dictionary = next.avatarParams;
+				var parts:AvatartParts = this.avatarHash[parts_id] as AvatartParts;
+				if (parts) {
+					var tmpParts:AvatartParts = parts;
+					tmpParts.coder::setupStart(key);
+					var tmpParam:AvatarParam;
+					for each (var paramItem:AvatarParam in params) {
+						tmpParam = paramItem.clone() as AvatarParam;
+						tmpParam.coder::assets_id = next.assets_id;
+						tmpParam.startPlayTime = next.startTime;
+						
+						tmpParts = parts;
+						tmpParts.coder::addAvatarPart(tmpParam);
 					}
-					_local_8 = _local_5;
-					(_local_8.coder::_setupReady_(_local_2));
+					tmpParts = parts;
+					tmpParts.coder::_setupReady_(key);
 				}
-				_local_4 = null;
 			}
 		}
 
@@ -253,23 +236,22 @@
 		{
 		}
 
-		public function loadedAvatarError(_arg_1:String):void
+		public function loadedAvatarError(id:String):void
 		{
-			var _local_2:AvatartParts = (this.avatarHash[_arg_1] as AvatartParts);
-			if (_local_2) {
-				var _local_3 = _local_2;
-				(_local_3.coder::loadedError());
+			var parts:AvatartParts = this.avatarHash[id] as AvatartParts;
+			if (parts) {
+				parts.coder::loadedError();
 			}
 		}
 
-		public function loadedAvatar(_arg_1:String, _arg_2:String, _arg_3:String, _arg_4:int, _arg_5:Dictionary):void
+		public function loadedAvatar(assets_id:String, key:String, parts_id:String, startTime:int, params:Dictionary):void
 		{
 			_avatarParams_.push({
-				"assets_id":_arg_1,
-				"key":_arg_2,
-				"avatarParts_id":_arg_3,
-				"startTime":_arg_4,
-				"avatarParams":_arg_5
+				"assets_id":assets_id,
+				"key":key,
+				"avatarParts_id":parts_id,
+				"startTime":startTime,
+				"avatarParams":params
 			});
 			_loadedAvatar_();
 		}

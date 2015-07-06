@@ -140,13 +140,13 @@
 			return (_arg_2);
 		}
 
-		private function getDis(_arg_1:SquarePt, _arg_2:SquarePt):int
+		private function getDis(pa:SquarePt, pb:SquarePt):int
 		{
-			var _local_3:int = (_arg_2.x - _arg_1.x);
+			var _local_3:int = (pb.x - pa.x);
 			if ((_local_3 < 0)) {
 				_local_3 = -(_local_3);
 			}
-			var _local_4:int = (_arg_2.y - _arg_1.y);
+			var _local_4:int = (pb.y - pa.y);
 			if ((_local_4 < 0)) {
 				_local_4 = -(_local_4);
 			}

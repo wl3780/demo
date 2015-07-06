@@ -144,13 +144,12 @@
 
 		public function get speed():Number
 		{
-			return (_speed);
+			return _speed;
 		}
-
-		public function set speed(_arg_1:Number):void
+		public function set speed(val:Number):void
 		{
-			_speed = _arg_1;
-			_sp = _arg_1;
+			_speed = val;
+			_sp = val;
 		}
 
 		public function sayWord(_arg_1:String):void
@@ -294,25 +293,29 @@
 
 		override public function get transform():Transform
 		{
-			return (this.bitmapdata_mid.transform);
+			if (this.bitmapdata_mid) {
+				return this.bitmapdata_mid.transform;
+			}
+			return null;
 		}
-
-		override public function set transform(_arg_1:Transform):void
+		override public function set transform(val:Transform):void
 		{
-			this.bitmapdata_mid.transform = _arg_1;
-		}
-
-		public function setSuitVisible(_arg_1:Boolean):void
-		{
-			_suitVisible = _arg_1;
-			if (_suit_effect) {
-				_suit_effect.visible = _arg_1;
+			if (this.bitmapdata_mid) {
+				this.bitmapdata_mid.transform = val;
 			}
 		}
 
-		public function showSuit(_arg_1:String):void
+		public function setSuitVisible(val:Boolean):void
 		{
-			this.suitURL = _arg_1;
+			_suitVisible = val;
+			if (_suit_effect) {
+				_suit_effect.visible = val;
+			}
+		}
+
+		public function showSuit(url:String):void
+		{
+			this.suitURL = url;
 			if (_suit_effect) {
 				_suit_effect.dispose();
 				if (_suit_effect.parent) {
@@ -325,7 +328,7 @@
 			}
 			_suit_effect.isSceneItem = false;
 			_suit_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			_suit_effect.loadAvatarPart(_arg_1);
+			_suit_effect.loadAvatarPart(url);
 			this.addChild(_suit_effect);
 			_suit_effect.visible = this.bodyVisible;
 		}
@@ -386,7 +389,7 @@
 		{
 			var _local_3:String = super.loadAvatarPart(_arg_1, _arg_2);
 			if (_halo_effect) {
-				if (isOnMonut) {
+				if (this.isOnMonut) {
 					_halo_effect.y = 20;
 				} else {
 					_halo_effect.y = 0;
@@ -509,43 +512,42 @@
 			}
 		}
 
-		override public function set bodyVisible(_arg_1:Boolean):void
+		override public function set bodyVisible(val:Boolean):void
 		{
-			var _local_2:ItemAvatar;
-			super.bodyVisible = _arg_1;
+			super.bodyVisible = val;
 			if (_song_effect) {
-				_song_effect.visible = _arg_1;
+				_song_effect.visible = val;
 			}
 			if (_song_effect2) {
-				_song_effect2.visible = _arg_1;
+				_song_effect2.visible = val;
 			}
 			if (_halo_effect) {
-				_halo_effect.visible = _arg_1;
+				_halo_effect.visible = val;
 			}
 			if (_suit_effect) {
-				_suit_effect.visible = _arg_1;
+				_suit_effect.visible = val;
 			}
 			if (_wing_effect_1) {
-				_wing_effect_1.visible = _arg_1;
+				_wing_effect_1.visible = val;
 			}
 			if (_wing_effect_2) {
-				_wing_effect_2.visible = _arg_1;
+				_wing_effect_2.visible = val;
 			}
 			if (this.buffSprite) {
-				this.buffSprite.visible = _arg_1;
+				this.buffSprite.visible = val;
 			}
 			if (this.wordShape) {
-				this.wordShape.visible = _arg_1;
+				this.wordShape.visible = val;
 			}
 			if (this.effectDic) {
-				for each (_local_2 in this.effectDic) {
-					if (_local_2.parent) {
-						_local_2.parent.removeChild(_local_2);
+				for each (var item:ItemAvatar in this.effectDic) {
+					if (item.parent) {
+						item.parent.removeChild(item);
 					}
-					_local_2.visible = _arg_1;
+					item.visible = val;
 				}
 			}
-			this.stop = !(_arg_1);
+			this.stop = !val;
 		}
 
 		public function addBuff(_arg_1:DisplayObject):void
@@ -746,14 +748,14 @@
 			}
 		}
 
-		override public function set alpha(_arg_1:Number):void
+		override public function set alpha(val:Number):void
 		{
-			super.alpha = _arg_1;
+			super.alpha = val;
 			if (this.headShape) {
-				this.headShape.alpha = _arg_1;
+				this.headShape.alpha = val;
 			}
 			if (this.shadowShape) {
-				this.shadowShape.alpha = _arg_1;
+				this.shadowShape.alpha = val;
 			}
 		}
 
@@ -780,20 +782,20 @@
 			}
 		}
 
-		override public function addChild(_arg_1:DisplayObject):DisplayObject
+		override public function addChild(child:DisplayObject):DisplayObject
 		{
-			if (((this.isMainChar) && ((_arg_1 as ItemAvatar)))) {
-				ItemAvatar(_arg_1).isAutoDispose = false;
+			if (this.isMainChar && (child as ItemAvatar)) {
+				ItemAvatar(child).isAutoDispose = false;
 			}
-			return (super.addChild(_arg_1));
+			return super.addChild(child);
 		}
 
-		override public function addChildAt(_arg_1:DisplayObject, _arg_2:int):DisplayObject
+		override public function addChildAt(child:DisplayObject, index:int):DisplayObject
 		{
-			if (((this.isMainChar) && ((_arg_1 as ItemAvatar)))) {
-				ItemAvatar(_arg_1).isAutoDispose = false;
+			if (this.isMainChar && (child as ItemAvatar)) {
+				ItemAvatar(child).isAutoDispose = false;
 			}
-			return (super.addChildAt(_arg_1, _arg_2));
+			return super.addChildAt(child, index);
 		}
 
 		public function removeBuff(_arg_1:int):void
@@ -823,13 +825,13 @@
 			}
 		}
 
-		override public function set isDeath(_arg_1:Boolean):void
+		override public function set isDeath(val:Boolean):void
 		{
-			_isDeath = _arg_1;
+			_isDeath = val;
 			if (this.walkEndFunc != null) {
 				this.walkEndFunc = null;
 			}
-			if (_arg_1) {
+			if (val) {
 				this.setSuitVisible(false);
 			} else {
 				this.setSuitVisible(true);
@@ -851,7 +853,6 @@
 		{
 			super.x = _arg_1;
 			this.setAlpha();
-			this.name = this.name;
 		}
 
 		override public function set y(_arg_1:Number):void
@@ -889,21 +890,21 @@
 			}
 		}
 
-		public function faceTo(_arg_1:Avatar):void
+		public function faceTo(char:Avatar):void
 		{
 			if (this.jumping == false) {
-				if (_arg_1) {
-					this.dir = this.getDretion(_arg_1.x, _arg_1.y);
+				if (char) {
+					this.dir = this.getDretion(char.x, char.y);
 				}
 			}
 		}
 
-		public function setRotation(_arg_1:Number, _arg_2:Number):void
+		public function setRotation(px:Number, py:Number):void
 		{
-			var _local_3:Number = (this.x - _arg_1);
-			var _local_4:Number = (this.y - _arg_2);
-			var _local_5:Number = ((Math.atan2(_local_4, _local_3) * 180) / Math.PI);
-			this.rotation = _local_5;
+			var dx:Number = this.x - px;
+			var dy:Number = this.y - py;
+			var r:Number = (Math.atan2(dy, dx) * 180) / Math.PI;
+			this.rotation = r;
 		}
 
 		public function faceToPoint(_arg_1:Number, _arg_2:Number):void

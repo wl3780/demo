@@ -13,6 +13,7 @@
 
 		public function NoderItem()
 		{
+			super();
 			this.registerNodeTree(Core.SCENE_ITEM_NODER);
 		}
 
