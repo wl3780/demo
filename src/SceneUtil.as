@@ -26,9 +26,9 @@
 			_arg_1.avatarParts.bodyRender(true);
 		}
 
-		public static function moveTo(_arg_1:Char, _arg_2:Point):void
+		public static function moveTo(char:Char, target:Point):void
 		{
-			GameScene.scene.charMoveTo(_arg_1, _arg_2.x, _arg_2.y);
+			GameScene.scene.charMoveTo(char, target.x, target.y);
 		}
 
 		public static function getJumpPath(from:Point, to:Point, time:int=5, _arg_4:int=300):Array

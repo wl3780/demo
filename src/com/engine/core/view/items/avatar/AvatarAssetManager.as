@@ -84,57 +84,49 @@
 
 		private function enterFrameFunc(evt:TimerEvent):void
 		{
-			var _local_2:int;
-			var _local_3:Object;
-			var _local_4:int;
-			var _local_5:int;
-			var _local_6:Object;
-			var _local_7:String;
-			var _local_8:String;
-			var _local_9:int;
-			var _local_10:Array;
-			var _local_11:String;
-			var _local_12:Dictionary;
+			var interval:int;
 			if (Core.fps >= 12) {
-				_local_2 = 5;
+				interval = 5;
 			} else {
-				_time = 20;
+				interval = 20;
 			}
-			if (((_loaderQuene.length) && (((Core.delayTime - _time) > _local_2)))) {
+			if (_loaderQuene.length && (Core.delayTime - _time) > interval) {
 				_time = Core.delayTime;
-				_local_3 = _loaderQuene.shift();
-				this.analyze(_local_3.avatarParam, _local_3.loader);
+				var loaderItem:Object = _loaderQuene.shift();
+				this.analyze(loaderItem.avatarParam, loaderItem.loader);
 			}
 			this.draw();
 			if (_assetsQuene.length > 0) {
-				_local_4 = _assetsQuene.length;
+				var passNum:int = _assetsQuene.length;
 				if (Core.fps < 10) {
-					if ((_assetsQuene.length > 20)) {
-						_local_4 = (_assetsQuene.length / 10);
+					if (_assetsQuene.length > 20) {
+						passNum = _assetsQuene.length / 10;
 					} else {
-						_local_4 = 1;
+						passNum = 1;
 					}
 				} else {
-					if ((_local_4 > 30)) {
-						_local_4 = 30;
+					if (passNum > 30) {
+						passNum = 30;
 					}
 				}
-				_local_5 = 0;
-				while (_local_5 < _local_4) {
+				var idx:int = 0;
+				while (idx < passNum) {
 					if (_assetsQuene.length) {
-						_local_6 = _assetsQuene.shift();
-						_local_7 = _local_6.url;
-						_local_8 = _local_6.owner;
-						_local_9 = _local_6.startTime;
-						_local_10 = _local_7.split("/");
-						_local_11 = _local_10[(_local_10.length - 1)];
-						_local_11 = _local_11.split(".")[0];
-						_local_12 = this.elements[_local_11];
-						if (_local_6.type == 0) {
-							AvatarManager.coder::getInstance().loadedAvatar(_local_6.key, _local_11, _local_8, _local_9, _local_12);
+						var assetItem:Object = _assetsQuene.shift();
+						if (assetItem.type == 0) {
+							var url:String = assetItem.url;
+							var owner:String = assetItem.owner;
+							var startTime:int = assetItem.startTime;
+							var arr:Array = url.split("/");
+							var avatarId:String = arr[arr.length-1];
+							avatarId = avatarId.split(".")[0];
+							var dict:Dictionary = this.elements[avatarId];
+							AvatarManager.coder::getInstance().loadedAvatar(assetItem.key, avatarId, owner, startTime, dict);
 						}
+					} else {
+						break;
 					}
-					_local_5++;
+					idx++;
 				}
 			}
 		}
@@ -145,77 +137,70 @@
 			AvatarManager.coder::getInstance().loadedAvatarError(evt.vo.data.owner as String);
 		}
 
-		public function loadAvatarAssets(_arg_1:String, _arg_2:String, _arg_3:String):void
+		public function loadAvatarAssets(url:String, action:String, parts_id:String):void
 		{
-			var _local_4:WealthGroupVo;
-			if ((((this.checkLoadedFunc(_arg_1) == false)) && (!((_arg_1 == null))))) {
-				_local_4 = new WealthGroupVo();
-				_local_4.level = WealthConstant.BUBBLE_LEVEL;
-				_local_4.addWealth(_arg_1, {"action":_arg_2});
-				_quene.addGroup(_local_4);
-				if (this.assetHash.indexOf(_arg_1) == -1) {
-					this.assetHash.push(_arg_1);
+			if (!url) {
+				return;
+			}
+			if (this.checkLoadedFunc(url) == false) {
+				var groupVo:WealthGroupVo = new WealthGroupVo();
+				groupVo.level = WealthConstant.BUBBLE_LEVEL;
+				groupVo.addWealth(url, {"action":action});
+				_quene.addGroup(groupVo);
+				if (this.assetHash.indexOf(url) == -1) {
+					this.assetHash.push(url);
 				}
 			} else {
 				_assetsQuene.push({
 					"type":1,
-					"url":_arg_1,
-					"owner":_arg_3,
-					"action":_arg_2
+					"url":url,
+					"owner":parts_id,
+					"action":action
 				});
 			}
 		}
 
-		public function loadAvatar(_arg_1:String, _arg_2:String, _arg_3:String=null):String
+		public function loadAvatar(smPath:String, oid:String, filePath:String=null):String
 		{
-			var _local_4:String = Core.coder::nextInstanceIndex().toString();
-			log("saiman", "加载动作资源：", _arg_1);
-			var _local_5:WealthGroupVo = new WealthGroupVo();
-			if (_arg_1.indexOf(".sm") == -1) {
-				_local_5.level = WealthConstant.BUBBLE_LEVEL;
+			var key:String = Core.coder::nextInstanceIndex().toString();
+			log("saiman", "加载动作资源：", smPath);
+			var groupVO:WealthGroupVo = new WealthGroupVo();
+			if (smPath.indexOf(Core.SM_FILE) == -1) {
+				groupVO.level = WealthConstant.BUBBLE_LEVEL;
 			}
-			var _local_6:Array = _arg_1.split("/");
-			var _local_7:String = _local_6[(_local_6.length - 1)];
-			_local_6 = _local_7.split(".sm")[0].split("_");
-			_local_5.addWealth(_arg_1, {
-				"owner":_arg_2,
+			groupVO.addWealth(smPath, {
+				"owner":oid,
 				"startTime":Core.delayTime,
-				"key":_local_4,
-				"assetsPath":_arg_3
+				"key":key,
+				"assetsPath":filePath
 			});
-			_quene.addGroup(_local_5);
-			if (this.assetHash.indexOf(_arg_1) == -1) {
-				this.assetHash.push(_arg_1);
+			_quene.addGroup(groupVO);
+			if (this.assetHash.indexOf(smPath) == -1) {
+				this.assetHash.push(smPath);
 			}
-			return (_local_4);
+			return key;
 		}
 
-		public function checkCleanAbled(_arg_1:AvatartParts):Boolean
+		public function checkCleanAbled(parts:AvatartParts):Boolean
 		{
-			var _local_3:String;
-			var _local_4:DisplayLoader;
-			var _local_5:String;
-			var _local_6:Array;
-			var _local_7:AvatarParam;
-			var _local_2:int;
-			while (_local_2 < this.assetHash.length) {
-				_local_4 = (WealthPool.getIntance().take(this.assetHash[_local_2]) as DisplayLoader);
-				_local_5 = this.assetHash[_local_2];
-				_local_6 = _local_5.split("/");
-				_local_5 = _local_6[(_local_6.length - 1)];
-				_local_5 = _local_5.split(".")[0];
-				if (_arg_1.hasAssets(_local_5)) {
-					return (false);
+			var idx:int;
+			while (idx < this.assetHash.length) {
+				var url:String = this.assetHash[idx];
+				var loader:DisplayLoader = WealthPool.getIntance().take(url) as DisplayLoader;
+				var arr:Array = url.split("/");
+				var avatarId:String = arr[arr.length-1];
+				avatarId = avatarId.split(".")[0];
+				if (parts.hasAssets(avatarId)) {
+					return false;
 				}
-				_local_2++;
+				idx++;
 			}
-			for (_local_3 in this.avatarParams) {
-				_local_7 = this.avatarParams[_local_3];
-				if (_arg_1.hasAssets(_local_7.oid)) {
-					return (false);
+			for each (var param:AvatarParam in this.avatarParams) {
+				if (parts.hasAssets(param.oid)) {
+					return false;
 				}
 			}
-			return (true);
+			return true;
 		}
 
 		public function cleanItems(_arg_1:Vector.<AvatartParts>):void
@@ -397,147 +382,277 @@
 			return (WealthPool.getIntance().has(_arg_1));
 		}
 
-		private function wealthLoadedFunc(_arg_1:WealthEvent):void
+		private function wealthLoadedFunc(evt:WealthEvent):void
 		{
-			var _local_4:Dictionary;
-			var _local_6:Dictionary;
-			var _local_7:Array;
-			var _local_8:String;
-			var _local_9:AvatarParam;
-			var _local_10:ByteArray;
-			var _local_11:int;
-			var _local_12:String;
-			var _local_13:XML;
-			var _local_14:String;
-			var _local_2:Array = _arg_1.vo.path.split("/");
-			var _local_3:String = _local_2[(_local_2.length - 1)];
-			_local_3 = _local_3.split(".")[0];
-			var _local_5:Object = WealthPool.getIntance().take(_arg_1.vo.path);
-			if ((_local_5 as DisplayLoader)) {
-				_local_7 = _local_3.split("_");
-				_local_8 = _local_7.pop();
-				_local_3 = _local_7.join("_");
-				if (this.elements[_local_3]) {
-					_local_9 = this.elements[_local_3][_local_8];
+			var array:Array = evt.vo.path.split("/");
+			var fileName:String = array[array.length-1];
+			fileName = fileName.split(".")[0];
+			var loader:Object = WealthPool.getIntance().take(evt.vo.path);
+			if (loader as DisplayLoader) {
+				var arr:Array = fileName.split("_");
+				var action:String = arr.pop();
+				fileName = arr.join("_");
+				if (this.elements[fileName]) {
+					var param:AvatarParam = this.elements[fileName][action];
 					_loaderQuene.push({
-						"avatarParam":_local_9,
-						"loader":DisplayLoader(_local_5).contentLoaderInfo
+						"avatarParam":param,
+						"loader":DisplayLoader(loader).contentLoaderInfo
 					});
 				}
-			} else {
-				if ((_local_5 as BingLoader)) {
-					if (this.elements[_local_3] == null) {
-						_local_10 = (BingLoader(_local_5).data as ByteArray);
-						_local_10.position = 0;
-						try {
-							_local_10.uncompress();
-						} catch(e:Error) {
-						}
-						_local_11 = _local_10.readInt();
-						_local_12 = _local_10.readMultiByte(_local_11, "cn-gb");
-						_local_13 = new XML(_local_12);
-						_local_14 = _arg_1.vo.data.assetsPath;
-						_local_4 = this.analyzeData(_local_3, _local_13, _local_14);
-						this.elements[_local_3] = _local_4;
-						_local_14 = _local_14.split(Core.TMP_FILE).join((("_" + CharAction.STAND) + Core.TMP_FILE));
-						this.loadAvatarAssets(_local_14, CharAction.STAND, _arg_1.vo.data.owner);
-						this.loadAvatarAssets(_local_14, CharAction.WALK, _arg_1.vo.data.owner);
-					} else {
-						_local_4 = this.elements[_local_3];
+			} else if (loader as BingLoader) {
+				var dict:Dictionary;
+				if (this.elements[fileName] == null) {
+					var bytes:ByteArray = BingLoader(loader).data as ByteArray;
+					bytes.position = 0;
+					try {
+						bytes.uncompress();
+					} catch(e:Error) {
 					}
-					AvatarManager.coder::getInstance().loadedAvatar(_arg_1.vo.data.key, _local_3, (_arg_1.vo.data.owner as String), _arg_1.vo.data.startTime, _local_4);
+					var size:int = bytes.readInt();
+					var str:String = bytes.readUTFBytes(size);
+					var xml:XML = new XML(str);
+					var assetsPath:String = evt.vo.data.assetsPath;
+					dict = this.analyzeData(fileName, xml, assetsPath);
+					this.elements[fileName] = dict;
+					assetsPath = assetsPath.split(Core.TMP_FILE).join("_" + CharAction.STAND + Core.TMP_FILE);
+					this.loadAvatarAssets(assetsPath, CharAction.STAND, evt.vo.data.owner);
+					this.loadAvatarAssets(assetsPath, CharAction.WALK, evt.vo.data.owner);
+				} else {
+					dict = this.elements[fileName];
 				}
+				AvatarManager.coder::getInstance().loadedAvatar(evt.vo.data.key, fileName, evt.vo.data.owner, evt.vo.data.startTime, dict);
 			}
 		}
 
 		private function analyze(avatarParam:AvatarParam, contentLoaderInfo:LoaderInfo):void
 		{
-			var c:Class;
+			if (!avatarParam || avatarParam.isDisposed || !contentLoaderInfo) {
+				return;
+			}
+			var frames:int = avatarParam.frames;
+			var id:String = avatarParam.oid;
+			var l:int = avatarParam.heights.length;
+			var type:String = avatarParam.type;
+			var num:int = 8;
+			if (l >= 5) {
+				num = 8;
+			} else {
+				num = 1;
+			}
+			
+			var clazz:Class;
 			var bmd:BitmapData;
 			var link:String;
-			var frames:int;
-			var j:int;
-			var id:String;
-			var l:int;
-			var type:String;
-			var num:int;
-			var i:int;
-			var class_:String;
+			var kName:String;
 			var index:int;
 			var indexLink:String;
 			var bmd_:BitmapData;
 			var mat:Matrix;
-			try {
-				if (((!(avatarParam)) || ((avatarParam.isDisposed == true)))) {
-					return;
-				}
-				frames = avatarParam.frames;
-				id = avatarParam.oid;
-				l = avatarParam.heights.length;
-				type = avatarParam.type;
-				num = 8;
-				if ((l >= 5)) {
-					num = 8;
-				} else {
-					num = 1;
-				}
-				i = 0;
-				while (i < num) {
-					link = ((avatarParam.id + Core.SIGN) + avatarParam.bitmapdatas[i]);
-					if (i < 5) {
-						j = 0;
-						while (j < frames) {
-							class_ = ((avatarParam.bitmapdatas[i] + ".") + j);
-							c = (contentLoaderInfo.applicationDomain.getDefinition(class_) as Class);
-							bmd = (new (c)() as BitmapData);
-							this.bitmapdatas[link][j] = bmd;
-							j = (j + 1);
-						}
-					} else {
-						index = (8 - i);
-						indexLink = ((((((avatarParam.id + Core.SIGN) + id) + ".") + avatarParam.link) + ".") + index);
-						j = 0;
-						while (j < frames) {
-							bmd_ = this.bitmapdatas[indexLink][j];
-							mat = new Matrix();
-							mat.scale(-1, 1);
-							mat.tx = bmd_.width;
-							bmd = new BitmapData(bmd_.width, bmd_.height, true, 0);
-							this.bitmapdatas[link][j] = bmd;
-							_bmdQuene.push({
-								"bmd_":bmd_,
-								"bmd":bmd,
-								"mat":mat
-							});
-							j = (j + 1);
-						}
+			var j:int = 0;
+			var i:int = 0;
+			while (i < num) {
+				link = avatarParam.id + Core.SIGN + avatarParam.bitmapdatas[i];
+				if (i < 5) {
+					j = 0;
+					while (j < frames) {
+						kName = avatarParam.bitmapdatas[i] + "." + j;
+						clazz = contentLoaderInfo.applicationDomain.getDefinition(kName) as Class;
+						bmd = new clazz() as BitmapData;
+						this.bitmapdatas[link][j] = bmd;
+						j++;
 					}
-					i = (i + 1);
+				} else {
+					index = 8 - i;
+					indexLink = avatarParam.id + Core.SIGN + id + "." + avatarParam.link + "." + index;
+					j = 0;
+					while (j < frames) {
+						bmd_ = this.bitmapdatas[indexLink][j];
+						mat = new Matrix();
+						mat.scale(-1, 1);
+						mat.tx = bmd_.width;
+						bmd = new BitmapData(bmd_.width, bmd_.height, true, 0);
+						this.bitmapdatas[link][j] = bmd;
+						_bmdQuene.push({
+							"bmd_":bmd_,
+							"bmd":bmd,
+							"mat":mat
+						});
+						j++;
+					}
 				}
-			} catch(e:Error) {
-				log("saiman", e.message);
+				i++;
 			}
 		}
 
 		private function draw():void
 		{
-			var _local_2:Object;
-			var _local_3:BitmapData;
-			var _local_4:BitmapData;
-			var _local_5:Matrix;
-			var _local_1:int = _bmdQuene.length;
-			while (_local_1) {
-				if (_bmdQuene.length) {
-					_local_2 = _bmdQuene.shift();
-					_local_3 = _local_2.bmd;
-					_local_4 = _local_2.bmd_;
-					_local_5 = _local_2.mat;
-					_local_3.draw(_local_4, _local_5, null, null, _local_4.rect);
-				}
-				_local_1--;
+			while (_bmdQuene.length) {
+				var info:Object = _bmdQuene.shift();
+				var target:BitmapData = info.bmd;
+				var source:BitmapData = info.bmd_;
+				var mtx:Matrix = info.mat;
+				target.draw(source, mtx, null, null, source.rect);
 			}
 		}
 
+		/*
+		private function analyzeData(fileName:String, xml:XML, path:String):Dictionary
+		{
+			var bmdKey:String;
+			var frameIdx:int;
+			var dirIdx:int;
+			var frameLen:int;
+			var frameW:int;
+			var frameH:int;
+			var flipIdx:int;
+			var flipFrameIdx:int;
+			var flipFrameX:int;
+			var _local_30:String;
+			var _local_31:int;
+			var type:String = fileName.split("_")[0];
+			var dict:Dictionary = new Dictionary();
+			var xmlList:XMLList = xml.children();
+			var len:int = xmlList.length();
+			var idx:int;
+			while (idx < len) {
+				var xmlItem:XML = xmlList[idx];
+				var avatarID:String = xml.@id;
+				var param:AvatarParam = new AvatarParam();
+				param.assetsPath = path;
+				param.type = type;
+				param.link = xmlItem.@id;
+				param.frames = xmlItem.@frames;
+				if (type != ItemConst.EFFECT_TYPE) {
+					param.speed = int(int(xmlItem.@speed) / Core._Lessen_Frame_);
+				} else {
+					param.speed = xmlItem.@speed;
+				}
+				param.offset_x = xmlItem.@offset_x;
+				param.offset_y = xmlItem.@offset_y;
+				param.replay = xmlItem.@replay;
+				if (param.replay == 0) {
+					param.replay = -1;
+				}
+				param.coder::oid = fileName;
+				param.coder::id = fileName + Core.SIGN + param.link;
+				
+				var actList:XMLList = xmlItem.children();
+				var actLen:int = actList.length();
+				var actIdx:int = 0;
+				var dirs:int = 8;
+				if (type == ItemConst.EFFECT_TYPE || type == ItemConst.MOUNT_TYPE) {
+					if (actLen >= 5) {
+						dirs = 8;
+					} else {
+						dirs = 1;
+					}
+				}
+				var once:Boolean = false;
+				if (type != ItemConst.EFFECT_TYPE && actLen == 1) {
+					once = true;
+				}
+				actIdx = 0;
+				while (actIdx < dirs) {
+					var actXML:XML;
+					var frameList:XMLList;
+					if (actIdx < 5) {
+						if (once) {
+							actXML = actList[0];
+							dirIdx = actIdx;
+						} else {
+							actXML = actList[actIdx];
+							dirIdx = actIdx;
+						}
+						param.txs[dirIdx] = [];
+						param.tys[dirIdx] = [];
+						param.widths[dirIdx] = [];
+						param.heights[dirIdx] = [];
+						if (!once) {
+							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + dirIdx;
+							bmdKey = param.id + Core.SIGN + avatarID + "." + param.link + "." + dirIdx;
+						} else {
+							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + 0;
+							bmdKey = param.id + Core.SIGN + avatarID + "." + param.link + "." + 0;
+						}
+						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
+							frameList = actXML.children();
+							if (frameList.length() == 0) {
+								log("saiman", "资源配置文件格式不符合要求");
+								return new Dictionary();
+							}
+							if (this.bitmapdatas[bmdKey] == null) {
+								this.bitmapdatas[bmdKey] = [];
+							}
+							frameLen = frameList.length();
+							if (frameLen > param.frames) {
+								param.frames = frameLen;
+							}
+							frameIdx = 0;
+							while (frameIdx < param.frames) {
+								if (frameIdx < frameLen) {
+									param.txs[dirIdx].push(int(frameList[frameIdx].@tx[0]));
+									param.tys[dirIdx].push(int(frameList[frameIdx].@ty[0]));
+									frameW = int(frameList[frameIdx].@width[0]);
+									if (frameW == 0) {
+										frameW = int(frameList[frameIdx].@w[0]);
+									}
+									frameH = int(frameList[frameIdx].@height[0]);
+									if (frameH == 0) {
+										frameH = int(frameList[frameIdx].@h[0]);
+									}
+									param.widths[dirIdx].push(frameW);
+									param.heights[dirIdx].push(frameH);
+								}
+								frameIdx++;
+							}
+						}
+					} else {	// 反转
+						dirIdx = actIdx;
+						flipIdx = 8 - dirIdx;
+						param.txs[dirIdx] = [];
+						flipFrameIdx = 0;
+						while (flipFrameIdx < param.widths[flipIdx].length) {
+							flipFrameX = param.widths[flipIdx][flipFrameIdx] - param.txs[flipIdx][flipFrameIdx];
+							param.txs[dirIdx].push(flipFrameX);
+							flipFrameIdx++;
+						}
+						param.tys[dirIdx] = param.tys[flipIdx];
+						param.widths[dirIdx] = param.widths[flipIdx];
+						param.heights[dirIdx] = param.heights[flipIdx];
+						if (!once) {
+							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + dirIdx;
+							bmdKey = param.id + Core.SIGN + avatarID + "." + param.link + "." + dirIdx;
+						} else {
+							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + 0;
+							bmdKey = param.id + Core.SIGN + avatarID + "." + param.link + "." + 0;
+						}
+						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
+							_local_30 = param.id + Core.SIGN + avatarID + "." + param.link + "." + flipIdx;
+							if (this.bitmapdatas[bmdKey] == null) {
+								this.bitmapdatas[bmdKey] = [];
+							}
+							_local_31 = 0;
+							while (_local_31 < this.bitmapdatas[_local_30].length) {
+								if (type == ItemConst.BODY_TYPE) {
+									this.bitmapdatas[bmdKey].push(Core.shadow_bitmapData);
+								} else {
+									this.bitmapdatas[bmdKey].push(null);
+								}
+								_local_31++;
+							}
+						}
+					}
+					actIdx++;
+				}
+				if (this.avatarParams.hasOwnProperty(param.id) == false) {
+					this.avatarParams[param.id] = param;
+					dict[param.link] = param;
+				}
+				idx++;
+			}
+			return dict;
+		}
+		*/
 		private function analyzeData(_arg_1:String, _arg_2:XML, _arg_3:String):Dictionary
 		{
 			var _local_8:AvatarParam;
@@ -704,6 +819,5 @@
 			}
 			return (_local_5);
 		}
-
 	}
 }

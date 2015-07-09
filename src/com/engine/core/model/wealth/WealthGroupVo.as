@@ -229,7 +229,5 @@
             super.dispose();
         }
 
-
     }
-}//package com.engine.core.model.wealth
-
+}

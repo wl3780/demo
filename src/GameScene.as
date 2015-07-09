@@ -22,7 +22,7 @@
 
 		public var setupReadyFunc:Function;
 		
-		private var _avatarArray:Array = [100000001, 100000002, 100000004, 100000003];
+		private var _avatarArray:Array = [100000002, 100000004, 100000003, 100000001];
 		private var _avatarIndex:int = 0;
 
 		public function GameScene()
@@ -62,12 +62,9 @@
 			}
 		}
 
-		override public function mainCharWalk(_arg_1:Point, _arg_2:Function=null, _arg_3:int=1000, _arg_4:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
+		override public function mainCharWalk(target:Point, callback:Function=null, _arg_3:int=1000, moveType:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
 		{
-			if (this.mainChar.lockMove) {
-				return;
-			}
-			MainCharWalkManager.getInstance().mainCharWalk(_arg_1, _arg_2, _arg_3, _arg_4, _arg_5);
+			MainCharWalkManager.getInstance().mainCharWalk(target, callback, _arg_3, moveType, _arg_5);
 		}
 
 		override protected function enterFrameFunc(evt:Event):void

@@ -9,7 +9,6 @@
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
-	import flash.utils.Timer;
 	import flash.utils.getTimer;
 
 	public class AvatarManager extends EventDispatcher 
@@ -27,7 +26,6 @@
 		private var effects_length:int;
 		private var onceTime:Number;
 		private var lastHandleTimer:int = 0;
-		private var num:int = 2;
 		private var tmpIndex:int = 0;
 
 		public function AvatarManager()
@@ -116,17 +114,18 @@
 		private function onRenderFunc(... args):void
 		{
 			Core.delayTime = getTimer();
+			var num:int = 2;
 			if (Scene.scene && Scene.scene.mainChar) {
 				if (Scene.scene.mainChar.runing == false) {
-					this.num = 2;
+					num = 2;
 				} else {
-					this.num = 7;
+					num = 7;
 				}
 			} else {
-				this.num = 2;
+				num = 2;
 			}
 			
-			var numIndex:int = this.lex % this.num;	// 分批渲染？？
+			var numIndex:int = this.lex % num;	// 分批渲染？？
 			if (this.hashArray.length) {
 				var renderNum:int;
 				this.avatars_lengh = this.hashArray.length;
@@ -215,19 +214,15 @@
 				var params:Dictionary = next.avatarParams;
 				var parts:AvatartParts = this.avatarHash[parts_id] as AvatartParts;
 				if (parts) {
-					var tmpParts:AvatartParts = parts;
-					tmpParts.coder::setupStart(key);
+					parts.coder::setupStart(key);
 					var tmpParam:AvatarParam;
 					for each (var paramItem:AvatarParam in params) {
-						tmpParam = paramItem.clone() as AvatarParam;
+						tmpParam = paramItem.clone() as AvatarParam;	// clone必须的
 						tmpParam.coder::assets_id = next.assets_id;
 						tmpParam.startPlayTime = next.startTime;
-						
-						tmpParts = parts;
-						tmpParts.coder::addAvatarPart(tmpParam);
+						parts.coder::addAvatarPart(tmpParam);
 					}
-					tmpParts = parts;
-					tmpParts.coder::_setupReady_(key);
+					parts.coder::_setupReady_(key);
 				}
 			}
 		}

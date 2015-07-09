@@ -3,8 +3,6 @@
 	import com.engine.core.tile.square.Square;
 	import com.engine.core.tile.square.SquarePt;
 	
-	import flash.display.Graphics;
-	import flash.geom.Point;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 
@@ -19,7 +17,6 @@
 		private static const DIR_CR:String = "cr";
 		private static const DIR_BC:String = "bc";
 
-		public var g:Graphics;
 		public var mode:int = 1;
 		
 		private var nonce:SquareAstarData;
@@ -44,16 +41,13 @@
 		private var canCR:Boolean;
 		private var canBC:Boolean;
 
-
-		public function getPath(_arg_1:Dictionary, _arg_2:SquarePt, _arg_3:SquarePt, _arg_4:Boolean=true, _arg_5:int=10000):Array
+		public function getPath(maps:Dictionary, tp_start:SquarePt, tp_end:SquarePt, _arg_4:Boolean=true, _arg_5:int=10000):Array
 		{
-			var _local_8:Square;
-			var _local_9:Square;
-			if (_arg_1[_arg_2.key]) {
-				_local_8 = (_arg_1[_arg_2.key] as Square);
-				_local_9 = (_arg_1[_arg_3.key] as Square);
-				if (((_local_8) && (_local_9))) {
-					if ((((_local_8.type == 2)) && ((_local_9.type == 2)))) {
+			if (maps[tp_start.key]) {
+				var sq_start:Square = maps[tp_start.key] as Square;
+				var sq_end:Square = maps[tp_end.key] as Square;
+				if (sq_start && sq_end) {
+					if (sq_start.type == 2 && sq_end.type == 2) {
 						this.mode = 2;
 					} else {
 						this.mode = 1;
@@ -62,23 +56,24 @@
 					this.mode = 1;
 				}
 			}
-			if (((!(_arg_1[_arg_2.key])) || ((((((this.mode == 1)) && (_arg_1[_arg_2.key]))) && ((_arg_1[_arg_2.key].type == 2)))))) {
-				return ([]);
+			if (!maps[tp_start.key] || (this.mode==1 && maps[tp_start.key].type == 2)) {
+				return [];
 			}
-			var _local_6:Number = getTimer();
+			
+			var startTime:Number = getTimer();
 			this.reSet();
-			this.startPoint = this.cycleCheck(_arg_1, _arg_2, 0);
-			this.endPoint = this.cycleCheck(_arg_1, _arg_3, 0);
-			this.source = _arg_1;
+			this.startPoint = this.cycleCheck(maps, tp_start, 0);	// 递归寻找可行点
+			this.endPoint = this.cycleCheck(maps, tp_end, 0);	// 递归寻找可行点
+			this.source = maps;
 			this.nonce = new SquareAstarData(0, 0, this.startPoint);
 			this.nonce.parent = this.nonce;
 			this.colsePath[this.nonce.key] = this.nonce;
 			while (this.isFinish) {
-				this.getScale9Grid(_arg_1, this.nonce, this.endPoint, _arg_5);
+				this.getScale9Grid(maps, this.nonce, this.endPoint, _arg_5);
 			}
-			var _local_7:Array = this.cleanArray();
-			log("saiman", "*****************寻路时间", (getTimer() - _local_6), "路径长: ", _local_7.length, "*******************", "\n\n");
-			return (_local_7);
+			var paths:Array = this.cleanArray();
+			log("saiman", "*****************寻路时间", (getTimer() - startTime), "路径长: ", paths.length, "*******************", "\n\n");
+			return paths;
 		}
 
 		public function stop():void
@@ -86,58 +81,41 @@
 			this.isFinish = false;
 		}
 
-		private function cycleCheck(_arg_1:Dictionary, _arg_2:SquarePt, _arg_3:int):SquarePt
+		private function cycleCheck(maps:Dictionary, tp_source:SquarePt, round:int):SquarePt
 		{
-			var _local_4:int;
-			var _local_5:int;
-			var _local_6:int;
-			var _local_7:Square;
-			var _local_8:Array;
-			var _local_9:String;
-			var _local_10:Square;
-			var _local_11:int;
-			var _local_12:int;
-			if ((this.mode == 1)) {
-				_local_4 = 2;
+			var type:int;
+			if (this.mode == 1) {
+				type = 2;
 			} else {
-				_local_4 = 1;
+				type = 1;
 			}
-			if ((((((_arg_1[_arg_2.key] == null)) || ((_arg_1[_arg_2.key].type == 0)))) || ((_arg_1[_arg_2.key].type == _local_4)))) {
-				_local_5 = _arg_2.x;
-				_local_6 = _arg_2.y;
-				_local_7 = new Square();
-				_local_7.setIndex(_arg_2);
-				_local_11 = (_local_5 - (_arg_3 + 1));
-				while (_local_11 <= (_local_5 + (_arg_3 + 1))) {
-					_local_8 = [];
-					_local_12 = (_local_6 - (_arg_3 + 1));
-					while (_local_12 <= (_local_6 + (_arg_3 + 1))) {
-						_local_9 = ((_local_11 + "|") + _local_12);
-						if (_local_9 != _arg_2.key) {
-							_local_10 = _arg_1[_local_9];
-							if (((((!((_local_10 == null))) && (!((_local_10.type == 0))))) && (!((_local_10.type == _local_4))))) {
-								_local_8.push({
-									"square":_local_10,
-									"dis":Point.distance(_local_10.midVertex, _local_7.midVertex)
-								});
-								return (_local_10.index);
+			if (maps[tp_source.key] == null || maps[tp_source.key].type == 0 || maps[tp_source.key].type == type) {
+				var tx:int = tp_source.x;
+				var ty:int = tp_source.y;
+				var sq_source:Square = new Square();
+				sq_source.setIndex(tp_source);
+				var i:int = tx - (round+1);
+				while (i <= tx + (round+1)) {
+					var j:int = ty - (round+1);
+					while (j <= ty + (round+1)) {
+						var key:String = i + "|" + j;
+						if (key != tp_source.key) {
+							var sq_target:Square = maps[key];
+							if (sq_target && sq_target.type != 0 && sq_target.type != type) {
+								return sq_target.index;
 							}
 						}
-						_local_12++;
+						j++;
 					}
-					if (_local_8.length > 0) {
-						_local_8.sortOn("dis", Array.NUMERIC);
-						return (_local_8[0].square.index);
-					}
-					_local_11++;
+					i++;
 				}
-				if (_arg_3 > 8) {
+				if (round > 8) {
 					this.isFinish = false;
-					return (_arg_2);
+					return tp_source;
 				}
-				return (this.cycleCheck(_arg_1, _arg_2, (_arg_3 + 1)));
+				return this.cycleCheck(maps, tp_source, (round+1));
 			}
-			return (_arg_2);
+			return tp_source;
 		}
 
 		private function getDis(pa:SquarePt, pb:SquarePt):int

@@ -29,18 +29,18 @@
 		public var specialMode:int = 0;
 		public var isFlyMode:Boolean = false;
 		public var isAutoDispose:Boolean = true;
+		public var isPalyStandDeay:Boolean = true;
+		public var isOnMonut:Boolean;
+		public var lockEffectState:Boolean = true;
+		
 		public var setupReady:Function;
 		public var onRender:Function;
 		public var clear:Function;
 		public var disposeEffectsFunc:Function;
-		public var subFunc:Function;
 		public var playEndFunc:Function;
 		public var loadErorFunc:Function;
 		public var onRendStart:Function;
 		public var playEffectFunc:Function;
-		public var isPalyStandDeay:Boolean = true;
-		public var isOnMonut:Boolean;
-		public var lockEffectState:Boolean = true;
 		
 		protected var _effectRestrict:Dictionary;
 		
@@ -514,30 +514,25 @@
 			delete this.avatarParts[linkKey];
 		}
 
-		coder function setupStart(key:String):void
+		coder function setupStart(avatarId:String):void
 		{
-			var findType:String;
-			var subType:String;
-			var param:AvatarParam;
-			var itemType:String = key.split("_")[0];
+			var finded:Boolean = false;
+			var avatarType:String = avatarId.split("_")[0];
 			for each (var dict:Dictionary in this.avatarParts) {
 				for (var subKey:String in dict) {
-					subType = subKey.split("_")[0];
-					if (subType == itemType && subType != ItemConst.EFFECT_TYPE && key != subKey) {
-						param = dict[subKey];
+					var subType:String = subKey.split("_")[0];
+					if (subType == avatarType && subType != ItemConst.EFFECT_TYPE && avatarId != subKey) {
+						var param:AvatarParam = dict[subKey];
 						delete dict[subKey];
 						if (param) {
 							param.dispose();
 						}
-						findType = itemType;
+						finded = true;
 					}
 				}
 			}
-			if (findType && this.onRender != null) {
-				this.onRender(this.id, 0, null, new Rectangle(0, 0, 0, 110), null, findType, 0, 0);
-			}
-			if (this.subFunc != null) {
-				this.subFunc.apply(null, ["setupStart"]);
+			if (finded && this.onRender != null) {
+				this.onRender(this.id, 0, null, new Rectangle(0, 0, 0, 110), null, avatarType, 0, 0);
 			}
 		}
 
@@ -550,9 +545,6 @@
 
 		coder function _setupReady_(key:String):void
 		{
-			if (this.subFunc != null) {
-				this.subFunc.apply(null, ["setupReady"]);
-			}
 			if (this.setupReady != null) {
 				this.setupReady();
 			}
@@ -666,7 +658,6 @@
 			this.disposeEffectsFunc = null;
 			this.clear = null;
 			this.onRender = null;
-			this.subFunc = null;
 			this.playEndFunc = null;
 			this.onRendStart = null;
 			this.setupReady = null;

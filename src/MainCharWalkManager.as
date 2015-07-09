@@ -39,172 +39,27 @@
 			return instance ||= new MainCharWalkManager();
 		}
 
-
-		private function pathCutter(_arg_1:Array, _arg_2:int=140, _arg_3:int=350):void
+		public function mainCharWalk(pt_target:Point, callback:Function, breakStep:int=1500, moveType:int=1, _arg_5:Boolean=true):void
 		{
-			var _local_7:Array;
-			var _local_8:int;
-			var _local_9:Point;
-			var _local_10:Point;
-			var _local_11:int;
-			var _local_12:int;
-			var _local_13:Number;
-			var _local_14:int;
-			var _local_15:Number;
-			var _local_16:Point;
-			var _local_17:Number;
-			var _local_18:int;
-			var _local_19:int;
-			var _local_4:Array = [];
-			var _local_5:int = _arg_1.length;
-			var _local_6:Square = new Square();
-			if (_local_5 >= 2) {
-				_local_8 = 0;
-				while (_local_8 < (_local_5 - 1)) {
-					_local_9 = _arg_1[_local_8];
-					_local_10 = _arg_1[(_local_8 + 1)];
-					_local_11 = Point.distance(_local_9, _local_10);
-					_local_12 = Math.ceil((_local_11 / _arg_2));
-					_local_13 = (_arg_2 / _local_11);
-					_local_14 = 0;
-					while (_local_14 <= _local_12) {
-						_local_15 = (_local_13 * _local_14);
-						_local_16 = Point.interpolate(_local_10, _local_9, _local_15);
-						_local_16.x = Math.round(_local_16.x);
-						_local_16.y = Math.round(_local_16.y);
-						if ((((_local_4.length == 0)) || ((((_local_4.length > 0)) && (!((_local_16.toString() == _local_4[(_local_4.length - 1)].toString()))))))) {
-							_local_4.push(_local_16);
-						}
-						if ((_local_13 * (_local_14 + 1)) > 1) {
-							_local_4.push(_local_10);
-							break;
-						}
-						_local_14++;
-					}
-					_local_8++;
-				}
-				if (_local_4.length > 1) {
-					_local_5 = _local_4.length;
-					_local_17 = 0;
-					_local_18 = 0;
-					_local_19 = 1;
-					while (_local_19 < _local_5) {
-						_local_17 = (_local_17 + Point.distance(_local_4[(_local_19 - 1)], _local_4[_local_19]));
-						if ((((Math.ceil(_local_17) >= _arg_3)) || ((((_local_19 == (_local_5 - 1))) && ((Math.ceil(_local_17) < _arg_3)))))) {
-							_local_7 = _local_4.slice(_local_18, (_local_19 + 1));
-							this.walkPathFragments.push(_local_7);
-							_local_17 = 0;
-							_local_18 = _local_19;
-						}
-						_local_19++;
-					}
-				}
-			}
-		}
-
-		public function cleanPath(_arg_1:Array):Array
-		{
-			var _local_2:int;
-			var _local_3:Point;
-			var _local_4:Point;
-			var _local_5:Point;
-			var _local_6:Number;
-			var _local_7:Number;
-			if (_arg_1.length > 2) {
-				_local_2 = 1;
-				while (_local_2 < (_arg_1.length - 1)) {
-					_local_3 = _arg_1[(_local_2 - 1)];
-					_local_4 = _arg_1[_local_2];
-					_local_5 = _arg_1[(_local_2 + 1)];
-					_local_6 = ((_local_3.y - _local_4.y) / (_local_3.x - _local_4.x));
-					_local_7 = ((_local_4.y - _local_5.y) / (_local_4.x - _local_5.x));
-					if (_local_6 == _local_7) {
-						_arg_1.splice(_local_2, 1);
-						_local_2--;
-					}
-					_local_2++;
-				}
-			}
-			return (_arg_1);
-		}
-
-		private function getPath(_arg_1:Point, _arg_2:Point, _arg_3:int=1000):Array
-		{
-			var _local_4:Array;
-			var _local_7:Point;
-			var _local_8:Point;
-			var _local_5:SquarePt = SquareUitls.pixelsToSquare(_arg_1);
-			var _local_6:SquarePt = SquareUitls.pixelsToSquare(_arg_2);
-			if (_local_5.key == _local_6.key) {
-				return ([_arg_1, _arg_2]);
-			}
-			if (this.checkPointType(_arg_1, _arg_2)) {
-				_local_4 = [_arg_1, _arg_2];
-			} else {
-				_local_4 = this.astar.getPath(SquareGroup.getInstance().hash.hash, _local_5, _local_6, true, _arg_3);
-				if (_local_4.length) {
-					_local_7 = _local_4[(_local_4.length - 1)];
-					if (SquareUitls.pixelsToSquare(_local_7).key == _local_6.key) {
-						_local_4[(_local_4.length - 1)] = _arg_2;
-					}
-					_local_8 = _local_4[0];
-					if (SquareUitls.pixelsToSquare(_local_8).key == _local_5.key) {
-						if (_local_5.toString() != _arg_1.toString()) {
-							_local_4[0] = _arg_1;
-						}
-					}
-				}
-				_local_4 = this.cleanPath(_local_4);
-			}
-			return (_local_4);
-		}
-
-		private function checkPointType(_arg_1:Point, _arg_2:Point, _arg_3:int=10):Boolean
-		{
-			var _local_8:Point;
-			var _local_9:SquarePt;
-			var _local_10:Square;
-			var _local_4:Number = Point.distance(_arg_1, _arg_2);
-			var _local_5:int = Math.ceil((_local_4 / _arg_3));
-			var _local_6:Boolean = true;
-			var _local_7:int;
-			while (_local_7 < _local_5) {
-				_local_8 = Point.interpolate(_arg_1, _arg_2, (_local_7 / _local_5));
-				_local_9 = SquareUitls.pixelsToSquare(_local_8);
-				_local_10 = SquareGroup.getInstance().take(_local_9.key);
-				if (((!(_local_10)) || ((((_local_10.type < 1)) && (!((_local_10.type == this.astar.mode))))))) {
-					_local_6 = false;
-					break;
-				}
-				_local_7++;
-			}
-			return (_local_6);
-		}
-
-		public function mainCharWalk(_arg_1:Point, _arg_2:Function, _arg_3:int=1500, _arg_4:int=1, _arg_5:Boolean=true):void
-		{
-			var _local_11:Array;
-			var _local_6:GameScene = GameScene.scene;
-			var _local_7:MainChar = _local_6.mainChar;
-			if (_local_7.isBackMoving) {
+			if (!pt_target) {
 				return;
 			}
-			var _local_8:Point = new Point(_local_7.x, _local_7.y);
-			if (((!(_local_8)) || (!(_arg_1)))) {
+			var mainChar:MainChar = GameScene.scene.mainChar;
+			if (mainChar.lockMove || mainChar.isBackMoving) {
 				return;
 			}
-			var _local_9:SquarePt = SquareUitls.pixelsToSquare(_local_8);
-			var _local_10:SquarePt = SquareUitls.pixelsToSquare(_arg_1);
-			if (GameScene.scene.mainChar.lockMove) {
-				return;
-			}
+			
+			var pt_from:Point = new Point(mainChar.x, mainChar.y);
+			var tp_start:SquarePt = SquareUitls.pixelsToSquare(pt_from);
+			var tp_end:SquarePt = SquareUitls.pixelsToSquare(pt_target);
 			this.walkPathFragments = [];
-			this.moveType = _arg_4;
-			this.walkEndFunc = _arg_2;
-			this.tar_point = _arg_1;
-			if ((((_local_9.key == _local_10.key)) && ((Point.distance(_local_8, _arg_1) > 1)))) {
-				this.pathCutter([_local_8, _arg_1]);
-				coder::paths = [_local_8, _arg_1];
+			this.moveType = moveType;
+			this.walkEndFunc = callback;
+			this.tar_point = pt_target;
+			
+			if (tp_start.key == tp_end.key && Point.distance(pt_from, pt_target) > 1) {
+				this.pathCutter([pt_from, pt_target]);
+				coder::paths = [pt_from, pt_target];
 				if (this.walkPathFragments.length) {
 					GameScene.scene.mainChar.walkendStandOutSide = true;
 					if (this.walkPathFragments.length == 1) {
@@ -215,9 +70,9 @@
 					this.totalWalkEnd();
 				}
 			} else {
-				_local_11 = this.getPath(_local_8, _arg_1, _arg_3);
-				coder::paths = _local_11.slice();
-				this.pathCutter(_local_11.slice());
+				var array:Array = this.getPath(pt_from, pt_target, breakStep);
+				this.pathCutter(array);
+				coder::paths = array;
 				if (this.walkPathFragments.length > 0) {
 					GameScene.scene.mainChar.walkendStandOutSide = true;
 					if (this.walkPathFragments.length == 1) {
@@ -230,29 +85,155 @@
 			}
 		}
 
+		private function pathCutter(array:Array, size:int=140, _arg_3:int=350):void
+		{
+			var len:int = array.length;
+			if (len < 2) {
+				return;
+			}
+			var new_paths:Array = [];
+			var i:int = 0;
+			var j:int = 0;
+			while (i < len-1) {
+				var pt_start:Point = array[i];
+				var pt_end:Point = array[i+1];
+				var dis:int = Point.distance(pt_start, pt_end);
+				var length:int = Math.ceil(dis / size);
+				var num:Number = size / dis;
+				j = 0;
+				while (j <= length) {
+					var pr:Number = num * j;
+					var pt_now:Point = Point.interpolate(pt_end, pt_start, pr);
+					pt_now.x = Math.round(pt_now.x);
+					pt_now.y = Math.round(pt_now.y);
+					if ((new_paths.length == 0) || (pt_now.toString() != new_paths[new_paths.length-1].toString())) {
+						new_paths.push(pt_now);
+					}
+					if (num*(j+1) > 1) {
+						new_paths.push(pt_end);
+						break;
+					}
+					j++;
+				}
+				i++;
+			}
+			
+			if (new_paths.length > 1) {
+				len = new_paths.length;
+				var sum:Number = 0;
+				var p_start:int = 0;
+				var n_start:int = 1;
+				while (n_start < len) {
+					sum += Point.distance(new_paths[n_start-1], new_paths[n_start]);
+					if ((Math.ceil(sum) >= _arg_3) || (n_start == len-1)) {
+						var pts:Array = new_paths.slice(p_start, (n_start+1));
+						this.walkPathFragments.push(pts);
+						sum = 0;
+						p_start = n_start;
+					}
+					n_start++;
+				}
+			}
+		}
+
+		public function cleanPath(p_paths:Array):Array
+		{
+			var pt0:Point;
+			var pt1:Point;
+			var pt2:Point;
+			var ratio0:Number;
+			var ratio1:Number;
+			if (p_paths.length > 2) {
+				var idx:int = 1;
+				while (idx < (p_paths.length-1)) {
+					pt0 = p_paths[idx-1];
+					pt1 = p_paths[idx];
+					pt2 = p_paths[idx+1];
+					// 斜率
+					ratio0 = (pt0.y - pt1.y) / (pt0.x - pt1.x);
+					ratio1 = (pt1.y - pt2.y) / (pt1.x - pt2.x);
+					if (ratio0 == ratio1) {
+						p_paths.splice(idx, 1);
+						idx--;
+					}
+					idx++;
+				}
+			}
+			return p_paths;
+		}
+
+		private function getPath(pt_start:Point, pt_end:Point, size:int=1000):Array
+		{
+			var tp_start:SquarePt = SquareUitls.pixelsToSquare(pt_start);
+			var tp_end:SquarePt = SquareUitls.pixelsToSquare(pt_end);
+			if (tp_start.key == tp_end.key) {
+				return [pt_start, pt_end];
+			}
+			
+			var ret:Array;
+			if (this.checkPointType(pt_start, pt_end)) {
+				ret = [pt_start, pt_end];
+			} else {
+				ret = this.astar.getPath(SquareGroup.getInstance().hash.hash, tp_start, tp_end, true, size);
+				if (ret.length) {
+					var pt_first:Point = ret[ret.length-1];
+					if (SquareUitls.pixelsToSquare(pt_first).key == tp_end.key) {
+						ret[ret.length-1] = pt_end;
+					}
+					var pt_last:Point = ret[0];
+					if (SquareUitls.pixelsToSquare(pt_last).key == tp_start.key) {
+						if (tp_start.toString() != pt_start.toString()) {
+							ret[0] = pt_start;
+						}
+					}
+				}
+				ret = this.cleanPath(ret);
+			}
+			return ret;
+		}
+
+		private function checkPointType(pt_start:Point, pt_end:Point, px:int=10):Boolean
+		{
+			var dis:Number = Point.distance(pt_start, pt_end);
+			var index:int = Math.ceil(dis / px);
+			var pass:Boolean = true;
+			var idx:int;
+			while (idx < index) {
+				var pt_inter:Point = Point.interpolate(pt_start, pt_end, (idx/index));
+				var tp_inter:SquarePt = SquareUitls.pixelsToSquare(pt_inter);
+				var sq:Square = SquareGroup.getInstance().take(tp_inter.key);
+				if (!sq || (sq.type < 1 && sq.type != this.astar.mode)) {
+					pass = false;
+					break;
+				}
+				idx++;
+			}
+			return pass;
+		}
+
 		private function totalWalkEnd():void
 		{
 			GameScene.scene.mainChar.walkendStandOutSide = false;
 			SceneEventDispatcher.getInstance().dispatchEvent(new SceneEvent(SceneEvent.WALK_END));
 			GameScene.scene.mainChar.stopMove();
 			if (this.walkEndFunc != null) {
-				this.walkEndFunc();
+				var tmpFunc:Function = this.walkEndFunc;
+				this.walkEndFunc = null;
+				tmpFunc();
 			}
-			this.walkEndFunc = null;
 		}
 
 		private function walkNextPart():void
 		{
-			var _local_1:Array = this.walkPathFragments.shift();
-			this.end_point_key = SquareUitls.pixelsToSquare(_local_1[(_local_1.length - 1)]).key;
+			var list:Array = this.walkPathFragments.shift();
+			this.end_point_key = SquareUitls.pixelsToSquare(list[list.length-1]).key;
 			GameScene.scene.mainChar.walkEndFunc = this.charPartWalkEndFunc;
-			GameScene.scene.mainChar.walk(_local_1.slice());
-			this.sendWalkData(_local_1);
+			GameScene.scene.mainChar.walk(list.slice());
+			this.sendWalkData(list);
 		}
 
 		private function charPartWalkEndFunc():void
 		{
-			var _local_1:MainChar = GameScene.scene.mainChar;
 			if (this.walkPathFragments.length == 0) {
 				this.totalWalkEnd();
 			} else {
@@ -263,7 +244,7 @@
 			}
 		}
 
-		private function sendWalkData(_arg_1:Array):void
+		private function sendWalkData(list:Array):void
 		{
 		}
 
