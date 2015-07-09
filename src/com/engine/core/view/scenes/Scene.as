@@ -101,25 +101,16 @@
 		private var _sceneFlyMode:Boolean;
 		private var _lingthMode:int;
 		
-		private var container:DisplayObjectContainer;
-		private var timeNum:int = 0;
-		private var _time:int = 0;
+		private var _container:DisplayObjectContainer;
 		private var _selectAvatar:*;
-		private var time_1:Number;
-		private var time_2:Number;
-		private var timeCounter:int;
-		private var timeBool:Boolean = false;
-		private var $point:Point;
-		private var cleanTime:int;
-		private var checkTime:int = 0;
-		private var depthTime:int = 0;
+		private var _cleanTime:int;
+		private var _depthTime:int = 0;
 		private var _outsideRect:Rectangle;
 
 		public function Scene()
 		{
 			this.mouseDownPoint = new Point();
 			this.shoawdBitmapArray = [];
-			this.$point = new Point(-1, -1);
 			this.headArray = new Dictionary();
 			_outsideRect = new Rectangle();
 			Scene.scene = this;
@@ -132,7 +123,7 @@
 
 		public function get flying():Boolean
 		{
-			return (_flying);
+			return _flying;
 		}
 
 		public function getSceneFlyMode():Boolean
@@ -306,12 +297,11 @@
 			this.$flyLayer.mouseEnabled = this.$flyLayer.mouseChildren = false;
 			this.$flyLayer.tabChildren = this.$flyLayer.tabEnabled = false;
 			
-			this.$cloudLayer = new Shape();
-			
 			this.$itemLayer = new Sprite();
 			this.$itemLayer.mouseChildren = this.$itemLayer.mouseEnabled = false;
 			this.$itemLayer.tabChildren = this.$itemLayer.tabEnabled = false;
 			
+			this.$cloudLayer = new Shape();
 			this.shadowShape = new Shape();
 			
 			this.maskShape = new Sprite();
@@ -333,9 +323,9 @@
 		public function setup(stage:Stage, container:DisplayObjectContainer):void
 		{
 			Core.stage = stage;
-			this.container = container;
-			this.container.addChild(this);
-			this.container.addChildAt(this.$bottomLayer, 0);
+			_container = container;
+			_container.addChild(this);
+			_container.addChildAt(this.$bottomLayer, 0);
 			Core.stage.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDownFunc);
 			Core.stage.addEventListener(MouseEvent.MOUSE_UP, this.mouseUpFunc);
 			Core.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.keyDownFunc);
@@ -359,7 +349,7 @@
 			this.updateCharAvatarPart(_mainChar, avatarID, weaponID, mountID, wingID);
 		}
 
-		public function updateCharAvatarPart(char:Char, avatarID:int, weaponID:int=0, mountID:int=0, wingID:int=0):void
+		public function updateCharAvatarPart(char:Char, clothesID:int, weaponID:int=0, mountID:int=0, wingID:int=0):void
 		{
 			if (char) {
 				if (mountID == 0) {
@@ -367,7 +357,7 @@
 				} else {
 					char.hp_height = 150;
 				}
-				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "clothes/mid_" + avatarID + Core.TMP_FILE + "?version=" + Core.version);
+				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "clothes/mid_" + clothesID + Core.TMP_FILE + "?version=" + Core.version);
 				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "weapons/wid_" + weaponID + Core.TMP_FILE + "?version=" + Core.version);
 				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "flys/fid_" + wingID + Core.TMP_FILE + "?version=" + Core.version);
 				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "mounts/midm_" + mountID + Core.TMP_FILE + "?version=" + Core.version);
@@ -413,7 +403,6 @@
 			SquareGroup.getInstance().reset(null);
 			this.cleanMemory();
 			InstancePool.coder::getInstance().reset();
-			this.$point = new Point(-1, -1);
 			if (this.$bottomLayer) {
 				this.$bottomLayer.clean(sceneID);
 			}
@@ -503,19 +492,16 @@
 
 		public function unload():void
 		{
-			var _local_1:HeadShowShape;
-			var _local_2:String;
-			var _local_3:Dictionary;
 			var _local_4:IAvatar;
 			var _local_7:DisplayLoader;
 			var _local_8:IItem;
 			var _local_9:ShoawdBitmap;
-			for each (_local_1 in this.headArray) {
+			for each (var _local_1:HeadShowShape in this.headArray) {
 				_local_1.dispose();
 			}
 			this.headArray = new Dictionary();
-			_local_3 = WealthPool.getIntance().coder::hash;
-			for (_local_2 in _local_3) {
+			var _local_3:Dictionary = WealthPool.getIntance().coder::hash;
+			for (var _local_2:String in _local_3) {
 				if (((((((!((_local_2.indexOf("mid_") == -1))) || (!((_local_2.indexOf("wid_") == -1))))) || (!((_local_2.indexOf("midm_") == -1))))) || (!((_local_2.indexOf("eid_") == -1))))) {
 					_local_7 = (_local_3[_local_2] as DisplayLoader);
 					if (_local_7) {
@@ -580,21 +566,21 @@
 
 		public function get nodeTree():NodeTree
 		{
-			return (this.$nodeTree);
+			return this.$nodeTree;
 		}
 
-		public function addShoawdBitmap(_arg_1:ShoawdBitmap):void
+		public function addShoawdBitmap(bmp:ShoawdBitmap):void
 		{
-			this.shoawdBitmapArray.push(_arg_1);
+			this.shoawdBitmapArray.push(bmp);
 		}
 
-		public function removeShoawdBitmap(_arg_1:ShoawdBitmap):void
+		public function removeShoawdBitmap(bmp:ShoawdBitmap):void
 		{
-			var _local_2:int = this.shoawdBitmapArray.indexOf(_arg_1);
-			if (_local_2 != -1) {
-				this.shoawdBitmapArray.splice(_local_2, 1);
+			var idx:int = this.shoawdBitmapArray.indexOf(bmp);
+			if (idx != -1) {
+				this.shoawdBitmapArray.splice(idx, 1);
 			}
-			_arg_1.dispose();
+			bmp.dispose();
 		}
 
 		public function addItem(sceneItem:IItem, layerName:String):void
@@ -642,41 +628,37 @@
 			return this.avatarHash.take(charID) as IAvatar;
 		}
 
-		coder function removeRepeatObjectInAvatarHash(_arg_1:IAvatar):void
+		coder function removeRepeatObjectInAvatarHash(avatar:IAvatar):void
 		{
-			if (_arg_1 == null) {
+			if (avatar == null) {
 				return;
 			}
-			var _local_2:Dictionary = this.avatarHash.hash;
-			if ((((((_arg_1 is Char)) || ((_arg_1 is SceneItem)))) || ((((_arg_1 as ItemAvatar)) && (ItemAvatar(_arg_1).isSkillEffect))))) {
-				if ((((_arg_1 as ItemAvatar)) && (ItemAvatar(_arg_1).isSkillEffect))) {
-				}
-				this.avatarHash.remove(_arg_1.char_id);
+			if ((avatar is Char) || (avatar is SceneItem) || (avatar as ItemAvatar && ItemAvatar(avatar).isSkillEffect)) {
+				this.avatarHash.remove(avatar.char_id);
 			}
 		}
 
-		public function remove(_arg_1:IAvatar, _arg_2:Boolean=false):void
+		public function remove(avatar:IAvatar, isClear:Boolean=false):void
 		{
-			if (_arg_1 == null) {
+			if (avatar == null) {
 				return;
 			}
-			var _local_3 = this;
-			(_local_3.coder::removeRepeatObjectInAvatarHash(_arg_1));
-			if (DisplayObject(_arg_1).parent) {
-				DisplayObject(_arg_1).parent.removeChild((_arg_1 as DisplayObject));
+			this.coder::removeRepeatObjectInAvatarHash(avatar);
+			if (DisplayObject(avatar).parent) {
+				DisplayObject(avatar).parent.removeChild(avatar as DisplayObject);
 			}
-			if (_arg_2) {
-				if (_arg_1.isDisposed == false) {
-					_arg_1.dispose();
+			if (isClear) {
+				if (avatar.isDisposed == false) {
+					avatar.dispose();
 				}
 			} else {
-				if ((((_arg_1 as ItemAvatar)) || ((_arg_1 as SceneItem)))) {
-					if (_arg_1.isDisposed == false) {
-						_arg_1.dispose();
+				if ((avatar as ItemAvatar) || (avatar as SceneItem)) {
+					if (avatar.isDisposed == false) {
+						avatar.dispose();
 					}
 				} else {
-					Char(_arg_1).stopMove();
-					Char(_arg_1).recover();
+					Char(avatar).stopMove();
+					Char(avatar).recover();
 				}
 			}
 		}
@@ -690,16 +672,16 @@
 
 		protected function keyUpFunc(evt:KeyboardEvent):void
 		{
-			_shiftKey = false;
+			_shiftKey = evt.shiftKey;
 			Core.stage.removeEventListener(KeyboardEvent.KEY_UP, this.keyUpFunc);
 			Core.stage.addEventListener(KeyboardEvent.KEY_UP, this.keyUpFunc);
 		}
 
-		public function getSkillTile(_arg_1:Point):Avatar
+		public function getSkillTile(p:Point):Avatar
 		{
-			var _local_2:Rectangle = new Rectangle((this.mouseX - 100), (this.mouseY - 100), 200, 200);
-			var _local_3:Array = this.find(_local_2, false, 150);
-			return ((HitTest.getChildUnderPoint(this, _arg_1, _local_3) as Avatar));
+			var area:Rectangle = new Rectangle(this.mouseX-100, this.mouseY-100, 200, 200);
+			var items:Array = this.find(area, false, 150);
+			return HitTest.getChildUnderPoint(this, p, items, Avatar) as Avatar;
 		}
 
 		protected function mouseUpFunc(evt:MouseEvent):void
@@ -718,29 +700,29 @@
 			}
 		}
 
-		public function mainCharWalk(_arg_1:Point, _arg_2:Function=null, _arg_3:int=1000, _arg_4:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
+		public function mainCharWalk(target:Point, callback:Function=null, _arg_3:int=1000, _arg_4:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
 		{
 			if (this.mainChar.lockMove) {
 				return;
 			}
 			Core.sceneClickAbled = true;
-			_walkEndFunc_ = _arg_2;
-			this.charMoveTo(this.mainChar, _arg_1.x, _arg_1.y);
+			_walkEndFunc_ = callback;
+			this.charMoveTo(this.mainChar, target.x, target.y);
 		}
 
-		public function charMoveTo(_arg_1:Char, _arg_2:Number, _arg_3:Number, _arg_4:Function=null):Array
+		public function charMoveTo(char:Char, _arg_2:Number, _arg_3:Number, _arg_4:Function=null):Array
 		{
 			var _local_5:Point;
 			var _local_6:Array;
-			if (_arg_1) {
+			if (char) {
 				_local_5 = new Point();
 				_local_5.x = _arg_2;
 				_local_5.y = _arg_3;
-				_local_6 = this.getPath(_arg_1.point, _local_5);
+				_local_6 = this.getPath(char.point, _local_5);
 				if (_local_6.length > 0) {
-					_arg_1.walk(_local_6);
+					char.walk(_local_6);
 					if (_arg_4 != null) {
-						_arg_1.walkEndFunc = _arg_4;
+						char.walkEndFunc = _arg_4;
 					}
 					return (_local_6);
 				}
@@ -988,14 +970,12 @@
 			_local_3.y = _arg_2;
 			var _local_6:Number = Point.distance(_local_3, _local_3);
 			if (_local_6 > 0) {
-				_time = getTimer();
 				_local_8 = (this.mainChar.speed * 1000);
 				if (_local_8 < 600) {
 					_local_8 = 500;
 				}
 				_local_7 = (_local_6 / _local_8);
 				_local_9 = this;
-				this.timeNum++;
 				TweenLite.to(this.$bottomLayer, _local_7, {
 					"x":_local_4,
 					"y":_local_5,
@@ -1140,42 +1120,20 @@
 			return (new Point(_local_7, _local_8));
 		}
 
-		protected function zuobi():Boolean
+		protected function fill(px:int, py:int, pw:int=500, ph:int=300):void
 		{
-			var _local_1:Date = new Date();
-			var _local_2:Number = _local_1.time;
-			var _local_3:Number = getTimer();
-			if (Math.abs(((_local_3 - this.time_2) - (_local_2 - this.time_1))) > 30) {
-				this.timeCounter++;
-				if (this.timeCounter > 5) {
-					return (true);
-				}
-				this.timeBool = true;
-			} else {
-				this.timeBool = false;
-			}
-			if (!this.timeBool) {
-				this.timeCounter = 0;
-			}
-			this.time_2 = getTimer();
-			this.time_1 = _local_2;
-			return (false);
+			var colors:Array = [0, 0, 0];
+			var alphas:Array = [1, 0.8, 0];
+			var ratios:Array = [0, 85, 0xFF];
+			var tx:Number = px-pw/2;
+			var ty:Number = (py-ph/2)-20;
+			var mtx:Matrix = RecoverUtils.matrix;
+			mtx.createGradientBox(pw, ph, 0, tx, ty);
+			this.shadowShape.graphics.beginGradientFill(GradientType.RADIAL, colors, alphas, ratios, mtx, SpreadMethod.PAD);
+			this.shadowShape.graphics.drawEllipse(tx, ty, pw, ph);
 		}
 
-		protected function fill(_arg_1:int, _arg_2:int, _arg_3:int=500, _arg_4:int=300):void
-		{
-			var _local_5:String = GradientType.RADIAL;
-			var _local_6:Array = [0, 0, 0];
-			var _local_7:Array = [1, 0.8, 0];
-			var _local_8:Array = [0, 85, 0xFF];
-			var _local_9:Matrix = RecoverUtils.matrix;
-			_local_9.createGradientBox(_arg_3, _arg_4, 0, (_arg_1 - (_arg_3 / 2)), ((_arg_2 - (_arg_4 / 2)) - 20));
-			var _local_10:String = SpreadMethod.PAD;
-			this.shadowShape.graphics.beginGradientFill(_local_5, _local_6, _local_7, _local_8, _local_9, _local_10);
-			this.shadowShape.graphics.drawEllipse((_arg_1 - (_arg_3 / 2)), ((_arg_2 - (_arg_4 / 2)) - 20), _arg_3, _arg_4);
-		}
-
-		protected function enterFrameFunc(_arg_1:Event):void
+		protected function enterFrameFunc(evt:Event):void
 		{
 			var _local_4:IAvatar;
 			var _local_6:int;
@@ -1186,15 +1144,15 @@
 				return;
 			}
 			if (((((this.$flyLayer.parent) && (_sceneFlyMode))) && (!(this.$cloudLayer.parent)))) {
-				this.container.addChild(this.$cloudLayer);
-				this.container.addChild(this.$flyLayer);
+				_container.addChild(this.$cloudLayer);
+				_container.addChild(this.$flyLayer);
 			} else {
 				if (((((!(_sceneFlyMode)) && (this.$cloudLayer.parent))) && (!(this.flying)))) {
 					this.$cloudLayer.parent.removeChild(this.$cloudLayer);
 				}
 			}
 			if (((((_sceneFlyMode) && (stage))) && (!(this.$flyLayer.parent)))) {
-				this.container.addChild(this.$flyLayer);
+				_container.addChild(this.$flyLayer);
 			}
 			if (((((((this.isMouseDown) && (Core.sceneClickAbled))) && (((getTimer() - this.mouseDownTime) > 1000)))) && (!(_shiftKey)))) {
 				this.autoWalk = true;
@@ -1229,10 +1187,10 @@
 			if (((this.mainChar.runing) || (this.mainChar.jumping))) {
 				_local_6 = 1200;
 			}
-			if ((getTimer() - this.depthTime) > _local_6) {
-				this.depthTime = getTimer();
-				this.sortDepth();
+			if ((getTimer() - _depthTime) > _local_6) {
+				_depthTime = getTimer();
 				this.checkOut();
+				this.sortDepth();
 			}
 			if (Core.screenShaking == false) {
 				try {
@@ -1243,9 +1201,9 @@
 			}
 			this.charMove();
 			this.playNumShape();
-			if ((getTimer() - this.cleanTime) > 150) {
+			if ((getTimer() - _cleanTime) > 150) {
 				this.$bottomLayer.loadImage(x, y);
-				this.cleanTime = getTimer();
+				_cleanTime = getTimer();
 			}
 			if (((this.shoawdBitmapArray) && (this.shoawdBitmapArray.length))) {
 				_local_7 = this.shoawdBitmapArray.length;
@@ -1331,48 +1289,42 @@
 
 		private function checkOut():void
 		{
-			var _local_2:IAvatar;
-			var _local_3:HeadShape;
-			var _local_1:Dictionary = this.avatarHash.hash;
-			for each (_local_2 in _local_1) {
-				if (_local_2.type != SceneConstant.ICON_EFFECT) {
-					if (!_local_2.stageIntersects) {
-						if (!_local_2.stop) {
-							_local_2.stop = true;
+			var avatar:Avatar;
+			var dict:Dictionary = this.avatarHash.hash;
+			for each (var item:IAvatar in dict) {
+				if (item.type != SceneConstant.ICON_EFFECT) {
+					continue;
+				}
+				if (!item.stageIntersects) {
+					if (!item.stop) {
+						item.stop = true;
+					}
+					if (DisplayObject(item).parent) {
+						DisplayObject(item).parent.removeChild(item as DisplayObject);
+					}
+					if (item as Avatar) {
+						avatar = item as Avatar;
+						if (avatar.shadowShape && avatar.shadowShape.parent) {
+							avatar.shadowShape.parent.removeChild(avatar.shadowShape);
 						}
-						if (DisplayObject(_local_2).parent) {
-							DisplayObject(_local_2).parent.removeChild((_local_2 as DisplayObject));
-							if ((_local_2 as Avatar)) {
-								_local_3 = (Avatar(_local_2).headShape as HeadShape);
-								if (((_local_3) && (_local_3.parent))) {
-									_local_3.parent.removeChild(_local_3);
-								}
-							}
+						if (avatar.headShape && avatar.headShape.parent) {
+							avatar.headShape.parent.removeChild(avatar.headShape);
 						}
-						if ((_local_2 as Char)) {
-							if (((Char(_local_2).shadowShape) && (Char(_local_2).shadowShape.parent))) {
-								Char(_local_2).shadowShape.parent.removeChild(Char(_local_2).shadowShape);
+					}
+				} else {
+					if (item.stop) {
+						item.stop = false;
+					}
+					if (Object(item).parent == null) {
+						if (item.isDisposed == false) {
+							this.addItem(item, item.layer);
+							if (item as Avatar) {
+								avatar = item as Avatar
+								avatar.headShape.reander();
+								avatar.openShadow = true;
 							}
-							if (((Char(_local_2).headShape) && (Char(_local_2).headShape.parent))) {
-								Char(_local_2).headShape.parent.removeChild(Char(_local_2).headShape);
-							}
-						}
-					} else {
-						if (_local_2.stop) {
-							_local_2.stop = false;
-						}
-						if (Object(_local_2).parent == null) {
-							if (_local_2.isDisposed == false) {
-								this.addItem(_local_2, _local_2.layer);
-								if ((_local_2 as Char)) {
-									Char(_local_2).openShadow = true;
-								}
-								if ((_local_2 as Avatar)) {
-									Avatar(_local_2).headShape.reander();
-								}
-							} else {
-								(coder::removeRepeatObjectInAvatarHash(_local_2));
-							}
+						} else {
+							coder::removeRepeatObjectInAvatarHash(item);
 						}
 					}
 				}
@@ -1381,52 +1333,52 @@
 
 		private function sortDepth():void
 		{
-			var _local_3:Object;
-			var _local_5:int;
-			var _local_6:int;
-			var _local_1:Array = [];
-			var _local_2:int = this.$middleLayer.numChildren;
-			var _local_4:int;
-			while (_local_4 < _local_2) {
-				_local_3 = this.$middleLayer.getChildAt(_local_4);
-				if ((((_local_3 as Avatar)) || ((_local_3 as SceneItem)))) {
-					if (_local_3) {
-						_local_1.push(_local_3);
+			var child:DisplayObject;
+			var index:int;
+			var list:Array = [];
+			var len:int = this.$middleLayer.numChildren;
+			var idx:int;
+			while (idx < len) {
+				child = this.$middleLayer.getChildAt(idx);
+				if ((child as Avatar) || (child as SceneItem)) {
+					if (child) {
+						list.push(child);
 					}
 				}
-				_local_4++;
+				idx++;
 			}
-			_local_2 = _local_1.length;
-			_local_1.sortOn(["y", "x"], [Array.NUMERIC, Array.NUMERIC]);
-			while (_local_2--) {
-				_local_3 = _local_1[_local_2];
-				if ((((((_local_2 <= (this.$middleLayer.numChildren - 1))) && (_local_3.stageIntersects))) && (!((this.$middleLayer.getChildAt(_local_2) == _local_3))))) {
-					_local_5 = DisplayObject(_local_3).parent.getChildIndex((_local_3 as DisplayObject));
-					if (_local_5 != _local_2) {
-						this.$middleLayer.addChildAt((_local_3 as DisplayObject), _local_2);
+			len = list.length;
+			list.sortOn(["y", "x"], [Array.NUMERIC, Array.NUMERIC]);
+			while (len--) {
+				child = list[len];
+				if (len <= this.$middleLayer.numChildren-1 && (child as Object).stageIntersects) {
+					index = child.parent.getChildIndex(child);
+					if (index != len) {
+						this.$middleLayer.addChildAt(child, len);
 					}
 				}
 			}
-			_local_1 = [];
-			_local_2 = this.$flyLayer.numChildren;
-			_local_4 = 0;
-			while (_local_4 < _local_2) {
-				_local_3 = this.$flyLayer.getChildAt(_local_4);
-				if ((_local_3 as Char)) {
-					if (_local_3) {
-						_local_1.push(_local_3);
+			
+			list.length = 0;
+			len = this.$flyLayer.numChildren;
+			idx = 0;
+			while (idx < len) {
+				child = this.$flyLayer.getChildAt(idx);
+				if (child as Char) {
+					if (child) {
+						list.push(child);
 					}
 				}
-				_local_4++;
+				idx++;
 			}
-			_local_2 = _local_1.length;
-			_local_1.sortOn(["y", "x"], [Array.NUMERIC, Array.NUMERIC]);
-			while (_local_2--) {
-				_local_3 = _local_1[_local_2];
-				if ((((((_local_2 <= (this.$flyLayer.numChildren - 1))) && (_local_3.stageIntersects))) && (!((this.$flyLayer.getChildAt(_local_2) == _local_3))))) {
-					_local_6 = DisplayObject(_local_3).parent.getChildIndex((_local_3 as DisplayObject));
-					if (_local_6 != _local_2) {
-						this.$flyLayer.addChildAt((_local_3 as DisplayObject), _local_2);
+			len = list.length;
+			list.sortOn(["y", "x"], [Array.NUMERIC, Array.NUMERIC]);
+			while (len--) {
+				child = list[len];
+				if (len <= this.$flyLayer.numChildren-1 && (child as Object).stageIntersects) {
+					index = child.parent.getChildIndex(child);
+					if (index != len) {
+						this.$flyLayer.addChildAt(child, len);
 					}
 				}
 			}

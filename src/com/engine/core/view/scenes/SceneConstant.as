@@ -23,6 +23,7 @@
 		 */		
 		public static const ITEM_LAYER:String = "ITEM_LAYER";
 		
+		public static const AVATAR:String = "Avatar";
 		public static const COLLECTION_ITEM:String = "collection";
 		public static const CHAR:String = "char";
 		public static const ROBOT:String = "robot";

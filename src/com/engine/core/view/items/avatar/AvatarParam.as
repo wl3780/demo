@@ -12,7 +12,6 @@
 	public class AvatarParam extends Proto 
 	{
 
-		public var timeout:int;
 		public var replay:int = -1;
 		public var holdOnLastFrame:Boolean = false;
 		public var currentFrame:int;
@@ -92,9 +91,9 @@
 		public function getBitmapData(dir:int, frame:int):BitmapData
 		{
 			try {
-				var _local_3:String = this.oid + Core.SIGN + this.link + Core.SIGN + this.bitmapdatas[dir];
+				var key:String = this.oid + Core.SIGN + this.link + Core.SIGN + this.bitmapdatas[dir];
 				var manager:AvatarAssetManager = AvatarAssetManager.getInstance();
-				return manager.bitmapdatas[_local_3][frame] as BitmapData;
+				return manager.bitmapdatas[key][frame] as BitmapData;
 			} catch(e:Error) {
 			}
 			return null;

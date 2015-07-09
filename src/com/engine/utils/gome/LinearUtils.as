@@ -1,11 +1,13 @@
 ﻿package com.engine.utils.gome
 {
-	import com.engine.core.tile.TileConst;
-	
 	import flash.geom.Point;
 
 	public class LinearUtils
 	{
+
+		public static const _radian_:Number = 180 / Math.PI;
+		public static const _angle_:Number = Math.PI / 180;
+		
 		public static function lineAttck(startPoint:Point, endPoint:Point, interval:int=80):Array
 		{
 			if (!startPoint || !endPoint) {
@@ -279,23 +281,27 @@
 		{
 			return LinearUtils.getDirection(x, y, tar_x, tar_y);
 		}
-
+		
 		public static function angle2Radian(angle:Number):Number
 		{
-			return angle * Math.PI / 180;
+			return angle * _angle_;//Math.PI / 180;
 		}
-		
 		public static function radian2Angle(radian:Number):Number
 		{
-			return radian * 180 / Math.PI;
+			return radian * _radian_;//180 / Math.PI;
 		}
-		
-		public static function getAngleWithPoint(p1:Point, p2:Point):Number
+		public static function getAngleWithPoints(p1:Point, p2:Point):Number
 		{
 			var dx:Number = p2.x - p1.x;
 			var dy:Number = p2.y - p1.y;
 			var radian:Number = Math.atan2(dy, dx);
 			return radian2Angle(radian);
+		}
+		public static function getRadianWithPoints(p1:Point, p2:Point):Number
+		{
+			var dx:Number = p2.x - p1.x;
+			var dy:Number = p2.y - p1.y;
+			return Math.atan2(dy, dx);
 		}
 	}
 }

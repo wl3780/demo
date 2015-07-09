@@ -40,9 +40,6 @@
 
 	public class Char extends Avatar 
 	{
-
-		public static const _radian_:Number = 180 / Math.PI;
-		public static const _angle_:Number = Math.PI / 180;
 		
 		private static var bitmapScale9Grid:BitmapScale9Grid;
 		private static var matrix:Matrix = new Matrix();
@@ -70,7 +67,6 @@
 		protected var cur_point:Point;
 		protected var time:Number = 0;
 		protected var totalTime:Number = 0;
-		protected var _sp:Number;
 		protected var _sceneFlyMode:Boolean;
 		protected var _speed_:int;
 		
@@ -87,7 +83,6 @@
 		private var _suitVisible:Boolean = true;
 		private var effectDic:Dictionary;
 		private var timex:int = 0;
-		private var overPoint:Point;
 		private var jumpTimeNum:int;
 		private var jumpTimerIndex:int;
 		private var headArray:Dictionary;
@@ -101,7 +96,6 @@
 			super();
 			this.type = SceneConstant.CHAR;
 			this.jumpQuene = [];
-			this.overPoint = new Point();
 		}
 
 		public static function createChar():Char
@@ -148,7 +142,6 @@
 		public function set speed(val:Number):void
 		{
 			_speed = val;
-			_sp = val;
 		}
 
 		public function sayWord(_arg_1:String):void
@@ -384,9 +377,9 @@
 			}
 		}
 
-		override public function loadAvatarPart(_arg_1:String, _arg_2:AvatarRestrict=null):String
+		override public function loadAvatarPart(url:String, _arg_2:AvatarRestrict=null):String
 		{
-			var _local_3:String = super.loadAvatarPart(_arg_1, _arg_2);
+			var loadKey:String = super.loadAvatarPart(url, _arg_2);
 			if (_halo_effect) {
 				if (this.isOnMonut) {
 					_halo_effect.y = 20;
@@ -394,7 +387,7 @@
 					_halo_effect.y = 0;
 				}
 			}
-			return (_local_3);
+			return loadKey;
 		}
 
 		public function showHalo(_arg_1:String):void
@@ -458,15 +451,15 @@
 					_song_effect.parent.removeChild(_song_effect);
 				}
 				_song_effect.dispose();
+				_song_effect = null;
 			}
 			if (_song_effect2) {
 				_song_effect2.dispose();
 				if (_song_effect2.parent) {
 					_song_effect2.parent.removeChild(_song_effect2);
 				}
+				_song_effect2 = null;
 			}
-			_song_effect2 = null;
-			_song_effect = null;
 		}
 
 		public function showSongEffect(_arg_1:String, _arg_2:String):void
@@ -898,7 +891,6 @@
 			this.sceneFlyMode = false;
 			this.type = null;
 			this.headArray = null;
-			this.overPoint = new Point();
 			this.meditation = false;
 			this.speed = 0;
 			this.tar_point = null;
@@ -1444,7 +1436,6 @@
 			}
 			this.buffSprite = null;
 			this.pathArr = null;
-			this.overPoint = null;
 			this.tar_point = null;
 			this.cur_point = null;
 			_pt = null;
@@ -1516,10 +1507,10 @@
 			}
 		}
 
-		public function set state(_arg_1:String):void
+		public function set state(val:String):void
 		{
-			this.avatarParts.state = _arg_1;
-			this.loadCharActionAssets(_arg_1);
+			this.avatarParts.state = val;
+			this.loadCharActionAssets(val);
 		}
 
 		private function needTime(_arg_1:Array, _arg_2:int=0):int
@@ -1555,35 +1546,31 @@
 			return (_local_4);
 		}
 
-		public function walk(_arg_1:Array):void
+		public function walk(paths:Array):void
 		{
-			var _local_2:int;
-			var _local_3:int;
-			var _local_4:int;
-			var _local_5:int;
-			if (_arg_1.length == 1) {
-				_local_2 = (_arg_1[0].x / TileConst.TILE_SIZE);
-				_local_3 = (_arg_1[0].y / TileConst.TILE_SIZE);
-				_local_4 = (this.x / TileConst.TILE_SIZE);
-				_local_5 = (this.y / TileConst.TILE_SIZE);
-				if ((((_local_2 == _local_4)) && ((_local_3 == _local_5)))) {
+			if (!this.avatarParts) {
+				return;
+			}
+			if (paths.length == 1) {
+				var ttx:int = paths[0].x / TileConst.TILE_SIZE;
+				var tty:int = paths[0].y / TileConst.TILE_SIZE;
+				var ftx:int = this.x / TileConst.TILE_SIZE;
+				var fty:int = this.y / TileConst.TILE_SIZE;
+				if (ttx == ftx && tty == fty) {
 					return;
 				}
-			}
-			if (!avatarParts) {
-				return;
 			}
 			this.isGroupSongModel = false;
 			this.meditation = false;
 			this.removeSongEffect();
 			if (!this.jumping) {
 				clearTimeout(this.jumpTimerIndex);
-				if (((!((this.avatarParts.state == CharAction.WALK))) && (!((this.avatarParts.state == CharAction.STAND))))) {
-					this.play("stand");
+				if (this.avatarParts.state != CharAction.WALK && this.avatarParts.state != CharAction.STAND) {
+					this.play(CharAction.STAND);
 				}
-				this.pathArr = _arg_1.slice();
+				this.pathArr = paths.slice();
 				if (this.pathArr.length > 0) {
-					if (this.needTime(_arg_1) > 10000) {
+					if (this.needTime(paths) > 10000) {
 					}
 					if (avatarParts) {
 						this.state = CharAction.WALK;
@@ -1601,12 +1588,12 @@
 					this.cur_point = this.point;
 				} else {
 					if (this.avatarParts.state == CharAction.WALK) {
-						this.play("stand");
+						this.play(CharAction.STAND);
 					}
 				}
 			} else {
 				if (this.avatarParts.state == CharAction.WALK) {
-					this.play("stand");
+					this.play(CharAction.STAND);
 				}
 			}
 		}
