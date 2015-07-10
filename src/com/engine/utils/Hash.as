@@ -1,92 +1,132 @@
 ﻿package com.engine.utils
 {
+	import com.engine.core.Core;
+	import com.engine.core.model.IProto;
 	import com.engine.namespaces.coder;
 	
 	import flash.utils.Dictionary;
 
-	public class Hash 
+	public dynamic class Hash extends Dictionary implements IProto
 	{
-
+		private var _id:String;
+		private var _oid:String;
+		private var _proto:Object;
+		private var _className:String;
 		private var _length:int;
-		private var _hash:Dictionary;
 
 		public function Hash()
 		{
-			_length = 0;
-			_hash = new Dictionary();
+			super(false);
+			_id = Core.coder::nextInstanceIndex().toString(16);
 		}
-
-		public function put(key:String, val:Object):void
+		
+		public function take(key:Object):Object
 		{
-			if (this.has(key) == false) {
-				_hash[key] = val;
-				_length++;
+			return this[key];
+		}
+		
+		public function put(key:Object, value:Object, replace:Boolean=false):void
+		{
+			var isContain:Boolean = has(key);
+			if (!replace && !isContain) {
+				this[key] = value;
 			} else {
-				this.remove(key);
-				_hash[key] = val;
-				_length++;
+				if (replace) {
+					if (key != "length" && key != "proto" && key != "id" && key != "oid" && key != "className") {
+						this[key] = value;
+					} else {
+						throw new Error("存储key值:\"" + key + "\"与对象固有属性名冲突！");
+					}
+				}
+			}
+			
+			if (!isContain) {
+				_length ++;
 			}
 		}
-
-		public function remove(key:String):Object
+		
+		public function has(key:Object):Boolean
 		{
-			if (this.has(key)) {
-				var ret:Object = _hash[key];
-				delete _hash[key];
-				_length--;
-				return ret;
+			return this[key] ? true : false;
+		}
+		
+		public function remove(key:Object):Object
+		{
+			var isHas:Boolean = has(key);
+			var result:Object = this[key];
+			delete this[key];
+			if (isHas) {
+				_length --;
 			}
-			return null;
+			return result;
 		}
-
-		public function has(key:String):Boolean
-		{
-			if (_hash[key] != null) {
-				return true;
-			}
-			return false;
-		}
-
-		public function take(key:String):Object
-		{
-			return _hash[key];
-		}
-
+		
 		public function get length():int
 		{
 			return _length;
 		}
-
-		public function get hash():Dictionary
+		
+		public function get id():String
 		{
-			return _hash;
+			return _id;
 		}
-
+		public function set id(value:String):void
+		{
+			_id = value;
+		}
+		
+		public function get oid():String
+		{
+			return _oid;
+		}
+		public function set oid(value:String):void
+		{
+			_oid = value;
+		}
+		
+		public function get proto():Object
+		{
+			return _proto;
+		}
+		public function set proto(value:Object):void
+		{
+			_proto = value;
+		}
+		
+		public function clone():IProto
+		{
+			var newOne:Hash = new Hash();
+			for (var key:String in this) {
+				newOne.put(key, this[key]);
+			}
+			return newOne;
+		}
+		
 		public function dispose():void
 		{
-			for (var key:String in _hash) {
-				delete _hash[key];
-			}
-			_hash = null;
+			_proto = null;
+			_oid = null;
+			_id = null;
 			_length = 0;
-		}
-
-		coder function values():Array
-		{
-			var ret:Array = [];
-			for each (var val:Object in _hash) {
-				ret.push(val);
+			for (var key:String in this) {
+				delete this[key];
 			}
-			return ret;
 		}
-
-		coder function keys():Array
+		
+		public function reset():void
 		{
-			var ret:Array = [];
-			for each (var key:Object in _hash) {
-				ret.push(key);
-			}
-			return null;
+			this.dispose();
+			_id = Core.getInstance().coder::nextInstanceIndex().toString(16);
+		}
+		
+		public function get className():String
+		{
+			return _className;
+		}
+		
+		public function toString():String
+		{
+			return super.toString();
 		}
 
 	}

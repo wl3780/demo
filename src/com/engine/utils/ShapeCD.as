@@ -52,7 +52,7 @@ package com.engine.utils
         private static function timerFunc():void
         {
             var _local_2:ShapeCD;
-            var _local_1:Dictionary = hash.hash;
+            var _local_1:Dictionary = hash;
             for each (_local_2 in _local_1) {
                 _local_2.onRender();
             };

@@ -70,7 +70,7 @@ package com.engine.core.controls.model
             var _local_2:SubProxy;
             if (this._valve){
                 this._subHandler.apply(null, [_arg_1]);
-                for each (_local_2 in this._hash.hash) {
+                for each (_local_2 in this._hash) {
                     if (!_local_2.lock){
                         var _local_5 = _local_2;
                         (_local_5.coder::subHandler(_arg_1));

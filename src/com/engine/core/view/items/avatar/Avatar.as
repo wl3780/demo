@@ -280,7 +280,10 @@
 		override public function set type(val:String):void
 		{
 			super.type = val;
-			if ((((((((this.type == SceneConstant.CHAR)) || ((this.type == SceneConstant.MONSTER)))) || ((this.type == SceneConstant.NPC)))) || ((this.type == SceneConstant.SPECIAL_NPC)))) {
+			if (this.type == SceneConstant.CHAR 
+				|| this.type == SceneConstant.MONSTER 
+				|| this.type == SceneConstant.NPC 
+				|| this.type == SceneConstant.SPECIAL_NPC) {
 				this.isShowbodyShoadw = true;
 			} else {
 				this.isShowbodyShoadw = false;
@@ -909,13 +912,8 @@
 			}
 			var smPath:String = filePath;
 			var arr:Array = smPath.split("/");
-<<<<<<< HEAD
 			var avatarId:String = arr[arr.length-1];
 			avatarId = avatarId.split(Core.TMP_FILE)[0];
-=======
-			var avatarID:String = arr[arr.length-1];
-			avatarID = avatarID.split(Core.TMP_FILE)[0];
->>>>>>> branch 'master' of ssh://git@github.com/hwj4itx/demo.git
 			if (arr.length >= 2) {
 				arr[arr.length-2] = "output";
 			} else if (arr.length == 1) {
@@ -923,13 +921,8 @@
 			}
 			smPath = arr.join("/");
 			smPath = smPath.split(Core.TMP_FILE).join(Core.SM_FILE);
-<<<<<<< HEAD
 			var avatarType:String = avatarId.split("_")[0];
 			var avatarNum:int = avatarId.split("_")[1];
-=======
-			var avatarType:String = avatarID.split("_")[0];
-			var avatarNum:int = avatarID.split("_")[1];
->>>>>>> branch 'master' of ssh://git@github.com/hwj4itx/demo.git
 			if (avatarType == ItemConst.MOUNT_TYPE) {
 				if (avatarNum == 0) {
 					this.isOnMonut = false;
@@ -942,23 +935,12 @@
 			if (avatarNum > 0) {
 				if (this.avatarParts) {
 					AvatarManager.coder::getInstance().put(this.avatarParts);
-<<<<<<< HEAD
 					avatarId = AvatarAssetManager.getInstance().loadAvatar(smPath, this.avatarParts.id, filePath);
 					if (avatarType == ItemConst.EFFECT_TYPE && _arg_2) {
 						_arg_2.coder::oid = avatarId;
 						this.avatarParts.addEffectRestrict(avatarId, _arg_2);
-=======
-					avatarID = AvatarAssetManager.getInstance().loadAvatar(smPath, this.avatarParts.id, filePath);
-					if (avatarType == ItemConst.EFFECT_TYPE && _arg_2) {
-						_arg_2.coder::oid = avatarID;
-						this.avatarParts.addEffectRestrict(avatarID, _arg_2);
->>>>>>> branch 'master' of ssh://git@github.com/hwj4itx/demo.git
 					}
-<<<<<<< HEAD
 					return avatarId;
-=======
-					return avatarID;
->>>>>>> branch 'master' of ssh://git@github.com/hwj4itx/demo.git
 				}
 			} else {
 				if (this.avatarParts) {

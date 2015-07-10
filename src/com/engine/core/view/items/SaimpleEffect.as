@@ -5,15 +5,17 @@
 
 package com.engine.core.view.items
 {
+    import com.engine.core.Core;
     import com.engine.core.view.base.BaseShape;
+    import com.engine.core.view.scenes.Scene;
     import com.engine.utils.Hash;
+    
+    import core.HeartbeatFactory;
+    
+    import flash.display.BitmapData;
     import flash.geom.Matrix;
     import flash.geom.Rectangle;
-    import flash.display.BitmapData;
     import flash.utils.Dictionary;
-    import core.HeartbeatFactory;
-    import com.engine.core.view.scenes.Scene;
-    import com.engine.core.Core;
 
     public class SaimpleEffect extends BaseShape 
     {
@@ -44,7 +46,7 @@ package com.engine.core.view.items
         private static function enterFrameFunc():void
         {
             var _local_2:SaimpleEffect;
-            var _local_1:Dictionary = hash.hash;
+            var _local_1:Dictionary = hash;
             for each (_local_2 in _local_1) {
                 if (!_local_2.stop){
                     _local_2.onReander();

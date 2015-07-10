@@ -5,9 +5,7 @@
 	import com.engine.core.controls.wealth.WealthPool;
 	import com.engine.core.controls.wealth.loader.DisplayLoader;
 	import com.engine.core.model.map.SquareMapData;
-	import com.engine.core.tile.square.Square;
 	import com.engine.core.tile.square.SquareGroup;
-	import com.engine.core.tile.square.SquarePt;
 	import com.engine.core.view.BaseSprite;
 	import com.engine.core.view.items.HeadShowShape;
 	import com.engine.core.view.items.IItem;
@@ -29,14 +27,9 @@
 	import com.engine.utils.Hash;
 	import com.engine.utils.HitTest;
 	import com.engine.utils.SuperKey;
-	import com.engine.utils.astar.SquareAstar;
-	import com.engine.utils.gome.SquareUitls;
-	import com.engine.utils.gome.TileUtils;
 	import com.greensock.TweenLite;
-	import com.greensock.easing.Linear;
 	
 	import flash.display.BitmapData;
-	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.GradientType;
@@ -54,7 +47,6 @@
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.System;
-	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 
@@ -91,28 +83,22 @@
 		protected var maskShape:Sprite;
 		protected var shoawdBitmapArray:Array;
 		protected var mouseDownTime:int = 0;
-		protected var _walkEndFunc_:Function;
 		protected var overAvatar:IAvatar;
 		protected var autoWalk:Boolean = false;
 		protected var headArray:Dictionary;
 		
-		coder var astar:SquareAstar;
-		
 		private var _sceneFlyMode:Boolean;
-		private var _lingthMode:int;
 		
 		private var _container:DisplayObjectContainer;
 		private var _selectAvatar:*;
 		private var _cleanTime:int;
 		private var _depthTime:int = 0;
-		private var _outsideRect:Rectangle;
 
 		public function Scene()
 		{
 			this.mouseDownPoint = new Point();
 			this.shoawdBitmapArray = [];
 			this.headArray = new Dictionary();
-			_outsideRect = new Rectangle();
 			Scene.scene = this;
 			super();
 			this.init();
@@ -223,15 +209,6 @@
 //			MonsterDebugger.enabled = !MonsterDebugger.enabled;
 		}
 
-		public function get walkEndFunc():Function
-		{
-			return _walkEndFunc_;
-		}
-		public function set walkEndFunc(val:Function):void
-		{
-			_walkEndFunc_ = val;
-		}
-
 		public function get selectAvatar():*
 		{
 			return _selectAvatar;
@@ -241,45 +218,12 @@
 			_selectAvatar = target;
 		}
 
-		public function get lingthMode():int
-		{
-			return _lingthMode;
-		}
-		public function set lingthMode(val:int):void
-		{
-			_lingthMode = val;
-			if (val <= 0) {
-				this.shadowShape.blendMode = BlendMode.NORMAL;
-				this.maskShape.blendMode = BlendMode.NORMAL;
-				if (this.maskShape.parent) {
-					this.maskShape.parent.removeChild(this.maskShape);
-				}
-			} else {
-				this.shadowShape.blendMode = BlendMode.ERASE;
-				this.maskShape.blendMode = BlendMode.LAYER;
-				if (this.contains(this.maskShape) == false && this.contains(this.$middleLayer) == true) {
-					var idx:int = this.getChildIndex(this.$middleLayer);
-					this.addChildAt(this.maskShape, (idx + 1));
-				}
-			}
-		}
-
-		public function liangdu(num:Number):Array
-		{
-			return [
-				1, 0, 0, 0, num, 
-				0, 1, 0, 0, num, 
-				0, 0, 1, 0, num, 
-				0, 0, 0, 1, 0];
-		}
-
 		private function init():void
 		{
 			if (Core.char_shadow == null) {
 				this.drawShadow();
 			}
 			
-			coder::astar = new SquareAstar();
 			this.$nodeTree = new NodeTree(Core.SCENE_ITEM_NODER);
 			
 			this.mouseChildren = this.mouseEnabled = false;
@@ -311,7 +255,6 @@
 			this.maskShape.tabChildren = this.maskShape.tabEnabled = false;
 			this.maskShape.addChild(this.shadowShape);
 			
-			this.lingthMode = 0;
 			this.$bottomLayer = new MapLayer();
 			
 			this.addChild(this.$itemLayer);
@@ -333,10 +276,6 @@
 			Core.stage.addEventListener(Event.ENTER_FRAME, this.enterFrameFunc);
 		}
 
-		public function movePointChangeFunc(_arg_1:Point, _arg_2:Point):void
-		{
-		}
-
 		public function updateMainChar(avatarID:int, weaponID:int=0, mountID:int=0, wingID:int=0):void
 		{
 			if (_mainChar == null) {
@@ -344,7 +283,6 @@
 				_mainChar.type = SceneConstant.CHAR;
 				_mainChar.char_id = Core.mainCharId;
 				_mainChar.showBodyShoadw(true);
-				_mainChar.movePointChangeFunc = this.movePointChangeFunc;
 			}
 			this.updateCharAvatarPart(_mainChar, avatarID, weaponID, mountID, wingID);
 		}
@@ -411,30 +349,28 @@
 			this.unload();
 		}
 
-		public function fineMainCharNearChar(_arg_1:int=400, _arg_2:String=null):Char
+		public function fineMainCharNearChar(radius:int=400, type:String=null):Char
 		{
-			var _local_7:Char;
-			var _local_8:int;
-			var _local_3:Rectangle = new Rectangle((this.mainChar.x - _arg_1), (this.mainChar.y - _arg_1), (_arg_1 * 2), (_arg_1 * 2));
-			var _local_4:Array = this.find(_local_3, true);
-			var _local_5:Array = [];
-			var _local_6:int;
-			while (_local_6 < _local_4.length) {
-				_local_7 = (_local_4[_local_6] as Char);
-				if (((_local_7) && ((((_arg_2 == null)) || ((_arg_2 == _local_7.type)))))) {
-					_local_8 = Point.distance(this.mainChar.point, new Point(_local_7.x, _local_7.y));
-					_local_5.push({
-						"dis":_local_8,
-						"char":_local_7
+			var area:Rectangle = new Rectangle(this.mainChar.x-radius, this.mainChar.y-radius, radius*2, radius*2);
+			var items:Array = this.find(area, true);
+			var arr:Array = [];
+			var idx:int;
+			while (idx < items.length) {
+				var char:Char = items[idx] as Char;
+				if (char && (type == null || type == char.type)) {
+					var dis:int = Point.distance(this.mainChar.point, new Point(char.x, char.y));
+					arr.push({
+						"dis":dis,
+						"char":char
 					});
 				}
-				_local_6++;
+				idx++;
 			}
-			_local_5.sortOn("dis", Array.NUMERIC);
-			if (_local_5.length) {
-				return (_local_5[0].char);
+			arr.sortOn("dis", Array.NUMERIC);
+			if (arr.length) {
+				return arr[0].char;
 			}
-			return (null);
+			return null;
 		}
 
 		public function find(area:Rectangle, exact:Boolean, definition:int=100):Array
@@ -515,7 +451,7 @@
 			while (this.$itemLayer.numChildren) {
 				this.$itemLayer.removeChildAt((this.$itemLayer.numChildren - 1));
 			}
-			_local_3 = this.avatarHash.hash;
+			_local_3 = this.avatarHash;
 			for (_local_2 in _local_3) {
 				_local_8 = _local_3[_local_2];
 				if (((_local_8) && (!((_local_8 == this.mainChar))))) {
@@ -700,188 +636,9 @@
 			}
 		}
 
-		public function mainCharWalk(target:Point, callback:Function=null, _arg_3:int=1000, _arg_4:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
+		public function sceneMoveTo(px:Number, py:Number):void
 		{
-			if (this.mainChar.lockMove) {
-				return;
-			}
-			Core.sceneClickAbled = true;
-			_walkEndFunc_ = callback;
-			this.charMoveTo(this.mainChar, target.x, target.y);
-		}
-
-		public function charMoveTo(char:Char, _arg_2:Number, _arg_3:Number, _arg_4:Function=null):Array
-		{
-			var _local_5:Point;
-			var _local_6:Array;
-			if (char) {
-				_local_5 = new Point();
-				_local_5.x = _arg_2;
-				_local_5.y = _arg_3;
-				_local_6 = this.getPath(char.point, _local_5);
-				if (_local_6.length > 0) {
-					char.walk(_local_6);
-					if (_arg_4 != null) {
-						char.walkEndFunc = _arg_4;
-					}
-					return (_local_6);
-				}
-				if (_arg_4 != null) {
-					(_arg_4());
-				}
-			}
-			return ([]);
-		}
-
-		public function charMovePath(_arg_1:Char, _arg_2:Array, _arg_3:Function=null):void
-		{
-			if (_arg_2.length > 1) {
-				_arg_1.walk(_arg_2);
-				if (_arg_3 != null) {
-					_arg_1.walkEndFunc = _arg_3;
-				}
-			} else {
-				if (_arg_3 != null) {
-					_arg_1.walkEndFunc = _arg_3;
-				}
-			}
-		}
-
-		public function cleanPath(_arg_1:Array):Array
-		{
-			var _local_2:int;
-			var _local_3:Point;
-			var _local_4:Point;
-			var _local_5:Point;
-			var _local_6:Number;
-			var _local_7:Number;
-			if (_arg_1.length > 2) {
-				_local_2 = 1;
-				while (_local_2 < (_arg_1.length - 1)) {
-					_local_3 = _arg_1[(_local_2 - 1)];
-					_local_4 = _arg_1[_local_2];
-					_local_5 = _arg_1[(_local_2 + 1)];
-					_local_6 = ((_local_3.y - _local_4.y) / (_local_3.x - _local_4.x));
-					_local_7 = ((_local_4.y - _local_5.y) / (_local_4.x - _local_5.x));
-					if (_local_6 == _local_7) {
-						_arg_1.splice(_local_2, 1);
-						_local_2--;
-					}
-					_local_2++;
-				}
-			}
-			return (_arg_1);
-		}
-
-		public function getPath(_arg_1:Point, _arg_2:Point):Array
-		{
-			var _local_3:Array;
-			var _local_6:Point;
-			var _local_7:Point;
-			var _local_4:SquarePt = SquareUitls.pixelsToSquare(_arg_1);
-			var _local_5:SquarePt = SquareUitls.pixelsToSquare(_arg_2);
-			if (_local_4.key == _local_5.key) {
-				return ([_arg_1, _arg_2]);
-			}
-			if (this.checkPointType(_arg_1, _arg_2)) {
-				_local_3 = [_arg_1, _arg_2];
-			} else {
-				_local_3 = this.coder::astar.getPath(SquareGroup.getInstance().hash.hash, _local_4, _local_5);
-				if (_local_3.length) {
-					_local_6 = _local_3[(_local_3.length - 1)];
-					if (TileUtils.getIndex(_local_6).key == _local_5.key) {
-						_local_3[(_local_3.length - 1)] = _arg_2;
-					}
-					_local_7 = _local_3[0];
-					if (TileUtils.getIndex(_local_7).key == _local_4.key) {
-						if (_local_4.toString() != _arg_1.toString()) {
-							_local_3[0] = _arg_1;
-						}
-					}
-				}
-				_local_3 = this.cleanPath(_local_3);
-				if (_local_3.length == 1) {
-					_local_3.push(_local_3[0]);
-				}
-			}
-			return (_local_3);
-		}
-
-		public function walkPathDecode(_arg_1:Point, _arg_2:Point):Array
-		{
-			var _local_3:Array;
-			var _local_6:Point;
-			var _local_7:Point;
-			var _local_4:SquarePt = SquareUitls.pixelsToSquare(_arg_1);
-			var _local_5:SquarePt = SquareUitls.pixelsToSquare(_arg_2);
-			_local_3 = this.coder::astar.getPath(SquareGroup.getInstance().hash.hash, _local_4, _local_5);
-			if (_local_3.length) {
-				_local_6 = _local_3[(_local_3.length - 1)];
-				if (TileUtils.getIndex(_local_6).key == _local_5.key) {
-					_local_3[(_local_3.length - 1)] = _arg_2;
-				}
-				_local_7 = _local_3[0];
-				if (TileUtils.getIndex(_local_7).key == _local_4.key) {
-					if (_local_4.toString() != _arg_1.toString()) {
-						_local_3[0] = _arg_1;
-					}
-				}
-			}
-			return (_local_3);
-		}
-
-		public function walkPathUncode(_arg_1:ByteArray):Array
-		{
-			return ([]);
-		}
-
-		protected function getLinePaths(_arg_1:Point, _arg_2:Point, _arg_3:int=10):Array
-		{
-			var _local_9:Point;
-			var _local_10:SquarePt;
-			var _local_11:Square;
-			var _local_4:Array = [];
-			var _local_5:Dictionary = new Dictionary();
-			var _local_6:Number = Point.distance(_arg_1, _arg_2);
-			var _local_7:int = Math.ceil((_local_6 / _arg_3));
-			var _local_8:int;
-			while (_local_8 < _local_7) {
-				_local_9 = Point.interpolate(_arg_1, _arg_2, (1 - (_local_8 / _local_7)));
-				_local_10 = SquareUitls.pixelsToSquare(_local_9);
-				_local_11 = SquareGroup.getInstance().take(_local_10.key);
-				if (_local_5[_local_11.key] == null) {
-					_local_4.push(SquareUitls.squareTopixels(_local_10));
-				}
-				_local_8++;
-			}
-			return (_local_4);
-		}
-
-		protected function checkPointType(_arg_1:Point, _arg_2:Point, _arg_3:int=10):Boolean
-		{
-			var _local_8:Point;
-			var _local_9:SquarePt;
-			var _local_10:Square;
-			var _local_4:Number = Point.distance(_arg_1, _arg_2);
-			var _local_5:int = Math.ceil((_local_4 / _arg_3));
-			var _local_6:Boolean = true;
-			var _local_7:int;
-			while (_local_7 < _local_5) {
-				_local_8 = Point.interpolate(_arg_1, _arg_2, (_local_7 / _local_5));
-				_local_9 = SquareUitls.pixelsToSquare(_local_8);
-				_local_10 = SquareGroup.getInstance().take(_local_9.key);
-				if (((!(_local_10)) || ((((_local_10.type < 1)) && (!((_local_10.type == this.coder::astar.mode))))))) {
-					_local_6 = false;
-					break;
-				}
-				_local_7++;
-			}
-			return (_local_6);
-		}
-
-		public function sceneMoveTo(_arg_1:Number, _arg_2:Number):void
-		{
-			var _local_3:Point = this.getCameraFocusTo(_arg_1, _arg_2);
+			var _local_3:Point = this.getCameraFocusTo(px, py);
 			var _local_4:Number = _local_3.x;
 			var _local_5:Number = _local_3.y;
 			var _local_6:Number = ((1 - this.$bottomLayer.scaleX) * _local_4);
@@ -944,57 +701,25 @@
 			}
 		}
 
-		public function zoon(_arg_1:Number):void
+		public function zoon(scale:Number):void
 		{
-			this.scaleX = (this.scaleY = (this.$bottomLayer.scaleX = (this.$bottomLayer.scaleY = _arg_1)));
+			this.scaleX = this.scaleY = scale;
+			this.$bottomLayer.scaleX = this.$bottomLayer.scaleY = scale;
 			if (this.$flyLayer.parent) {
-				this.$flyLayer.scaleX = (this.$flyLayer.scaleY = this.scaleX);
+				this.$flyLayer.scaleX = this.$flyLayer.scaleY = scale;
 			}
 			this.sceneMoveTo(this.mainChar.x, this.mainChar.y);
-			var _local_2:Number = (1 + ((1 - _arg_1) * 2));
-			this.mainChar.hp_height = (140 * _local_2);
-			this.mainChar.scaleX = (this.mainChar.scaleY = _local_2);
+			var _local_2:Number = 1 + (1-scale)*2;
+			this.mainChar.hp_height = 140 * _local_2;
+			this.mainChar.scaleX = this.mainChar.scaleY = _local_2;
 		}
 
-		public function slowMoveTo(_arg_1:Number, _arg_2:Number):void
+		public function uniformSpeedMoveTo(px:Number, py:Number):void
 		{
-			var _local_3:Point;
-			var _local_7:Number;
-			var _local_8:int;
-			var _local_9:*;
-			_local_3 = this.getCameraFocusPoint(_arg_1, _arg_2);
-			var _local_4:Number = _local_3.x;
-			var _local_5:Number = _local_3.y;
-			_local_3 = new Point();
-			_local_3.x = _arg_1;
-			_local_3.y = _arg_2;
-			var _local_6:Number = Point.distance(_local_3, _local_3);
-			if (_local_6 > 0) {
-				_local_8 = (this.mainChar.speed * 1000);
-				if (_local_8 < 600) {
-					_local_8 = 500;
-				}
-				_local_7 = (_local_6 / _local_8);
-				_local_9 = this;
-				TweenLite.to(this.$bottomLayer, _local_7, {
-					"x":_local_4,
-					"y":_local_5,
-					"ease":Linear.easeNone
-				});
-				TweenLite.to(this, _local_7, {
-					"x":_local_4,
-					"y":_local_5,
-					"ease":Linear.easeNone
-				});
-			}
-		}
-
-		public function uniformSpeedMoveTo(_arg_1:Number, _arg_2:Number):void
-		{
-			var _local_3:Point = this.getCameraFocusPoint(_arg_1, _arg_2);
+			var _local_3:Point = this.getCameraFocusPoint(px, py);
 			var _local_4:Point = new Point();
-			_local_4.x = _arg_1;
-			_local_4.y = _arg_2;
+			_local_4.x = px;
+			_local_4.y = py;
 			var _local_5:Point = _local_4;
 			var _local_6:Number = Point.distance(_local_5, _local_3);
 			if (_local_6 > 0) {
@@ -1002,122 +727,120 @@
 			}
 		}
 
-		public function getCameraFocusTo(_arg_1:Number, _arg_2:Number):Point
+		public function getCameraFocusTo(px:Number, py:Number):Point
 		{
-			var _local_7:Number;
-			var _local_8:Number;
-			var _local_3:int = Core.stage.stageWidth;
-			var _local_4:int = Core.stage.stageHeight;
-			var _local_5 = 4000;
-			var _local_6 = 4000;
-			if (((((this.mapData) && ((this.mapData.width > 0)))) && ((this.mapData.height > 0)))) {
-				_local_5 = this.mapData.width;
-				_local_6 = this.mapData.height;
+			var fx:Number;
+			var fy:Number;
+			var stageW:int = Core.stage.stageWidth;
+			var stageH:int = Core.stage.stageHeight;
+			var mapW:int = 4000;
+			var mapH:int = 4000;
+			if (this.mapData && this.mapData.width > 0 && this.mapData.height > 0) {
+				mapW = this.mapData.width;
+				mapH = this.mapData.height;
 			}
-			var _local_9:Number = (_local_3 / 2);
-			var _local_10:Number = (_local_4 / 2);
-			if ((((_arg_1 >= _local_9)) && ((_arg_1 <= (_local_5 - _local_9))))) {
-				_local_7 = (_local_9 - _arg_1);
-			} else {
-				if (_arg_1 <= _local_9) {
-					_local_7 = 0;
+			var centerX:Number = stageW / 2;
+			var centerY:Number = stageH / 2;
+			if ((px>=centerX) && (px<=mapW-centerX)) {	// 地图之间
+				fx = centerX - px;
+			} else {	//　地图两端
+				if (px <= centerX) {
+					fx = 0;
 				} else {
-					_local_7 = (_local_3 - _local_5);
+					fx = stageW - mapW;
 				}
 			}
-			if ((((_arg_2 >= _local_10)) && ((_arg_2 <= (_local_6 - _local_10))))) {
-				_local_8 = (_local_10 - _arg_2);
-			} else {
-				if (_arg_2 <= _local_10) {
-					_local_8 = 0;
+			if ((py>=centerY) && (py <= mapH-centerY)) {	// 地图之间
+				fy = centerY - py;
+			} else {	//　地图两端
+				if (py <= centerY) {
+					fy = 0;
 				} else {
-					_local_8 = (_local_4 - _local_6);
+					fy = stageH - mapH;
 				}
 			}
-			return (new Point(_local_7, _local_8));
+			return new Point(fx, fy);
 		}
 
-		public function getCameraFocusPoint(_arg_1:Number, _arg_2:Number):Point
+		public function getCameraFocusPoint(px:Number, py:Number):Point
 		{
-			var _local_7:Number;
-			var _local_8:Number;
-			var _local_3:int = Core.stage.stageWidth;
-			var _local_4:int = Core.stage.stageHeight;
-			var _local_5 = 4000;
-			var _local_6 = 4000;
-			if (((((this.mapData) && ((this.mapData.width > 0)))) && ((this.mapData.height > 0)))) {
-				_local_5 = this.mapData.pixel_width;
-				_local_6 = this.mapData.pixel_height;
+			var fx:Number;
+			var fy:Number;
+			var stageW:int = Core.stage.stageWidth;
+			var stageH:int = Core.stage.stageHeight;
+			var mapPW:int = 4000;
+			var mapPH:int = 4000;
+			if (this.mapData && this.mapData.width > 0 && this.mapData.height > 0) {
+				mapPW = this.mapData.pixel_width;
+				mapPH = this.mapData.pixel_height;
 			}
-			var _local_9:int = 70;
-			var _local_10:Point = new Point();
-			_local_10.x = _arg_1;
-			_local_10.y = _arg_2;
-			var _local_11:Point = this.localToGlobal(_local_10);
-			var _local_12:Number = (_local_3 / 2);
-			var _local_13:Number = (_local_4 / 2);
-			var _local_14:Point = this.localToGlobal(_local_10);
-			_local_10 = new Point();
-			_local_10.x = _local_12;
-			_local_10.y = _local_13;
-			var _local_15:int = Point.distance(_local_10, _local_14);
-			var _local_16:int = _local_9;
-			var _local_17:Number = scaleX;
-			var _local_18:Number = (_local_14.x - _local_12);
-			var _local_19:Number = (_local_14.y - _local_13);
-			var _local_20:Number = Number(Math.atan2(_local_19, _local_18).toFixed(2));
-			_local_14.x = Number((_local_12 + ((Math.cos(_local_20) * _local_9) * _local_17)).toFixed(2));
-			_local_14.y = Number((_local_13 + ((Math.sin(_local_20) * _local_9) * _local_17)).toFixed(2));
-			var _local_21:Point = this.globalToLocal(_local_14);
-			var _local_22:Number = (_local_3 - _local_5);
-			var _local_23:Number = (_local_4 - _local_6);
-			if ((((_arg_1 >= (_local_12 + _local_9))) && ((_arg_1 <= ((_local_5 - _local_12) - _local_9))))) {
-				if (_local_15 >= (_local_16 * _local_17)) {
-					_local_7 = (_local_14.x - _arg_1);
-					if (_local_7 > 0) {
-						_local_7 = 0;
+			var p:Point = new Point();
+			p.x = px;
+			p.y = py;
+			var gp:Point = this.localToGlobal(p);
+			var centerX:Number = stageW / 2;
+			var centerY:Number = stageH / 2;
+			p.x = centerX;
+			p.y = centerY;
+			var dis:int = Point.distance(p, gp);
+			
+			var size:int = 70;	// 中心点偏移值
+			var dis_:int = size;
+			var scale:Number = scaleX;
+			var dx:Number = gp.x - centerX;
+			var dy:Number = gp.y - centerY;
+			var angle:Number = Number(Math.atan2(dy, dx).toFixed(2));
+			gp.x = Number((centerX + Math.cos(angle) * size * scale).toFixed(2));
+			gp.y = Number((centerY + Math.sin(angle) * size * scale).toFixed(2));
+			var dW:Number = stageW - mapPW;
+			var dH:Number = stageH - mapPH;
+			if (px >= (centerX+size) && px <= (mapPW-centerX-size)) {
+				if (dis >= (dis_*scale)) {
+					fx = gp.x - px;
+					if (fx > 0) {
+						fx = 0;
 					}
-					if (_local_7 < _local_22) {
-						_local_7 = _local_22;
+					if (fx < dW) {
+						fx = dW;
 					}
 				}
 			} else {
-				if (_arg_1 <= (_local_12 + _local_9)) {
-					_local_7 = (_local_14.x - _arg_1);
-					if (_local_7 > 0) {
-						_local_7 = 0;
+				if (px <= (centerX+size)) {
+					fx = gp.x - px;
+					if (fx > 0) {
+						fx = 0;
 					}
 				} else {
-					_local_7 = (_local_14.x - _arg_1);
-					if (_local_7 < _local_22) {
-						_local_7 = _local_22;
+					fx = gp.x - px;
+					if (fx < dW) {
+						fx = dW;
 					}
 				}
 			}
-			if ((((_arg_2 >= (_local_13 + _local_9))) && ((_arg_2 <= ((_local_6 - _local_13) - _local_9))))) {
-				if (_local_15 >= (_local_16 * _local_17)) {
-					_local_8 = (_local_14.y - _arg_2);
-					if (_local_8 > 0) {
-						_local_8 = 0;
+			if (py >= (centerY+size) && py <= (mapPH-centerY-size)) {
+				if (dis >= (dis_*scale)) {
+					fy = gp.y - py;
+					if (fy > 0) {
+						fy = 0;
 					}
-					if (_local_8 < _local_23) {
-						_local_8 = _local_23;
+					if (fy < dH) {
+						fy = dH;
 					}
 				}
 			} else {
-				if (_arg_2 <= (_local_13 + _local_9)) {
-					_local_8 = (_local_14.y - _arg_2);
-					if (_local_8 > 0) {
-						_local_8 = 0;
+				if (py <= (centerY+size)) {
+					fy = gp.y - py;
+					if (fy > 0) {
+						fy = 0;
 					}
 				} else {
-					_local_8 = (_local_14.y - _arg_2);
-					if (_local_8 < _local_23) {
-						_local_8 = _local_23;
+					fy = gp.y - py;
+					if (fy < dH) {
+						fy = dH;
 					}
 				}
 			}
-			return (new Point(_local_7, _local_8));
+			return new Point(fx, fy);
 		}
 
 		protected function fill(px:int, py:int, pw:int=500, ph:int=300):void
@@ -1220,33 +943,28 @@
 
 		public function clean():void
 		{
-			var _local_1:Vector.<AvatartParts>;
-			var _local_2:Dictionary;
-			var _local_3:IAvatar;
 			if (this.changing == false) {
-				_local_1 = new Vector.<AvatartParts>();
-				_local_2 = this.avatarHash.hash;
-				for each (_local_3 in _local_2) {
-					if ((_local_3 as Avatar)) {
-						if (AvatarAssetManager.getInstance().checkCleanAbled(Object(_local_3).avatarParts)) {
-							_local_1.push(Object(_local_3).avatarParts);
+				var list:Vector.<AvatartParts> = new Vector.<AvatartParts>();
+				var dict:Dictionary = this.avatarHash;
+				for each (var avatar:IAvatar in dict) {
+					if (avatar as Avatar) {
+						if (AvatarAssetManager.getInstance().checkCleanAbled(Object(avatar).avatarParts)) {
+							list.push(Object(avatar).avatarParts);
 						}
 					}
 				}
-				AvatarAssetManager.getInstance().cleanItems(_local_1);
+				AvatarAssetManager.getInstance().cleanItems(list);
 			}
 		}
 
 		public function charMove():void
 		{
-			var _local_1:Dictionary;
-			var _local_2:IItem;
-			if (((!(this.stop)) && (this.mainChar))) {
+			if (!this.stop && this.mainChar) {
 				this.mainChar.moving();
-				_local_1 = this.avatarHash.hash;
-				for each (_local_2 in _local_1) {
-					if ((_local_2 is Char)) {
-						Char(_local_2).moving();
+				var dict:Dictionary = this.avatarHash;
+				for each (var item:IItem in dict) {
+					if (item is Char) {
+						Char(item).moving();
 					}
 				}
 				if (!this.lockSceneMove) {
@@ -1259,38 +977,10 @@
 			}
 		}
 
-		protected function setCharHeadVisible(_arg_1:Boolean):void
-		{
-			var _local_4:Avatar;
-			var _local_2:Array = this.avatarHash.coder::values();
-			var _local_3:int = (_local_2.length - 1);
-			while (_local_3 >= 0) {
-				_local_4 = (_local_2[_local_3] as Avatar);
-				if (((((((_local_4) && (!((_local_4 == this.mainChar))))) && (!((_local_4 == this.mainPet))))) && ((((_local_4.type == SceneConstant.CHAR)) || ((_local_4.type == SceneConstant.PET)))))) {
-					_local_4.headVisible = _arg_1;
-				}
-				_local_3--;
-			}
-		}
-
-		protected function setCharBodyVisible(_arg_1:Boolean):void
-		{
-			var _local_4:Avatar;
-			var _local_2:Array = this.avatarHash.coder::values();
-			var _local_3:int = (_local_2.length - 1);
-			while (_local_3 >= 0) {
-				_local_4 = (_local_2[_local_3] as Avatar);
-				if (((((((_local_4) && (!((_local_4 == this.mainChar))))) && (!((_local_4 == this.mainPet))))) && ((((_local_4.type == SceneConstant.CHAR)) || ((_local_4.type == SceneConstant.PET)))))) {
-					_local_4.bodyVisible = _arg_1;
-				}
-				_local_3--;
-			}
-		}
-
 		private function checkOut():void
 		{
 			var avatar:Avatar;
-			var dict:Dictionary = this.avatarHash.hash;
+			var dict:Dictionary = this.avatarHash;
 			for each (var item:IAvatar in dict) {
 				if (item.type != SceneConstant.ICON_EFFECT) {
 					continue;
@@ -1382,51 +1072,6 @@
 					}
 				}
 			}
-		}
-
-		public function get outsideRect():Rectangle
-		{
-			return (_outsideRect);
-		}
-
-		protected function updateOutsideRect():void
-		{
-			var _local_1:int = (1750 / 2);
-			var _local_2:int = (1750 / 2);
-			_outsideRect = new Rectangle(0, 0, _local_1, _local_2);
-			var _local_3:Number = this.mainChar.x;
-			var _local_4:Number = this.mainChar.y;
-			var _local_5:int = Core.stage.stageWidth;
-			var _local_6:int = Core.stage.stageHeight;
-			var _local_7 = 4000;
-			var _local_8 = 4000;
-			if (((((this.mapData) && ((this.mapData.width > 0)))) && ((this.mapData.height > 0)))) {
-				_local_7 = this.mapData.width;
-				_local_8 = this.mapData.height;
-			}
-			this.$middleLayer.graphics.clear();
-			this.$middleLayer.graphics.lineStyle(1, 0xFF0000);
-			var _local_9:Number = (_local_5 / 2);
-			var _local_10:Number = (_local_6 / 2);
-			if ((((_local_3 >= _local_9)) && ((_local_3 <= (_local_7 - _local_9))))) {
-				_outsideRect.x = (_local_3 - (_local_1 / 2));
-			} else {
-				if (_local_3 <= _local_9) {
-					_outsideRect.x = 0;
-				} else {
-					_outsideRect.x = (_local_7 - _local_1);
-				}
-			}
-			if ((((_local_4 >= _local_10)) && ((_local_4 <= (_local_8 - _local_10))))) {
-				_outsideRect.y = (_local_4 - (_local_2 / 2));
-			} else {
-				if (_local_4 <= _local_10) {
-					_outsideRect.y = 0;
-				} else {
-					_outsideRect.y = (_local_8 - _local_2);
-				}
-			}
-			this.$middleLayer.graphics.drawRect(_outsideRect.x, _outsideRect.y, _outsideRect.width, _outsideRect.height);
 		}
 
 		private function drawShadow():void

@@ -174,7 +174,7 @@
 			if (this.checkPointType(pt_start, pt_end)) {
 				ret = [pt_start, pt_end];
 			} else {
-				ret = this.astar.getPath(SquareGroup.getInstance().hash.hash, tp_start, tp_end, true, size);
+				ret = this.astar.getPath(SquareGroup.getInstance().hash, tp_start, tp_end, true, size);
 				if (ret.length) {
 					var pt_first:Point = ret[ret.length-1];
 					if (SquareUitls.pixelsToSquare(pt_first).key == tp_end.key) {
