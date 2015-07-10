@@ -68,9 +68,7 @@
 				return;
 			}
 			try {
-				for (_local_1 in this.hash.hash) {
-					delete this.hash.hash[_local_1];
-				}
+				this.$hash.dispose();
 				this.$hash = null;
 			} catch(e:Error) {
 			}
@@ -127,9 +125,9 @@
 
 		public function clean():Point
 		{
-			var _local_1:Point = this.grids.clean(this.hash.hash);
-			this.reset(this.hash.hash);
-			return (_local_1);
+			var _local_1:Point = this.grids.clean(this.hash);
+			this.reset(this.hash);
+			return _local_1;
 		}
 
 		public function passAbled(_arg_1:Pt):Boolean
@@ -151,7 +149,7 @@
 		public function getScale9Grid(_arg_1:Pt):ScaleGrid
 		{
 			var _local_2:ScaleGrid = new ScaleGrid();
-			_local_2.setValue(_arg_1, this.hash.hash);
+			_local_2.setValue(_arg_1, this.hash);
 			return (_local_2);
 		}
 

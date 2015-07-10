@@ -62,7 +62,7 @@
 			}
 		}
 
-		override public function mainCharWalk(target:Point, callback:Function=null, _arg_3:int=1000, moveType:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
+		public function mainCharWalk(target:Point, callback:Function=null, _arg_3:int=1000, moveType:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
 		{
 			MainCharWalkManager.getInstance().mainCharWalk(target, callback, _arg_3, moveType, _arg_5);
 		}

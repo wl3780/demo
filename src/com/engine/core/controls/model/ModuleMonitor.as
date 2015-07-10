@@ -70,7 +70,7 @@ package com.engine.core.controls.model
             var _local_5:IModule;
             var _local_6:Message;
             var _local_4:Vector.<String> = new Vector.<String>();
-            for each (_local_5 in this._hash.hash) {
+            for each (_local_5 in this._hash) {
                 _local_4.push(_local_5.id);
             };
             _local_6 = new Message();

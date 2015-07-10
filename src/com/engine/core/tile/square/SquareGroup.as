@@ -47,7 +47,7 @@
 			}
 			
 			var square:Square;
-			for (var key:String in this.hash.hash) {
+			for (var key:String in this.hash) {
 				square = this.hash.remove(key) as Square;
 				square.dispose();
 			}

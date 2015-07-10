@@ -26,11 +26,6 @@
 			_arg_1.avatarParts.bodyRender(true);
 		}
 
-		public static function moveTo(char:Char, target:Point):void
-		{
-			GameScene.scene.charMoveTo(char, target.x, target.y);
-		}
-
 		public static function getJumpPath(from:Point, to:Point, time:int=5, _arg_4:int=300):Array
 		{
 			var range:int = 400;
@@ -249,7 +244,7 @@
 			var _local_20:int;
 			var _local_11:Array = [];
 			var _local_12:SquarePt = SquareUitls.pixelsToSquare(_arg_1);
-			var _local_13:Dictionary = SquareGroup.getInstance().hash.hash;
+			var _local_13:Dictionary = SquareGroup.getInstance().hash;
 			if (_local_13) {
 				_local_16 = _local_12.x;
 				_local_17 = _local_12.y;
