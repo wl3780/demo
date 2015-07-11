@@ -72,8 +72,7 @@
 		public function get type():String
 		{
 			if (_path) {
-				if (_path.indexOf(".swf") != -1 
-					|| _path.indexOf(".tmp") != -1) {
+				if (_path.indexOf(".swf") != -1 || _path.indexOf(".tmp") != -1) {
 					return WealthConstant.SWF_WEALTH;
 				}
 				if (_path.indexOf(".png") != -1 
@@ -87,6 +86,6 @@
 			}
 			return null;
 		}
-
+		
 	}
 }

@@ -1,233 +1,189 @@
 ﻿package com.engine.core.model.wealth
 {
-    import com.engine.core.Core;
-    import com.engine.core.controls.wealth.WealthConstant;
-    import com.engine.core.model.Proto;
-    import com.engine.namespaces.coder;
-    
-    import flash.net.URLLoaderDataFormat;
-    import flash.utils.Dictionary;
+	import com.engine.core.Core;
+	import com.engine.core.controls.wealth.WealthConstant;
+	import com.engine.core.model.Proto;
+	import com.engine.namespaces.coder;
+	
+	import flash.net.URLLoaderDataFormat;
+	import flash.utils.Dictionary;
 
-    public class WealthGroupVo extends Proto 
-    {
+	public class WealthGroupVo extends Proto 
+	{
 
-        public var name:String = "";
-        public var loadedIndex:int;
-        
-        coder var $index:int;
-        coder var $lock:Boolean;
+		public var name:String = "";
+		public var loadedIndex:int;
+		public var level:int;
 		
-		private var _level:int;
-        private var _values:Vector.<WealthVo>;
-        private var _hash:Dictionary;
-        private var _loaded:Boolean;
+		private var _values:Vector.<WealthVo>;
+		private var _hash:Dictionary;
+		private var _loaded:Boolean;
+		private var _lock:Boolean;
 
-        public function WealthGroupVo()
-        {
-            this._level = WealthConstant.PRIORITY_LEVEL;
-            this._hash = new Dictionary();
-            this._values = new Vector.<WealthVo>();
-        }
+		public function WealthGroupVo()
+		{
+			_hash = new Dictionary();
+			_values = new Vector.<WealthVo>();
+			this.level = WealthConstant.PRIORITY_LEVEL;
+		}
 
-        public function get lock():Boolean
-        {
-            return ((this.coder::$lock as Boolean));
-        }
+		public function addWealth(path:String, data:Object, index:int=0):void
+		{
+			var key:String = path + Core.SIGN + this.id;
+			if (_hash[key] == null) {
+				var wealthVo:WealthVo = new WealthVo();
+				wealthVo.setUp(path, data, this.id);
+				if (path.indexOf(".txt") != -1 
+					|| path.indexOf(".xml") != -1 
+					|| path.indexOf(".css") != -1 
+					|| path.indexOf(".as") != -1) {
+					wealthVo.dataFormat = URLLoaderDataFormat.TEXT;
+				} else {
+					wealthVo.dataFormat = URLLoaderDataFormat.BINARY;
+				}
+				wealthVo.coder::$index = _values.length;
+				wealthVo.loadIndex = index;
+				_values.push(wealthVo);
+				_hash[key] = wealthVo;
+			}
+		}
 
-        public function get level():int
-        {
-            return (this._level);
-        }
+		public function checkFinish():void
+		{
+			var count:int;
+			var len:int = _values.length;
+			var idx:int;
+			while (idx < len) {
+				if (_values[idx].loaded == false) {
+					_loaded = false;
+				} else {
+					count++;
+				}
+				idx++;
+			}
+			this.loadedIndex = count;
+			if (count == len) {
+				_loaded = true;
+			}
+		}
 
-        public function set level(_arg_1:int):void
-        {
-            this._level = _arg_1;
-        }
+		public function addWealths(paths:Vector.<String>, datas:Vector.<Object>):void
+		{
+			var len:int = paths.length;
+			var idx:int;
+			while (idx < len) {
+				this.addWealth(paths[idx], datas ? datas[idx] : null, idx);
+				idx++;
+			}
+		}
 
-        public function get loaded():Boolean
-        {
-            return (this._loaded);
-        }
+		public function shift():WealthVo
+		{
+			if (_values.length) {
+				var wealthVo:WealthVo = _values.shift();
+				var idx:int = 0;
+				while (idx < _values.length) {
+					_values[idx].coder::$index = idx;
+					idx++;
+				}
+				delete _hash[wealthVo.id];
+			}
+			return null;
+		}
 
-        coder function set loaded(_arg_1:Boolean):void
-        {
-            this._loaded = _arg_1;
-        }
+		public function pop():WealthVo
+		{
+			if (_values.length) {
+				var wealthVo:WealthVo = _values.pop();
+				delete _hash[wealthVo.id];
+				return wealthVo;
+			}
+			return null;
+		}
 
-        public function addWealth(_arg_1:String, _arg_2:Object, _arg_3:int=0):void
-        {
-            var _local_5:WealthVo;
-            var _local_6:Array;
-            var _local_7:String;
-            var _local_4:String = ((_arg_1 + Core.SIGN) + this.id);
-            if (this._hash[_local_4] == null){
-                _local_5 = new WealthVo();
-                _local_5.setUp(_arg_1, _arg_2, this.id);
-                _local_6 = _arg_1.split("/");
-                _local_7 = _local_6[(_local_6.length - 1)];
-                if (((((((!((_local_7.indexOf(".txt") == -1))) || (!((_local_7.indexOf(".xml") == -1))))) || (!((_local_7.indexOf(".css") == -1))))) || (!((_local_7.indexOf(".as") == -1))))){
-                    _local_5.dataFormat = URLLoaderDataFormat.TEXT;
-                } else {
-                    _local_5.dataFormat = URLLoaderDataFormat.BINARY;
-                };
-                _local_5.coder::$index = this._values.length;
-                _local_5.loadIndex = _arg_3;
-                this._values.push(_local_5);
-                this._hash[_local_4] = _local_5;
-            };
-        }
+		public function getNextWealth():WealthVo
+		{
+			for each (var item:WealthVo in _values) {
+				if (item.lock == false && item.loaded == false && item.path) {
+					return item;
+				}
+			}
+			return null;
+		}
 
-        public function checkFinish():void
-        {
-            var _local_1:int = this._values.length;
-            var _local_2:int;
-            var _local_3:int;
-            while (_local_3 < _local_1) {
-                if (this._values[_local_3].loaded == false){
-                    this._loaded = false;
-                } else {
-                    _local_2++;
-                };
-                _local_3++;
-            };
-            this.loadedIndex = _local_2;
-            if (_local_2 == _local_1){
-                this._loaded = true;
-            };
-        }
+		public function remove(id:String):WealthVo
+		{
+			var wealthVo:WealthVo = _hash[id];
+			delete _hash[id];
+			var idx:int = _values.indexOf(wealthVo);
+			if (idx != -1) {
+				_values.slice(idx, 1);
+			}
+			return wealthVo;
+		}
 
-        public function addWealths(_arg_1:Vector.<String>, _arg_2:Vector.<Object>):void
-        {
-            var _local_3:String;
-            var _local_6:WealthVo;
-            var _local_4:int = _arg_1.length;
-            var _local_5:int;
-            while (_local_5 < _local_4) {
-                _local_3 = ((_arg_1[_local_5] + Core.SIGN) + this.id);
-                if (this._hash[_local_3] == null){
-                    _local_6 = new WealthVo();
-                    if (_arg_2 == null){
-                        _local_6.setUp(_arg_1[_local_5], null, this.id);
-                    } else {
-                        _local_6.setUp(_arg_1[_local_5], _arg_2[_local_5], this.id);
-                    };
-                    if (((!((_arg_1[_local_5].indexOf(".txt") == -1))) || (!((_arg_1[_local_5].indexOf(".xml") == -1))))){
-                        _local_6.dataFormat = URLLoaderDataFormat.TEXT;
-                    } else {
-                        _local_6.dataFormat = URLLoaderDataFormat.BINARY;
-                    };
-                    _local_6.coder::$index = this._values.length;
-                    this._hash[_local_3] = _local_6;
-                    this._values.push(_local_6);
-                };
-                _local_5++;
-            };
-        }
+		public function take(id:String):WealthVo
+		{
+			return _hash[id] as WealthVo;
+		}
 
-        public function shift():WealthVo
-        {
-            var _local_1:WealthVo;
-            var _local_2:int;
-            if (this._values.length){
-                _local_1 = this._values.shift();
-                _local_2 = 0;
-                while (_local_2 < this._values.length) {
-                    this._values[_local_2].coder::$index = _local_2;
-                    _local_2++;
-                };
-                delete this._hash[_local_1.id];
-            };
-            return (null);
-        }
+		public function sortOn(pro:String="index"):void
+		{
+			var compareFunction:Function = function (one:WealthVo, another:WealthVo):int
+			{
+				if (one.hasOwnProperty(pro)) {
+					return int(one[pro] - another[pro]);
+				}
+				return int(one.index - another.index);
+			}
+			_values.sort(compareFunction);
+		}
 
-        coder function values():Vector.<WealthVo>
-        {
-            return (this._values);
-        }
+		public function reBuild():void
+		{
+			_hash = new Dictionary();
+			_values = new Vector.<WealthVo>();
+			this.level = WealthConstant.PRIORITY_LEVEL;
+		}
 
-        public function getNextWealth():WealthVo
-        {
-            var _local_2:WealthVo;
-            var _local_1:int;
-            while (_local_1 < this._values.length) {
-                _local_2 = this._values[_local_1];
-                if ((((((_local_2.lock == false)) && ((_local_2.loaded == false)))) && (_local_2.path))){
-                    return (_local_2);
-                };
-                _local_1++;
-            };
-            return (null);
-        }
+		override public function dispose():void
+		{
+			_hash = null;
+			_values = null;
+			super.dispose();
+		}
 
-        public function remove(_arg_1:String):WealthVo
-        {
-            var _local_2:WealthVo = this._hash[_arg_1];
-            delete this._hash[_arg_1];
-            var _local_3:int;
-            while (_local_3 < this._values.length) {
-                if (this._values[_local_3] == _local_2){
-                    this._values.splice(_local_3, 1);
-                };
-                _local_3++;
-            };
-            return (_local_2);
-        }
-
-        public function pop():WealthVo
-        {
-            var _local_1:WealthVo;
-            if (this._values.length){
-                _local_1 = this._values.pop();
-                delete this._hash[_local_1.id];
-                return (_local_1);
-            };
-            return (null);
-        }
-
-        public function take(_arg_1:String):WealthVo
-        {
-            return ((this._hash[_arg_1] as WealthVo));
-        }
-
-        public function sortOn(pro:String="index"):void
-        {
-            var value:String;
-            var compareFunction:Function;
-            compareFunction = function (_arg_1:WealthVo, _arg_2:WealthVo):int
-            {
-                if (_arg_1.hasOwnProperty(pro)){
-                    return (int((_arg_1[value] - _arg_2[value])));
-                };
-                return (int((_arg_1.index - _arg_2.index)));
-            };
-            value = pro;
-            this._values.sort(compareFunction);
-        }
-
-        public function get length():int
-        {
-            if (this._values){
-                return (this._values.length);
-            };
-            return (0);
-        }
-
-        public function reBuild():void
-        {
-            this._hash = null;
-            this._hash = new Dictionary();
-            this._values = null;
-            this._values = new Vector.<WealthVo>();
-            this._level = 0;
-        }
-
-        override public function dispose():void
-        {
-            this._hash = null;
-            this._values = null;
-            this._level = 0;
-            super.dispose();
-        }
-
-    }
+		
+		coder function values():Vector.<WealthVo>
+		{
+			return _values;
+		}
+		
+		public function get length():int
+		{
+			if (_values) {
+				return _values.length;
+			}
+			return 0;
+		}
+		
+		public function get lock():Boolean
+		{
+			return _lock;
+		}
+		coder function set lock(val:Boolean):void
+		{
+			_lock = val;
+		}
+		
+		public function get loaded():Boolean
+		{
+			return _loaded;
+		}
+		coder function set loaded(val:Boolean):void
+		{
+			_loaded = val;
+		}
+		
+	}
 }
