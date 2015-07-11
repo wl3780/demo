@@ -1,11 +1,7 @@
 ﻿package com.engine.core.view.role
 {
-	import com.engine.core.tile.square.Square;
-	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.tile.square.SquarePt;
 	import com.engine.core.view.items.avatar.CharAction;
-	import com.engine.core.view.scenes.Scene;
-	import com.engine.namespaces.coder;
 	
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -140,10 +136,6 @@
 		override public function set pt(val:SquarePt):void
 		{
 			super.pt = val;
-			var _local_2:Square = SquareGroup.getInstance().take(pt.key);
-			if (((_local_2) && ((_local_2.type > 0)))) {
-				(Scene.scene.coder::astar.mode == _local_2.type);
-			}
 		}
 
 		override public function set x(val:Number):void

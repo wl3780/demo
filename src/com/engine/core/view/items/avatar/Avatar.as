@@ -512,15 +512,6 @@
 			}
 		}
 
-		public function liangdu(num:Number):Array
-		{
-			return [
-				1, 0, 0, 0, num,
-				0, 1, 0, 0, num,
-				0, 0, 1, 0, num,
-				0, 0, 0, 1, 0];
-		}
-
 		public function set pt(val:SquarePt):void
 		{
 			_pt = val;
@@ -801,7 +792,6 @@
 			_fuzzyMode = _arg_1;
 			super.filters = [new BlurFilter(20, 2)];
 		}
-
 		public function get fuzzyMode():Boolean
 		{
 			return (_fuzzyMode);

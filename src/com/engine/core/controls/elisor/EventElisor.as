@@ -57,9 +57,9 @@
 			return true;
 		}
 
-		public function removeOrder(id:String):EventOrder
+		public function removeOrder(orderId:String):EventOrder
 		{
-			var arr:Array = id.split(Core.SIGN);
+			var arr:Array = orderId.split(Core.SIGN);
 			if (arr.length != 2) {
 				return null;
 			}
@@ -73,9 +73,9 @@
 			return ret;
 		}
 
-		public function hasOrder(id:String):Boolean
+		public function hasOrder(orderId:String):Boolean
 		{
-			var arr:Array = id.split(Core.SIGN);
+			var arr:Array = orderId.split(Core.SIGN);
 			if (arr.length != 2) {
 				return false;
 			}
@@ -87,9 +87,9 @@
 			return _hash[oid][type] != null;
 		}
 
-		public function takeOrder(id:String):EventOrder
+		public function takeOrder(orderId:String):EventOrder
 		{
-			var arr:Array = id.split(Core.SIGN);
+			var arr:Array = orderId.split(Core.SIGN);
 			if (arr.length != 2) {
 				return null;
 			}

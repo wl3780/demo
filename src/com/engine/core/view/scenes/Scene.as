@@ -24,6 +24,7 @@
 	import com.engine.core.view.role.MainChar;
 	import com.engine.core.view.world.MapLayer;
 	import com.engine.namespaces.coder;
+	import com.engine.utils.DisplayObjectUtil;
 	import com.engine.utils.Hash;
 	import com.engine.utils.HitTest;
 	import com.engine.utils.SuperKey;
@@ -58,7 +59,7 @@
 
 		public var $topLayer:Sprite;
 		public var $middleLayer:Sprite;
-		public var $bottomLayer:MapLayer;
+		public var $mapLayer:MapLayer;
 		public var $itemLayer:Sprite;
 		public var $flyLayer:Sprite;
 		public var $cloudLayer:Shape;
@@ -84,7 +85,6 @@
 		protected var shoawdBitmapArray:Array;
 		protected var mouseDownTime:int = 0;
 		protected var overAvatar:IAvatar;
-		protected var autoWalk:Boolean = false;
 		protected var headArray:Dictionary;
 		
 		private var _sceneFlyMode:Boolean;
@@ -255,7 +255,7 @@
 			this.maskShape.tabChildren = this.maskShape.tabEnabled = false;
 			this.maskShape.addChild(this.shadowShape);
 			
-			this.$bottomLayer = new MapLayer();
+			this.$mapLayer = new MapLayer();
 			
 			this.addChild(this.$itemLayer);
 			this.addChild(this.$middleLayer);
@@ -268,7 +268,7 @@
 			Core.stage = stage;
 			_container = container;
 			_container.addChild(this);
-			_container.addChildAt(this.$bottomLayer, 0);
+			_container.addChildAt(this.$mapLayer, 0);
 			Core.stage.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDownFunc);
 			Core.stage.addEventListener(MouseEvent.MOUSE_UP, this.mouseUpFunc);
 			Core.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.keyDownFunc);
@@ -315,7 +315,7 @@
 			if (this.mainChar) {
 				this.mainChar.reLoadHaloBuffEffect();
 			}
-			this.$bottomLayer.inited = true;
+			this.$mapLayer.inited = true;
 			if (this.onSceneReadyFunc != null) {
 				this.onSceneReadyFunc();
 			}
@@ -341,8 +341,8 @@
 			SquareGroup.getInstance().reset(null);
 			this.cleanMemory();
 			InstancePool.coder::getInstance().reset();
-			if (this.$bottomLayer) {
-				this.$bottomLayer.clean(sceneID);
+			if (this.$mapLayer) {
+				this.$mapLayer.clean(sceneID);
 			}
 			this.changing = true;
 			this.isReady = false;
@@ -405,8 +405,7 @@
 
 		protected function playNumShape():void
 		{
-			var _local_1:HeadShowShape;
-			for each (_local_1 in this.headArray) {
+			for each (var _local_1:HeadShowShape in this.headArray) {
 				_local_1.moving();
 			}
 		}
@@ -474,7 +473,7 @@
 			if (((this.mainChar) && (this.mainChar.char_id))) {
 				this.avatarHash.put(this.mainChar.char_id, this.mainChar);
 			}
-			this.$bottomLayer.graphics.clear();
+			this.$mapLayer.graphics.clear();
 			while (this.$middleLayer.numChildren) {
 				_local_4 = (this.$middleLayer.removeChildAt(0) as IAvatar);
 				if (((_local_4) && (!((_local_4 == this.mainChar))))) {
@@ -495,7 +494,7 @@
 				_local_6++;
 			}
 			this.shoawdBitmapArray = [];
-			this.$bottomLayer.unload();
+			this.$mapLayer.unload();
 			this.overAvatar = null;
 			this.selectAvatar = null;
 		}
@@ -623,7 +622,6 @@
 		protected function mouseUpFunc(evt:MouseEvent):void
 		{
 			this.isMouseDown = false;
-			this.autoWalk = false;
 			if (Core.sceneClickAbled == false) {
 				return;
 			}
@@ -638,73 +636,51 @@
 
 		public function sceneMoveTo(px:Number, py:Number):void
 		{
-			var _local_3:Point = this.getCameraFocusTo(px, py);
-			var _local_4:Number = _local_3.x;
-			var _local_5:Number = _local_3.y;
-			var _local_6:Number = ((1 - this.$bottomLayer.scaleX) * _local_4);
-			var _local_7:Number = ((1 - this.$bottomLayer.scaleY) * _local_5);
-			_local_4 = ((_local_4 - _local_6) + ((Core.stage.stageWidth / 2) * (1 - this.$bottomLayer.scaleX)));
-			_local_5 = ((_local_5 - _local_7) + ((Core.stage.stageHeight / 2) * (1 - this.$bottomLayer.scaleY)));
-			this.x = _local_4;
-			this.y = _local_5;
-			_local_4 = Number(_local_4.toFixed(1));
-			_local_5 = Number(_local_5.toFixed(1));
-			this.$bottomLayer.x = _local_4;
-			this.$bottomLayer.y = _local_5;
-			if (this.$flyLayer.parent) {
-				this.$flyLayer.x = _local_4;
-			}
-			if (this.$flyLayer.parent) {
-				this.$flyLayer.y = _local_5;
+			var pt_focus:Point = this.getCameraFocusTo(px, py);
+			var pt_curr:Point = new Point(this.x, this.y);
+			var dis:Number = Point.distance(pt_focus, pt_curr);
+			if (dis > 0) {
+				this.scenedMove(pt_curr, pt_focus);
 			}
 		}
 
-		public function drawCloud(_arg_1:BitmapData, _arg_2:int, _arg_3:int):void
+		public function drawCloud(bmd:BitmapData, px:int, py:int):void
 		{
-			var _local_4:Matrix;
 			if (this.$cloudLayer) {
-				_local_4 = RecoverUtils.matrix;
-				_local_4.tx = _arg_2;
-				_local_4.ty = _arg_3;
-				this.$cloudLayer.graphics.beginBitmapFill(_arg_1, _local_4);
-				this.$cloudLayer.graphics.drawRect(_arg_2, _arg_3, _arg_1.width, _arg_1.height);
+				var mtx:Matrix = RecoverUtils.matrix;
+				mtx.tx = px;
+				mtx.ty = py;
+				this.$cloudLayer.graphics.beginBitmapFill(bmd, mtx);
+				this.$cloudLayer.graphics.drawRect(px, py, bmd.width, bmd.height);
 			}
 		}
 
-		protected function uniformSpeedMove(_arg_1:Point, _arg_2:Point):void
+		protected function scenedMove(pt_from:Point, pt_to:Point):void
 		{
-			var _local_6:Point;
-			var _local_7:Number;
-			var _local_8:Number;
-			var _local_3:Number = Point.distance(_arg_2, _arg_1);
-			var _local_4:int = 20;
-			var _local_5:int = 1;
-			while (_local_5 <= _local_4) {
-				_local_6 = Point.interpolate(_arg_2, _arg_1, 1);
-				_local_7 = ((1 - this.$bottomLayer.scaleX) * _local_6.x);
-				_local_8 = ((1 - this.$bottomLayer.scaleY) * _local_6.y);
-				_local_6.x = ((_local_6.x - _local_7) + ((Core.stage.stageWidth / 2) * (1 - this.$bottomLayer.scaleX)));
-				_local_6.y = ((_local_6.y - _local_8) + ((Core.stage.stageHeight / 2) * (1 - this.$bottomLayer.scaleY)));
-				_local_6.x = Number(_local_6.x.toFixed(1));
-				_local_6.y = Number(_local_6.y.toFixed(1));
-				this.x = _local_6.x;
-				this.y = _local_6.y;
-				this.$bottomLayer.x = _local_6.x;
-				this.$bottomLayer.y = _local_6.y;
-				if (this.$flyLayer.parent) {
-					this.$flyLayer.x = _local_6.x;
-				}
-				if (this.$flyLayer.parent) {
-					this.$flyLayer.y = _local_6.y;
-				}
-				_local_5++;
+//			this.x = this.$mapLayer.x = pt_to.x >> 0;
+//			this.y = this.$mapLayer.y = pt_to.y >> 0;
+			
+			var pt_inter:Point = pt_to;
+			var mapX:Number = (1 - this.$mapLayer.scaleX) * pt_inter.x;
+			var mapY:Number = (1 - this.$mapLayer.scaleY) * pt_inter.y;
+			pt_inter.x = (pt_inter.x - mapX) + (Core.stage.stageWidth / 2) * (1 - this.$mapLayer.scaleX);
+			pt_inter.y = (pt_inter.y - mapY) + (Core.stage.stageHeight / 2) * (1 - this.$mapLayer.scaleY);
+			pt_inter.x = Number(pt_inter.x.toFixed(1));
+			pt_inter.y = Number(pt_inter.y.toFixed(1));
+			this.x = pt_inter.x;
+			this.y = pt_inter.y;
+			this.$mapLayer.x = pt_inter.x;
+			this.$mapLayer.y = pt_inter.y;
+			if (this.$flyLayer.parent) {
+				this.$flyLayer.x = pt_inter.x;
+				this.$flyLayer.y = pt_inter.y;
 			}
 		}
 
 		public function zoon(scale:Number):void
 		{
 			this.scaleX = this.scaleY = scale;
-			this.$bottomLayer.scaleX = this.$bottomLayer.scaleY = scale;
+			this.$mapLayer.scaleX = this.$mapLayer.scaleY = scale;
 			if (this.$flyLayer.parent) {
 				this.$flyLayer.scaleX = this.$flyLayer.scaleY = scale;
 			}
@@ -716,14 +692,11 @@
 
 		public function uniformSpeedMoveTo(px:Number, py:Number):void
 		{
-			var _local_3:Point = this.getCameraFocusPoint(px, py);
-			var _local_4:Point = new Point();
-			_local_4.x = px;
-			_local_4.y = py;
-			var _local_5:Point = _local_4;
-			var _local_6:Number = Point.distance(_local_5, _local_3);
-			if (_local_6 > 0) {
-				this.uniformSpeedMove(_local_5, _local_3);
+			var pt_focus:Point = this.getCameraFocusPoint(px, py);
+			var pt_curr:Point = new Point(this.x, this.y);
+			var dis:Number = Point.distance(pt_focus, pt_curr);
+			if (dis > 0) {
+				this.scenedMove(pt_curr, pt_focus);
 			}
 		}
 
@@ -858,85 +831,82 @@
 
 		protected function enterFrameFunc(evt:Event):void
 		{
-			var _local_4:IAvatar;
-			var _local_6:int;
-			var _local_7:int;
-			var _local_8:int;
-			var _local_9:ShoawdBitmap;
 			if (!this.mainChar) {
 				return;
 			}
-			if (((((this.$flyLayer.parent) && (_sceneFlyMode))) && (!(this.$cloudLayer.parent)))) {
+			if (this.$flyLayer.parent && _sceneFlyMode && !this.$cloudLayer.parent) {
 				_container.addChild(this.$cloudLayer);
 				_container.addChild(this.$flyLayer);
-			} else {
-				if (((((!(_sceneFlyMode)) && (this.$cloudLayer.parent))) && (!(this.flying)))) {
-					this.$cloudLayer.parent.removeChild(this.$cloudLayer);
-				}
+			} else if (!_sceneFlyMode && this.$cloudLayer.parent && !this.flying) {
+				this.$cloudLayer.parent.removeChild(this.$cloudLayer);
 			}
-			if (((((_sceneFlyMode) && (stage))) && (!(this.$flyLayer.parent)))) {
+			if (_sceneFlyMode && !this.$flyLayer.parent) {
 				_container.addChild(this.$flyLayer);
 			}
-			if (((((((this.isMouseDown) && (Core.sceneClickAbled))) && (((getTimer() - this.mouseDownTime) > 1000)))) && (!(_shiftKey)))) {
-				this.autoWalk = true;
-			} else {
-				this.autoWalk = false;
-			}
-			var _local_2:Rectangle = new Rectangle((this.mouseX - 200), (this.mouseY - 280), 400, 560);
-			var _local_3:Array = this.find(_local_2, false, 150);
-			var _local_5:DisplayObject = (HitTest.getChildUnderPoint(this, new Point(mouseX, mouseY), _local_3) as DisplayObject);
-			_local_4 = (_local_5 as IAvatar);
-			if ((_local_5 as HeadShape)) {
-				if (HeadShape(_local_5).owner) {
-					_local_4 = (HeadShape(_local_5).owner as IAvatar);
+			
+			var area:Rectangle = new Rectangle(this.mouseX-200, this.mouseY-280, 400, 560);
+			var items:Array = this.find(area, false, 150);
+			var dis:DisplayObject = HitTest.getChildUnderPoint(this, new Point(this.mouseX, this.mouseY), items);
+			var avatar:IAvatar = dis as IAvatar;
+			if (dis as HeadShape) {
+				if (HeadShape(dis).owner) {
+					avatar = HeadShape(dis).owner as IAvatar;
 				}
 			}
-			if (_local_4 != this.overAvatar) {
-				if (((this.overAvatar) && (Object(this.overAvatar).filters))) {
+			if (avatar != this.overAvatar) {
+				if (this.overAvatar && Object(this.overAvatar).filters) {
 					Object(this.overAvatar).filters = [];
 				}
-				this.overAvatar = _local_4;
-				if (((this.overAvatar) && (!((this.overAvatar == this.mainChar))))) {
-					if ((((Object(this.overAvatar).filters == null)) || ((Object(this.overAvatar).filters.length == 0)))) {
-						Object(this.overAvatar).filters = [new ColorMatrixFilter(Object(this.overAvatar).liangdu(50)), new GlowFilter(0xCACACA, 0.5)];
+				this.overAvatar = avatar;
+				if (this.overAvatar && this.overAvatar != this.mainChar) {
+					if (Object(this.overAvatar).filters == null || Object(this.overAvatar).filters.length == 0) {
+						Object(this.overAvatar).filters = [
+							new ColorMatrixFilter(DisplayObjectUtil.liangdu(50)), 
+							new GlowFilter(0xCACACA, 0.5)
+						];
 					}
 				}
 			}
-			if ((Core.fps < 12)) {
-				_local_6 = 2000;
+			
+			var interval:int;
+			if (Core.fps < 12) {
+				interval = 2000;
 			} else {
-				_local_6 = 600;
+				interval = 600;
+				if (this.mainChar.runing || this.mainChar.jumping) {
+					interval = 1200;
+				}
 			}
-			if (((this.mainChar.runing) || (this.mainChar.jumping))) {
-				_local_6 = 1200;
-			}
-			if ((getTimer() - _depthTime) > _local_6) {
+			if ((getTimer() - _depthTime) > interval) {
 				_depthTime = getTimer();
 				this.checkOut();
 				this.sortDepth();
 			}
+			
 			if (Core.screenShaking == false) {
 				try {
-					TweenLite.killTweensOf(this.$bottomLayer);
 					TweenLite.killTweensOf(this);
+					TweenLite.killTweensOf(this.$mapLayer);
 				} catch(e:Error) {
 				}
 			}
+			
 			this.charMove();
 			this.playNumShape();
 			if ((getTimer() - _cleanTime) > 150) {
-				this.$bottomLayer.loadImage(x, y);
+				this.$mapLayer.loadImage(this.x, this.y);
 				_cleanTime = getTimer();
 			}
-			if (((this.shoawdBitmapArray) && (this.shoawdBitmapArray.length))) {
-				_local_7 = this.shoawdBitmapArray.length;
-				_local_8 = 0;
-				while (_local_8 < _local_7) {
-					_local_9 = this.shoawdBitmapArray[_local_8];
-					if (_local_9) {
-						_local_9.reander();
+			
+			if (this.shoawdBitmapArray && this.shoawdBitmapArray.length) {
+				var len:int = this.shoawdBitmapArray.length;
+				var idx:int = 0;
+				while (idx < len) {
+					var shoawBmp:ShoawdBitmap = this.shoawdBitmapArray[idx];
+					if (shoawBmp) {
+						shoawBmp.reander();
 					}
-					_local_8++;
+					idx++;
 				}
 			}
 		}

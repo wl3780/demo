@@ -26,22 +26,22 @@
 			_arg_1.avatarParts.bodyRender(true);
 		}
 
-		public static function getJumpPath(from:Point, to:Point, time:int=5, _arg_4:int=300):Array
+		public static function getJumpPath(pt_from:Point, pt_to:Point, time:int=5, _arg_4:int=300):Array
 		{
 			var range:int = 400;
 			GameScene.scene.$topLayer.graphics.clear();
-			var distance:Number = Point.distance(from, to);
+			var distance:Number = Point.distance(pt_from, pt_to);
 			var speed:int = Math.ceil(distance / time);
 			var sp:int = speed;
 			if (sp > (range / time)) {
 				sp = (range / time);
 			}
-			var pstart:Point = from;
-			var pend:Point = to;
-			var ptend:SquarePt = SquareUitls.pixelsToSquare(pend);
-			var sq:Square = SquareGroup.getInstance().take(ptend.key);
+			var pt_start:Point = pt_from;
+			var pt_end:Point = pt_to;
+			var tp_end:SquarePt = SquareUitls.pixelsToSquare(pt_end);
+			var sq:Square = SquareGroup.getInstance().take(tp_end.key);
 			if (sq == null || sq.type < 1) {
-				pstart = from;
+				pt_start = pt_from;
 			}
 			
 			var p:Point;
@@ -51,12 +51,12 @@
 			var _local_15:int;
 			var tmp:int = sp;
 			while (tmp > 0) {
-				p = Point.interpolate(to, from, (tmp / speed));
+				p = Point.interpolate(pt_to, pt_from, (tmp / speed));
 				pt = SquareUitls.pixelsToSquare(p);
 				_local_23 = SquareGroup.getInstance().take(pt.key);
 				_local_14++;
 				if (((_local_23) && ((int(_local_23.type) > 0)))) {
-					pend = p;
+					pt_end = p;
 					if (++_local_15 > 1)
 						break;
 				}
@@ -65,27 +65,27 @@
 			if (_local_14 >= sp) {
 				return ([]);
 			}
-			distance = Point.distance(pstart, pend);
-			var _local_17:Point = Point.interpolate(pstart, pend, 0.5);
-			var _local_18:int = Math.abs((pstart.x - pend.x));
-			var _local_19:int = Math.abs((pstart.y - pend.y));
-			var _local_20:int = (pstart.y - pend.y);
+			distance = Point.distance(pt_start, pt_end);
+			var _local_17:Point = Point.interpolate(pt_start, pt_end, 0.5);
+			var _local_18:int = Math.abs((pt_start.x - pt_end.x));
+			var _local_19:int = Math.abs((pt_start.y - pt_end.y));
+			var _local_20:int = (pt_start.y - pt_end.y);
 			if ((_local_20 > 0)) {
 				_local_20 = 1;
 			} else {
 				_local_20 = -1;
 			}
 			if ((_local_20 > 0)) {
-				_local_17.y = pend.y;
+				_local_17.y = pt_end.y;
 			} else {
-				_local_17.y = pend.y;
+				_local_17.y = pt_end.y;
 			}
 			_local_17.y = (_local_17.y - _arg_4);
-			var _local_21:Array = Bezier.drawBezier(pstart, pend, _local_17, 50);
-			if (_local_21[(_local_21.length - 1)].toString() != pend.toString()) {
-				_local_21.push(pend);
+			var _local_21:Array = Bezier.drawBezier(pt_start, pt_end, _local_17, 50);
+			if (_local_21[(_local_21.length - 1)].toString() != pt_end.toString()) {
+				_local_21.push(pt_end);
 			}
-			return (_local_21);
+			return _local_21;
 		}
 
 		public static function getTeleportPath(_arg_1:Point, _arg_2:Point, _arg_3:int=5):Point
@@ -93,7 +93,7 @@
 			var _local_8:Point;
 			var _local_13:SquarePt;
 			var _local_14:Square;
-			var _local_4 = 400;
+			var _local_4:int = 400;
 			var _local_5:Number = Point.distance(_arg_1, _arg_2);
 			var _local_6:int = Math.ceil((_local_5 / _arg_3));
 			var _local_7:int = _local_6;
@@ -124,7 +124,7 @@
 			var _local_17:Square;
 			var _local_20:SquarePt;
 			var _local_21:Square;
-			var _local_4 = 400;
+			var _local_4:int = 400;
 			var _local_5:Array = [];
 			var _local_6:Number = Point.distance(_arg_1, _arg_2);
 			var _local_7:int = Math.ceil((_local_6 / _arg_3));

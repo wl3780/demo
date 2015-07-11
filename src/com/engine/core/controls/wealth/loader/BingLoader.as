@@ -1,254 +1,231 @@
-﻿// Decompiled by AS3 Sorcerer 3.16
-// http://www.as3sorcerer.com/
-
-//com.engine.core.controls.wealth.loader.BingLoader
-
-package com.engine.core.controls.wealth.loader
+﻿package com.engine.core.controls.wealth.loader
 {
-    import flash.net.URLLoader;
-    import com.engine.core.IOrderDispatcher;
-    import com.engine.core.model.wealth.WealthVo;
-    import flash.net.URLRequest;
-    import flash.net.URLLoaderDataFormat;
-    import flash.events.Event;
-    import flash.events.IOErrorEvent;
-    import flash.events.ProgressEvent;
-    import flash.system.LoaderContext;
-    import com.engine.core.controls.wealth.WealthPool;
-    import com.engine.core.controls.events.WealthProgressEvent;
-    import com.engine.core.controls.elisor.EventOrder;
-    import com.engine.core.controls.elisor.Elisor;
-    import com.engine.core.Core;
-    import com.engine.core.controls.elisor.OrderMode;
-    import com.engine.core.controls.IOrder;
-    import __AS3__.vec.Vector;
-    import com.engine.namespaces.coder;
-    import com.engine.core.view.DisplayObjectPort;
-    import com.engine.core.model.Proto;
-    import com.engine.core.model.IProto;
+	import com.engine.core.Core;
+	import com.engine.core.IOrderDispatcher;
+	import com.engine.core.controls.IOrder;
+	import com.engine.core.controls.elisor.Elisor;
+	import com.engine.core.controls.elisor.EventOrder;
+	import com.engine.core.controls.elisor.OrderMode;
+	import com.engine.core.controls.events.WealthProgressEvent;
+	import com.engine.core.controls.wealth.WealthPool;
+	import com.engine.core.model.IProto;
+	import com.engine.core.model.Proto;
+	import com.engine.core.model.wealth.WealthVo;
+	import com.engine.core.view.DisplayObjectPort;
+	import com.engine.namespaces.coder;
+	
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.events.ProgressEvent;
+	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
+	import flash.net.URLRequest;
+	import flash.system.LoaderContext;
 
-    public class BingLoader extends URLLoader implements IOrderDispatcher, ILoader 
-    {
+	public class BingLoader extends URLLoader implements IOrderDispatcher, ILoader 
+	{
 
-        private var _id:String;
-        protected var $oid:String;
-        protected var $proto:Object;
-        public var vo:WealthVo;
-        private var _successFunc:Function;
-        private var _errorFunc:Function;
-        private var _progressFunc:Function;
+		public var vo:WealthVo;
+		
+		protected var $oid:String;
+		protected var $proto:Object;
+		
+		private var _id:String;
+		private var _successFunc:Function;
+		private var _errorFunc:Function;
+		private var _progressFunc:Function;
 
-        public function BingLoader(_arg_1:URLRequest=null)
-        {
-            super(_arg_1);
-        }
+		public function BingLoader(request:URLRequest=null)
+		{
+			super(request);
+		}
 
-        public function get wealthVo():WealthVo
-        {
-            return (null);
-        }
+		public function unloadAndStop(gc:Boolean=true):void
+		{
+			this.close();
+		}
 
-        public function unload():void
-        {
-        }
+		public function loadElemt(wealthVo:WealthVo, successFunc:Function=null, errorFunc:Function=null, progressFunc:Function=null, _arg_5:LoaderContext=null):void
+		{
+			if (wealthVo.dataFormat) {
+				if (wealthVo.dataFormat == URLLoaderDataFormat.BINARY || wealthVo.dataFormat == URLLoaderDataFormat.TEXT) {
+					this.dataFormat = wealthVo.dataFormat;
+				}
+			}
+			this.vo = wealthVo;
+			_successFunc = successFunc;
+			_errorFunc = errorFunc;
+			_progressFunc = progressFunc;
+			if (_successFunc != null) {
+				this.addEventListener(Event.COMPLETE, _successFunc_);
+			}
+			if (_errorFunc != null) {
+				this.addEventListener(IOErrorEvent.IO_ERROR, _errorFunc_);
+			}
+			if (_progressFunc != null) {
+				this.addEventListener(ProgressEvent.PROGRESS, _progressFunc_);
+			}
+			this.load(new URLRequest(wealthVo.path));
+		}
 
-        public function unloadAndStop(_arg_1:Boolean=true):void
-        {
-            super.close();
-        }
+		private function _successFunc_(evt:Event):void
+		{
+			WealthPool.getIntance().add(this.vo.path, this);
+			_successFunc.apply(null, [this.vo]);
+			_successFunc = null;
+			_progressFunc = null;
+			_errorFunc = null;
+			this.removeEventListener(Event.COMPLETE, _successFunc_);
+			this.removeEventListener(IOErrorEvent.IO_ERROR, _errorFunc_);
+			this.removeEventListener(ProgressEvent.PROGRESS, _progressFunc_);
+		}
 
-        public function loadElemt(_arg_1:WealthVo, _arg_2:Function=null, _arg_3:Function=null, _arg_4:Function=null, _arg_5:LoaderContext=null):void
-        {
-            if (_arg_1.dataFormat){
-                if ((((_arg_1.dataFormat == URLLoaderDataFormat.BINARY)) || ((_arg_1.dataFormat == URLLoaderDataFormat.TEXT)))){
-                    this.dataFormat = _arg_1.dataFormat;
-                };
-            };
-            this.vo = _arg_1;
-            this._successFunc = _arg_2;
-            this._errorFunc = _arg_3;
-            this._progressFunc = _arg_4;
-            if (this._successFunc != null){
-                this.addEventListener(Event.COMPLETE, this._successFunc_);
-            };
-            if (this._errorFunc != null){
-                this.addEventListener(IOErrorEvent.IO_ERROR, this._errorFunc_);
-            };
-            if (this._progressFunc != null){
-                this.addEventListener(ProgressEvent.PROGRESS, this._progressFunc_);
-            };
-            this.load(new URLRequest(_arg_1.path));
-        }
+		private function _errorFunc_(evt:IOErrorEvent):void
+		{
+			_errorFunc.apply(null, [this.vo]);
+			_successFunc = null;
+			_progressFunc = null;
+			_errorFunc = null;
+			this.removeEventListener(Event.COMPLETE, _successFunc_);
+			this.removeEventListener(IOErrorEvent.IO_ERROR, _errorFunc_);
+			this.removeEventListener(ProgressEvent.PROGRESS, _progressFunc_);
+		}
 
-        private function _successFunc_(_arg_1:Event):void
-        {
-            WealthPool.getIntance().add(this.vo.path, this);
-            this._successFunc.apply(null, [this.vo]);
-            this._successFunc = null;
-            this._progressFunc = null;
-            this._errorFunc = null;
-            this.removeEventListener(Event.COMPLETE, this._successFunc_);
-            this.removeEventListener(IOErrorEvent.IO_ERROR, this._errorFunc_);
-            this.removeEventListener(ProgressEvent.PROGRESS, this._progressFunc_);
-        }
+		private function _progressFunc_(evt:ProgressEvent):void
+		{
+			var event:WealthProgressEvent = new WealthProgressEvent(WealthProgressEvent.Progress, false, false, evt.bytesLoaded, evt.bytesTotal);
+			_progressFunc.apply(null, [event, this.vo]);
+		}
 
-        private function _errorFunc_(_arg_1:IOErrorEvent):void
-        {
-            this._errorFunc.apply(null, [this.vo]);
-            this._successFunc = null;
-            this._progressFunc = null;
-            this._errorFunc = null;
-            this.removeEventListener(Event.COMPLETE, this._successFunc_);
-            this.removeEventListener(IOErrorEvent.IO_ERROR, this._errorFunc_);
-            this.removeEventListener(ProgressEvent.PROGRESS, this._progressFunc_);
-        }
+		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			var orderKey:String = _id + Core.SIGN + type;
+			if (elisor.hasOrder(orderKey, OrderMode.EVENT_ORDER) == false) {
+				var order:EventOrder = elisor.createEventOrder(this.id, type, listener);
+				elisor.addOrder(order);
+				if (super.hasEventListener(type) == false) {
+					super.addEventListener(type, listener, useCapture);
+				}
+			}
+		}
 
-        private function _progressFunc_(_arg_1:ProgressEvent):void
-        {
-            var _local_2:WealthProgressEvent = new WealthProgressEvent(WealthProgressEvent.Progress, false, false, _arg_1.bytesLoaded, _arg_1.bytesTotal);
-            this._progressFunc.apply(null, [_local_2, this.vo]);
-        }
+		override public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			var orderKey:String = _id + Core.SIGN + type;
+			if (elisor.hasOrder(orderKey, OrderMode.EVENT_ORDER) == true) {
+				var order:EventOrder = elisor.removeOrder(orderKey, OrderMode.EVENT_ORDER) as EventOrder;
+				if (order) {
+					order.dispose();
+				}
+			}
+			if (super.hasEventListener(type) == true) {
+				super.removeEventListener(type, listener);
+			}
+		}
 
-        override public function addEventListener(_arg_1:String, _arg_2:Function, _arg_3:Boolean=false, _arg_4:int=0, _arg_5:Boolean=false):void
-        {
-            var _local_8:EventOrder;
-            var _local_6:Elisor = Elisor.getInstance();
-            var _local_7:String = ((this._id + Core.SIGN) + _arg_1);
-            if (_local_6.hasOrder(_local_7, OrderMode.EVENT_ORDER) == false){
-                _local_8 = _local_6.createEventOrder(this.id, _arg_1, _arg_2);
-                _local_6.addOrder(_local_8);
-                if (super.hasEventListener(_arg_1) == false){
-                    super.addEventListener(_arg_1, _arg_2, _arg_3);
-                };
-            };
-        }
+		public function takeOrder(orderId:String, _arg_2:String):IOrder
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.takeOrder(orderId, _arg_2);
+		}
 
-        override public function removeEventListener(_arg_1:String, _arg_2:Function, _arg_3:Boolean=false):void
-        {
-            var _local_6:EventOrder;
-            var _local_4:Elisor = Elisor.getInstance();
-            var _local_5:String = ((this._id + Core.SIGN) + _arg_1);
-            if (_local_4.hasOrder(_local_5, OrderMode.EVENT_ORDER) == true){
-                _local_6 = (_local_4.removeOrder(_local_5, OrderMode.EVENT_ORDER) as EventOrder);
-                if (_local_6){
-                    _local_6.dispose();
-                };
-                _local_6 = null;
-            };
-            if (super.hasEventListener(_arg_1) == true){
-                super.removeEventListener(_arg_1, _arg_2);
-            };
-        }
+		public function hasOrder(orderId:String, _arg_2:String):Boolean
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.hasOrder(orderId, _arg_2);
+		}
 
-        public function takeOrder(_arg_1:String, _arg_2:String):IOrder
-        {
-            var _local_3:Elisor = Elisor.getInstance();
-            return (_local_3.takeOrder(_arg_1, _arg_2));
-        }
+		public function removeOrder(orderId:String, _arg_2:String):IOrder
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.removeOrder(orderId, _arg_2);
+		}
 
-        public function hasOrder(_arg_1:String, _arg_2:String):Boolean
-        {
-            var _local_3:Elisor = Elisor.getInstance();
-            return (_local_3.hasOrder(_arg_1, _arg_2));
-        }
+		public function addOrder(order:IOrder):Boolean
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.addOrder(order);
+		}
 
-        public function removeOrder(_arg_1:String, _arg_2:String):IOrder
-        {
-            var _local_3:Elisor = Elisor.getInstance();
-            return (_local_3.removeOrder(_arg_1, _arg_2));
-        }
+		public function takeGroupOrders(orderMode:String):Vector.<IOrder>
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.takeGroupOrders(_id, orderMode);
+		}
 
-        public function addOrder(_arg_1:IOrder):Boolean
-        {
-            var _local_2:Elisor = Elisor.getInstance();
-            return (_local_2.addOrder(_arg_1));
-        }
+		public function disposeGroupOrders(orderMode:String):Vector.<IOrder>
+		{
+			var elisor:Elisor = Elisor.getInstance();
+			return elisor.disposeGroupOrders(_id, orderMode);
+		}
 
-        public function takeGroupOrders(_arg_1:String):Vector.<IOrder>
-        {
-            var _local_2:Elisor = Elisor.getInstance();
-            return (_local_2.takeGroupOrders(this._id, _arg_1));
-        }
+		coder function set id(val:String):void
+		{
+			DisplayObjectPort.coder::getInstance().remove(_id);
+			var list:Vector.<IOrder> = Elisor.getInstance().disposeGroupOrders(_id);
+			_id = val;
+			DisplayObjectPort.coder::getInstance().put(this);
+			for each (var item:IOrder in list) {
+				if (item) {
+					Elisor.getInstance().addOrder(item);
+				}
+			}
+		}
+		public function get id():String
+		{
+			return _id;
+		}
 
-        public function disposeGroupOrders(_arg_1:String):Vector.<IOrder>
-        {
-            var _local_2:Elisor = Elisor.getInstance();
-            return (_local_2.disposeGroupOrders(this._id, _arg_1));
-        }
+		public function set proto(val:Object):void
+		{
+			this.$proto = val;
+		}
+		public function get proto():Object
+		{
+			return this.$proto;
+		}
 
-        coder function set id(_arg_1:String):void
-        {
-            DisplayObjectPort.coder::getInstance().remove(this._id);
-            var _local_2:Vector.<IOrder> = Elisor.getInstance().disposeGroupOrders(this._id);
-            this._id = _arg_1;
-            DisplayObjectPort.coder::getInstance().put(this);
-            var _local_3:int;
-            while (_local_3 < _local_2.length) {
-                if (_local_2[_local_3]){
-                    Elisor.getInstance().addOrder(_local_2[_local_3]);
-                };
-                _local_3++;
-            };
-        }
+		public function set oid(val:String):void
+		{
+			this.$oid = val;
+		}
+		public function get oid():String
+		{
+			return this.$oid;
+		}
 
-        public function get id():String
-        {
-            return (this._id);
-        }
+		public function clone():IProto
+		{
+			var p:Proto = new Proto();
+			p.coder::id = _id;
+			p.coder::oid = this.$oid;
+			p.proto = this.$proto;
+			return p;
+		}
 
-        public function set proto(_arg_1:Object):void
-        {
-            this.$proto = _arg_1;
-        }
+		public function dispose():void
+		{
+			this.removeEventListener(Event.COMPLETE, _successFunc_);
+			this.removeEventListener(IOErrorEvent.IO_ERROR, _errorFunc_);
+			this.removeEventListener(ProgressEvent.PROGRESS, _progressFunc_);
+			_successFunc = null;
+			_progressFunc = null;
+			_errorFunc = null;
+			
+			var list:Vector.<IOrder> = this.disposeGroupOrders(OrderMode.TOTAL);
+			for each (var item:IOrder in list) {
+				if (item) {
+					item.dispose();
+				}
+			}
+			DisplayObjectPort.coder::getInstance().remove(_id);
+			_id = null;
+			this.$oid = null;
+			this.$proto = null;
+			this.vo = null;
+		}
 
-        public function get proto():Object
-        {
-            return (this.$proto);
-        }
-
-        public function set oid(_arg_1:String):void
-        {
-            this.$oid = _arg_1;
-        }
-
-        public function get oid():String
-        {
-            return (this.$oid);
-        }
-
-        public function clone():IProto
-        {
-            var _local_1:Proto = new Proto();
-            _local_1.coder::id = this._id;
-            _local_1.coder::oid = this.$oid;
-            _local_1.proto = this.$proto;
-            return (_local_1);
-        }
-
-        public function dispose():void
-        {
-            var _local_2:int;
-            var _local_3:IOrder;
-            var _local_1:Vector.<IOrder> = this.disposeGroupOrders(OrderMode.TOTAL);
-            if (_local_1){
-                _local_2 = 0;
-                while (_local_2 < _local_1.length) {
-                    _local_3 = _local_1[_local_2];
-                    if (_local_3){
-                        _local_3.dispose();
-                    };
-                    _local_3 = null;
-                    _local_2++;
-                };
-            };
-            DisplayObjectPort.coder::getInstance().remove(this._id);
-            _local_1 = null;
-            this._id = null;
-            this.$oid = null;
-            this.$proto = null;
-        }
-
-
-    }
-}//package com.engine.core.controls.wealth.loader
-
+	}
+}

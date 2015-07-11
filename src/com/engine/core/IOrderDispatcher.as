@@ -8,12 +8,13 @@
 	public interface IOrderDispatcher extends IEventDispatcher, IProto 
 	{
 
-		function takeOrder(_arg_1:String, _arg_2:String):IOrder;
-		function hasOrder(_arg_1:String, _arg_2:String):Boolean;
-		function removeOrder(_arg_1:String, _arg_2:String):IOrder;
-		function addOrder(_arg_1:IOrder):Boolean;
-		function takeGroupOrders(_arg_1:String):Vector.<IOrder>;
-		function disposeGroupOrders(_arg_1:String):Vector.<IOrder>;
+		function takeOrder(orderId:String, _arg_2:String):IOrder;
+		function hasOrder(orderId:String, _arg_2:String):Boolean;
+		function removeOrder(orderId:String, _arg_2:String):IOrder;
+		function addOrder(order:IOrder):Boolean;
+		
+		function takeGroupOrders(orderMode:String):Vector.<IOrder>;
+		function disposeGroupOrders(orderMode:String):Vector.<IOrder>;
 
 	}
 }

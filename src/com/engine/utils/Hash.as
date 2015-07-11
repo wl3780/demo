@@ -129,5 +129,15 @@
 			return super.toString();
 		}
 
+		
+		coder function values():Array
+		{
+			var ret:Array = [];
+			for each (var item:* in this) {
+				ret.push(item);
+			}
+			return ret;
+		}
+		
 	}
 }

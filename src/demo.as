@@ -59,7 +59,7 @@
 			this.scene.buildTree(new Rectangle(0, 0, 10000, 10000));
 			this.scene.setup(Core.stage, this);
 			this.scene.changeScene(5);
-			this.scene.$bottomLayer.init("scene_" + 4);
+			this.scene.$mapLayer.init("scene_" + 4);
 			this.scene.updateMainChar(100000002, 0, 0);
 			
 			this.scene.mainChar.speed = 270;
