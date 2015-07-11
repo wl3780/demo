@@ -1,245 +1,233 @@
 ﻿package com.engine.core.controls.wealth
 {
-    import com.engine.core.Core;
-    import com.engine.core.controls.events.WealthEvent;
-    import com.engine.core.controls.events.WealthProgressEvent;
-    import com.engine.core.model.wealth.WealthGroupVo;
-    import com.engine.core.model.wealth.WealthVo;
-    import com.engine.namespaces.coder;
-    import com.engine.utils.Hash;
-    
-    import flash.events.ProgressEvent;
-    import flash.utils.Dictionary;
+	import com.engine.core.Core;
+	import com.engine.core.controls.events.WealthEvent;
+	import com.engine.core.controls.events.WealthProgressEvent;
+	import com.engine.core.model.wealth.WealthGroupVo;
+	import com.engine.core.model.wealth.WealthVo;
+	import com.engine.namespaces.coder;
+	import com.engine.utils.Hash;
+	
+	import flash.events.ProgressEvent;
+	import flash.utils.Dictionary;
 
-    public class WealthManager 
-    {
+	public class WealthManager 
+	{
 
-        private static var _intance:WealthManager;
+		private static var _intance:WealthManager;
 
-        private var _hash:Hash;
-        private var _requestHash:Dictionary;
+		private var _queneHash:Hash;
+		private var _requestHash:Dictionary;
 
-        public function WealthManager()
-        {
-            this._requestHash = new Dictionary();
-            this._hash = new Hash();
-        }
+		public function WealthManager()
+		{
+			_queneHash = new Hash();
+			_requestHash = new Dictionary();
+		}
 
-        public static function getIntance():WealthManager
-        {
-            if (_intance == null){
-                _intance = new (WealthManager)();
-            };
-            return (_intance);
-        }
+		public static function getIntance():WealthManager
+		{
+			if (_intance == null) {
+				_intance = new WealthManager();
+			}
+			return _intance;
+		}
 
+		public function addQuene(quene:WealthQuene):void
+		{
+			_queneHash.put(quene.id, quene);
+		}
 
-        public function addQuene(_arg_1:WealthQuene):void
-        {
-            this._hash.put(_arg_1.id, _arg_1);
-        }
+		public function takeQuene(id:String):WealthQuene
+		{
+			return _queneHash.take(id) as WealthQuene;
+		}
 
-        public function takeQuene(_arg_1:String):WealthQuene
-        {
-            return ((this._hash.take(_arg_1) as WealthQuene));
-        }
+		public function removeQuene(id:String):void
+		{
+			_queneHash.remove(id);
+		}
 
-        public function removeQuene(_arg_1:String):void
-        {
-            this._hash.remove(_arg_1);
-        }
+		public function addRequest(path:String, oid:String, qid:String):void
+		{
+			if (path == null) {
+				return;
+			}
+			if (_requestHash[path] == null) {
+				_requestHash[path] = new Dictionary();
+			}
+			_requestHash[path][oid] = {
+				"oid":oid,
+				"qid":qid,
+				"path":path
+			}
+		}
 
-        public function addRequest(_arg_1:String, _arg_2:String, _arg_3:String):void
-        {
-            if (_arg_1 == null){
-                return;
-            };
-            if (this._requestHash[_arg_1] == null){
-                this._requestHash[_arg_1] = new Dictionary();
-            };
-            this._requestHash[_arg_1][_arg_2] = {
-                "oid":_arg_2,
-                "qid":_arg_3,
-                "path":_arg_1
-            };
-        }
+		public function hasRequest(path:String):Boolean
+		{
+			if (_requestHash[path] == null) {
+				return false;
+			}
+			for (var key:String in _requestHash[path]) {
+				return true;
+			}
+			return false;
+		}
 
-        public function hasRequest(_arg_1:String):Boolean
-        {
-            var _local_2:String;
-            if (this._requestHash[_arg_1] == null){
-                return (false);
-            };
-            for each (_local_2 in this._requestHash[_arg_1]) {
-                return (true);
-            };
-            return (false);
-        }
+		public function takeRequestLength(path:String):int
+		{
+			var num:int;
+			for (var key:String in _requestHash[path]) {
+				num++;
+			}
+			return num;
+		}
 
-        public function takeRequestLength(_arg_1:String):int
-        {
-            var _local_3:String;
-            var _local_2:int;
-            for each (_local_3 in this._requestHash[_arg_1]) {
-                _local_2++;
-            };
-            return (_local_2);
-        }
+		public function removeRequest(path:String, oid:String):void
+		{
+			if (_requestHash[path] == null || _requestHash[path][oid] == null) {
+				return;
+			}
+			delete _requestHash[path][oid];
+			for (var key:String in _requestHash[path]) {
+				return;
+			}
+			delete _requestHash[path];
+		}
 
-        public function removeRequest(_arg_1:String, _arg_2:String):void
-        {
-            var _local_3:String;
-            if ((((this._requestHash[_arg_1][_arg_2] == null)) || ((this._requestHash[_arg_1] == null)))){
-                return;
-            };
-            delete this._requestHash[_arg_1][_arg_2];
-            for each (_local_3 in this._requestHash[_arg_1]) {
-                return;
-            };
-            delete this._requestHash[_arg_1];
-        }
+		coder function callSuccess(path:String, _arg_2:Boolean):void
+		{
+			var dict:Dictionary = _requestHash[path];
+			for each (var item:Object in dict) {
+				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
+				var groupId:String = item.oid.split(path+Core.SIGN)[1];
+				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
+				var wealthVo:WealthVo = groupVo.take(item.oid);
+				if (wealthVo) {
+					wealthVo.coder::loaded = true;
+				}
+				if (groupVo.lock) {
+					quene.removeGroup(groupVo.id);
+					groupVo.dispose();
+					break;
+				}
+				if (_arg_2 == false) {
+					quene.limitIndex++;
+				}
+				if (groupVo.lock == false) {
+					groupVo.checkFinish();
+				}
+				quene.dispatchWealthEvent(WealthEvent.WEALTH_LOADED, wealthVo);
+				if (groupVo.loaded) {
+					if (groupVo.lock == false) {
+						quene.removeGroup(wealthVo.oid);
+						quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
+					}
+				}
+			}
+			delete _requestHash[wealthVo.path];
+		}
 
-        coder function callSuccess(_arg_1:String, _arg_2:Boolean):void
-        {
-            var _local_4:Object;
-            var _local_5:WealthQuene;
-            var _local_6:String;
-            var _local_7:WealthGroupVo;
-            var _local_8:WealthVo;
-            var _local_3:Dictionary = this._requestHash[_arg_1];
-            for each (_local_4 in _local_3) {
-                _local_5 = (this._hash.take(_local_4.qid) as WealthQuene);
-                _local_6 = _local_4.oid.split((_local_4.path + Core.SIGN))[1];
-                _local_7 = _local_5.takeGroup(_local_6);
-                _local_8 = _local_7.take(_local_4.oid);
-                if (_local_8){
-                    _local_8.coder::loaded = true;
-                };
-                if (_local_7.lock){
-                    _local_5.removeGroup(_local_7.id);
-                    _local_7.dispose();
-                    _local_7 = null;
-                    break;
-                };
-                if (_arg_2 == false){
-                    _local_5.limitIndex = (_local_5.limitIndex + 1);
-                };
-                if (_local_7.lock == false){
-                    _local_7.checkFinish();
-                };
-                _local_5.dispatchWealthEvent(WealthEvent.WEALTH_LOADED, _local_8);
-                if (_local_7.loaded){
-                    if (_local_7.lock == false){
-                        _local_5.removeGroup(_local_8.oid);
-                        _local_5.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, _local_8);
-                    };
-                };
-            };
-            delete this._requestHash[_local_8.path];
-        }
+		coder function callError(path:String, _arg_2:Boolean):void
+		{
+			var item:Object;
+			var arr:Array = [];
+			for each (item in _requestHash[path]) {
+				arr.push(item);
+			}
+			var idx:int = 0;
+			while (idx < arr.length) {
+				item = arr[idx];
+				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
+				if (quene == null) {
+					break;
+				}
+				var groupId:String = item.oid.split(path+Core.SIGN)[1];
+				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
+				if (groupVo == null) {
+					break;
+				}
+				var wealthVo:WealthVo = groupVo.take(item.oid);
+				if (wealthVo == null) {
+					break;
+				}
+				delete _requestHash[path][wealthVo.id];
+				if (_arg_2 == false) {
+					quene.limitIndex++;
+				}
+				if (wealthVo.loadIndex > 0) {
+					wealthVo.loadIndex--;
+					wealthVo.coder::lock = false;
+				} else {
+					wealthVo.coder::loaded = true;
+					if (groupVo.lock) {
+						quene.removeGroup(groupVo.id);
+						groupVo.dispose();
+						return;
+					}
+					quene.dispatchWealthEvent(WealthEvent.WEALTH_ERROR, wealthVo);
+					if (groupVo.lock == false) {
+						groupVo.checkFinish();
+					}
+					if (groupVo.loaded) {
+						if (groupVo.lock == false) {
+							quene.removeGroup(wealthVo.oid);
+							quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
+						}
+					}
+				}
+				idx++;
+			}
+		}
 
-        coder function callError(_arg_1:String, _arg_2:Boolean):void
-        {
-            var _local_4:Object;
-            var _local_5:int;
-            var _local_6:WealthQuene;
-            var _local_7:String;
-            var _local_8:WealthGroupVo;
-            var _local_9:WealthVo;
-            var _local_3:Array = [];
-            for each (_local_4 in this._requestHash[_arg_1]) {
-                _local_3.push(_local_4);
-            };
-            _local_5 = 0;
-            while (_local_5 < _local_3.length) {
-                _local_4 = _local_3[_local_5];
-                _local_6 = (this._hash.take(_local_4.qid) as WealthQuene);
-                _local_7 = _local_4.oid.split((_local_4.path + Core.SIGN))[1];
-                if (_local_6 == null) break;
-                _local_8 = _local_6.takeGroup(_local_7);
-                if (_local_8 == null) break;
-                _local_9 = _local_8.take(_local_4.oid);
-                if (_local_9 == null) break;
-                delete this._requestHash[_arg_1][_local_9.id];
-                if ((_arg_2 == false)){
-                    _local_6.limitIndex = (_local_6.limitIndex + 1);
-                };
-                if (_local_9.loadIndex > 0){
-                    _local_9.loadIndex--;
-                    _local_9.coder::lock = false;
-                } else {
-                    if (_local_9){
-                        _local_9.coder::loaded = true;
-                    };
-                    if (_local_8.lock){
-                        _local_6.removeGroup(_local_8.id);
-                        _local_8.dispose();
-                        return;
-                    };
-                    _local_6.dispatchWealthEvent(WealthEvent.WEALTH_ERROR, _local_9);
-                    if (_local_8.lock == false){
-                        _local_8.checkFinish();
-                    };
-                    if (_local_8.loaded){
-                        if (_local_8.lock == false){
-                            _local_6.removeGroup(_local_9.oid);
-                            _local_6.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, _local_9);
-                        };
-                    };
-                };
-                _local_5++;
-            };
-        }
+		coder function proFunc(path:String, evt:ProgressEvent):void
+		{
+			for each (var item:Object in _requestHash[path]) {
+				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
+				if (quene == null) {
+					break;
+				}
+				var groupId:String = item.oid.split(path+Core.SIGN)[1];
+				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
+				if (groupVo == null) {
+					break;
+				}
+				var wealthVo:WealthVo = groupVo.take(item.oid);
+				if (wealthVo == null) {
+					break;
+				}
+				quene.dispatchWealthProgressEvent(WealthProgressEvent.Progress, evt, wealthVo);
+			}
+		}
 
-        coder function proFunc(_arg_1:String, _arg_2:ProgressEvent):void
-        {
-            var _local_3:Object;
-            var _local_4:WealthQuene;
-            var _local_5:String;
-            var _local_6:WealthGroupVo;
-            var _local_7:WealthVo;
-            for each (_local_3 in this._requestHash[_arg_1]) {
-                _local_4 = (this._hash.take(_local_3.qid) as WealthQuene);
-                _local_5 = _local_3.oid.split((_local_3.path + Core.SIGN))[1];
-                if (_local_4 == null) break;
-                _local_6 = _local_4.takeGroup(_local_5);
-                if (_local_6 == null) break;
-                _local_7 = _local_6.take(_local_3.oid);
-                if (_local_7 == null) break;
-                _local_4.dispatchWealthProgressEvent(WealthProgressEvent.Progress, _arg_2, _local_7);
-            };
-        }
+		coder function removeGroupRequest(groupVo:WealthGroupVo):void
+		{
+			var values:Vector.<WealthVo> = groupVo.coder::values();
+			var len:int = values.length;
+			var idx:int;
+			while (idx < len) {
+				var wealthVo:WealthVo = values[idx];
+				if (_requestHash[wealthVo.path]) {
+					delete _requestHash[wealthVo.path][wealthVo.id];
+					for each (var item:Object in _requestHash[wealthVo.path]) {
+						var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
+						if (quene == null) {
+							break;
+						}
+						var groupId:String = item.oid.split(item.path+Core.SIGN)[1];
+						groupVo = quene.takeGroup(groupId);
+						if (groupVo == null) {
+							break;
+						}
+						wealthVo = groupVo.take(item.oid);
+						if (wealthVo) {
+							wealthVo.coder::lock = false;
+						}
+					}
+				}
+				idx++;
+			}
+		}
 
-        coder function removeGroupRequest(_arg_1:WealthGroupVo):void
-        {
-            var _local_5:WealthVo;
-            var _local_6:Object;
-            var _local_7:WealthQuene;
-            var _local_8:String;
-            var _local_2:Vector.<WealthVo> = _arg_1.coder::values();
-            var _local_3:int = _local_2.length;
-            var _local_4:int;
-            while (_local_4 < _local_3) {
-                _local_5 = _local_2[_local_4];
-                if (this._requestHash[_local_5.path]){
-                    delete this._requestHash[_local_5.path][_local_5.id];
-                    for each (_local_6 in this._requestHash[_local_5.path]) {
-                        _local_7 = (this._hash.take(_local_6.qid) as WealthQuene);
-                        _local_8 = _local_6.oid.split((_local_6.path + Core.SIGN))[1];
-                        if (_local_7 == null) break;
-                        _arg_1 = _local_7.takeGroup(_local_8);
-                        if (_arg_1 == null) break;
-                        _local_5 = _arg_1.take(_local_6.oid);
-                        if (_local_5){
-                            _local_5.coder::lock = false;
-                        };
-                    };
-                };
-                _local_4++;
-            };
-        }
-
-
-    }
-}//package com.engine.core.controls.wealth
-
+	}
+}

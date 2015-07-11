@@ -17,9 +17,9 @@
 
 		public static const TMP_FILE:String = ".tmp";
 		public static const SM_FILE:String = ".sm";
-		public static const IMAGE_SZIE:int = 300;
 		public static const SIGN:String = "#";
 		public static const LINE:String = "-";
+		public static const IMAGE_SZIE:int = 300;
 		
 		public static var totalAvatarAssetsIndex:int;
 		public static var totalEffectAssetsIndex:int;
