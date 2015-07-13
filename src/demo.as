@@ -1,6 +1,6 @@
 ﻿package 
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.view.items.avatar.Avatar;
 	import com.engine.core.view.role.Char;
 	
@@ -55,9 +55,9 @@
 			this.stage.align = StageAlign.TOP_LEFT;
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			
-			Core.setup(this, "../", "zh_CN", "v1");
+			Engine.setup(this, "../", "zh_CN", "v1");
 			this.scene.buildTree(new Rectangle(0, 0, 10000, 10000));
-			this.scene.setup(Core.stage, this);
+			this.scene.setup(Engine.stage, this);
 			this.scene.changeScene(5);
 			this.scene.$mapLayer.init("scene_" + 4);
 			this.scene.updateMainChar(100000002, 0, 0);
@@ -217,7 +217,7 @@
 				msg += "数字2：线性技能\n";
 				msg += "数字3：扇形连射\n";
 				msg += "Shift+左键：跳跃\n";
-				this.text.text = "fps:" + Core.fps + "\n机器人数：" + robot_quene.length + msg;
+				this.text.text = "fps:" + Engine.fps + "\n机器人数：" + robot_quene.length + msg;
 			}
 		}
 

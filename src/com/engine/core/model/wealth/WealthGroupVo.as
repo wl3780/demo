@@ -1,6 +1,6 @@
 ﻿package com.engine.core.model.wealth
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.controls.wealth.WealthConstant;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
@@ -22,6 +22,7 @@
 
 		public function WealthGroupVo()
 		{
+			super();
 			_hash = new Dictionary();
 			_values = new Vector.<WealthVo>();
 			this.level = WealthConstant.PRIORITY_LEVEL;
@@ -29,7 +30,7 @@
 
 		public function addWealth(path:String, data:Object, index:int=0):void
 		{
-			var key:String = path + Core.SIGN + this.id;
+			var key:String = path + Engine.SIGN + this.id;
 			if (_hash[key] == null) {
 				var wealthVo:WealthVo = new WealthVo();
 				wealthVo.setUp(path, data, this.id);
@@ -41,8 +42,9 @@
 				} else {
 					wealthVo.dataFormat = URLLoaderDataFormat.BINARY;
 				}
-				wealthVo.coder::$index = _values.length;
-				wealthVo.loadIndex = index;
+				wealthVo.coder::index = _values.length;
+				wealthVo.retryCount = index;
+				
 				_values.push(wealthVo);
 				_hash[key] = wealthVo;
 			}
@@ -75,30 +77,6 @@
 				this.addWealth(paths[idx], datas ? datas[idx] : null, idx);
 				idx++;
 			}
-		}
-
-		public function shift():WealthVo
-		{
-			if (_values.length) {
-				var wealthVo:WealthVo = _values.shift();
-				var idx:int = 0;
-				while (idx < _values.length) {
-					_values[idx].coder::$index = idx;
-					idx++;
-				}
-				delete _hash[wealthVo.id];
-			}
-			return null;
-		}
-
-		public function pop():WealthVo
-		{
-			if (_values.length) {
-				var wealthVo:WealthVo = _values.pop();
-				delete _hash[wealthVo.id];
-				return wealthVo;
-			}
-			return null;
 		}
 
 		public function getNextWealth():WealthVo
@@ -134,8 +112,8 @@
 				if (one.hasOwnProperty(pro)) {
 					return int(one[pro] - another[pro]);
 				}
-				return int(one.index - another.index);
-			}
+				return one.index - another.index;
+			};
 			_values.sort(compareFunction);
 		}
 

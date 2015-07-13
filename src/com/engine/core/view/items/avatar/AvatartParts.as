@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items.avatar
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.ItemConst;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
@@ -221,9 +221,9 @@
 				}
 				var _local_14:Boolean = true;
 				var _local_15:Boolean = true;
-				var passTime:int = Core.delayTime - this.counter;
+				var passTime:int = Engine.delayTime - this.counter;
 				if (passTime >= interval || now) {
-					this.counter = Core.delayTime;
+					this.counter = Engine.delayTime;
 					this.oldState = this.state;
 					if (this.onRendStart != null) {
 						this.onRendStart();
@@ -286,9 +286,9 @@
 						if (param.maxRects[this.dir] == null) {
 							param.maxRects[this.dir] = new Rectangle(0, 0, 0, 110);
 						}
-						if (_local_3 == Core.shadow_bitmapData) {
+						if (_local_3 == Engine.shadow_bitmapData) {
 						}
-						if (_local_3 && _local_3 != Core.shadow_bitmapData && _local_3.width > 0 && _local_3.height > 0) {
+						if (_local_3 && _local_3 != Engine.shadow_bitmapData && _local_3.width > 0 && _local_3.height > 0) {
 							param.maxRects[this.dir] = _local_3.rect.union(param.maxRects[this.dir]);
 						}
 						var _local_4:Rectangle = param.maxRects[this.dir];
@@ -395,8 +395,8 @@
 					} else {
 						_local_11 = this.dir;
 					}
-					var _local_15:int = (Core.delayTime - _local_1.counter);
-					if (((((!((_local_1.replay == -1))) && (((Core.delayTime - _local_1.startPlayTime) > (((_local_1.replay * _local_1.speed) * _local_1.frames) + 3000))))) && (!(_local_13)))) {
+					var _local_15:int = (Engine.delayTime - _local_1.counter);
+					if (((((!((_local_1.replay == -1))) && (((Engine.delayTime - _local_1.startPlayTime) > (((_local_1.replay * _local_1.speed) * _local_1.frames) + 3000))))) && (!(_local_13)))) {
 						_local_1.replay = 0;
 					}
 					var _local_2:BitmapData;
@@ -420,12 +420,12 @@
 						_local_16 = _lockEffectPlaySpeed;
 					}
 					if (_local_15 >= _local_16) {
-						_local_1.counter = Core.delayTime;
+						_local_1.counter = Engine.delayTime;
 						var _local_10:int = _local_1.currentFrame;
 						_local_3 = _local_1.getRect(_local_11, _local_10);
 						_local_2 = _local_1.getBitmapData(_local_11, _local_10);
 						if (_local_2) {
-							_local_1.currentFrame = (_local_1.currentFrame + Core.handleCount);
+							_local_1.currentFrame = (_local_1.currentFrame + Engine.handleCount);
 							var _local_5:int = _local_3.width;
 							if (((_local_13) && ((_local_1.currentFrame >= _local_1.frames)))) {
 								_local_1.currentFrame--;

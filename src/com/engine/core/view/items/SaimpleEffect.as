@@ -5,7 +5,7 @@
 
 package com.engine.core.view.items
 {
-    import com.engine.core.Core;
+    import com.engine.core.Engine;
     import com.engine.core.view.base.BaseShape;
     import com.engine.core.view.scenes.Scene;
     import com.engine.utils.Hash;
@@ -109,22 +109,22 @@ package com.engine.core.view.items
         {
             var _local_1:int;
             if (((((Scene.scene) && (Scene.scene.mainChar))) && (((Scene.scene.mainChar.runing) || (Scene.scene.mainChar.jumping))))){
-                if ((Core.fps < 5)){
+                if ((Engine.fps < 5)){
                     _local_1 = 600;
                 } else {
                     _local_1 = 400;
                 };
             } else {
-                if ((Core.fps < 5)){
+                if ((Engine.fps < 5)){
                     _local_1 = 500;
                 } else {
                     _local_1 = 0;
                 };
             };
-            stageRect.width = Core.stage.stageWidth;
-            stageRect.height = Core.stage.stageHeight;
-            if ((Core.delayTime - this.time) > ((this.dur + this.r) + _local_1)){
-                this.time = Core.delayTime;
+            stageRect.width = Engine.stage.stageWidth;
+            stageRect.height = Engine.stage.stageHeight;
+            if ((Engine.delayTime - this.time) > ((this.dur + this.r) + _local_1)){
+                this.time = Engine.delayTime;
                 if ((((((this.totalFrame > 0)) && (!(this._stop)))) && (this.stage))){
                     if (this.currFrame >= this.totalFrame){
                         this.currFrame = 0;

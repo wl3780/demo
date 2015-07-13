@@ -1,6 +1,6 @@
 ﻿package com.engine.core.controls.wealth
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.controls.wealth.loader.DisplayLoader;
 	import com.engine.core.controls.wealth.loader.ILoader;
 	import com.engine.core.model.Proto;
@@ -63,7 +63,7 @@
 			var instance:Object;
 			var clazz:Class;
 			if (kName) {
-				linkName = path + Core.LINE + kName;
+				linkName = path + Engine.LINE + kName;
 				instance = this.bitmapdatas.take(linkName);
 				if (instance == null) {
 					clazz = this.getClass(path, kName);

@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.view.base.BaseShape;
 	
 	import flash.utils.getTimer;
@@ -61,22 +61,22 @@
 					if (this.startSpeedY < 0) {
 						this.startSpeedY = 0;
 					}
-					this.dy = ((2 * Core.handleCount) + this.startSpeedY);
+					this.dy = ((2 * Engine.handleCount) + this.startSpeedY);
 					if (this.startSpeedY > 0) {
 						this.startSpeedY = (this.startSpeedY - 0.1);
 					}
 					this.startY = (this.startY - this.dy);
 					this.x = (this.x - this.dx);
-					this.dx = (this.dx - (0.15 * Core.handleCount));
+					this.dx = (this.dx - (0.15 * Engine.handleCount));
 					this.y = this.startY;
 					if (_local_1 > 400) {
-						this.dy = ((1.5 * Core.handleCount) + this.startSpeedY);
-						this.alpha = (this.alpha - (this.va * Core.handleCount));
+						this.dy = ((1.5 * Engine.handleCount) + this.startSpeedY);
+						this.alpha = (this.alpha - (this.va * Engine.handleCount));
 						if (_local_1 > 5000) {
 							alpha = -1;
 						}
 					} else {
-						this.dy = ((2 * Core.handleCount) + this.startSpeedY);
+						this.dy = ((2 * Engine.handleCount) + this.startSpeedY);
 					}
 				} else {
 					if (this.type == 1) {
@@ -88,8 +88,8 @@
 							this.scaleX = (this.scaleY = 1);
 						}
 						if (_local_1 > 400) {
-							this.alpha = (this.alpha - (this.va * Core.handleCount));
-							this.y = (this.y - (this.dx * Core.handleCount));
+							this.alpha = (this.alpha - (this.va * Engine.handleCount));
+							this.y = (this.y - (this.dx * Engine.handleCount));
 						}
 						if (_local_1 > 5000) {
 							alpha = -1;
@@ -97,8 +97,8 @@
 					} else {
 						if (this.type == 2) {
 							if (_local_1 > 200) {
-								this.alpha = (this.alpha - (this.va * Core.handleCount));
-								this.y = (this.y - (this.dx * Core.handleCount));
+								this.alpha = (this.alpha - (this.va * Engine.handleCount));
+								this.y = (this.y - (this.dx * Engine.handleCount));
 							}
 							if (_local_1 > 5000) {
 								alpha = -1;

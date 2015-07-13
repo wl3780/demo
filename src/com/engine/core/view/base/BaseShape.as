@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.base
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.controls.IOrder;
 	import com.engine.core.controls.elisor.Elisor;
 	import com.engine.core.controls.elisor.EventOrder;
@@ -24,14 +24,14 @@
 		
 		public function BaseShape()
 		{
-			_id = Core.coder::nextInstanceIndex().toString(16);
+			_id = Engine.coder::nextInstanceIndex().toString(16);
 			DisplayObjectPort.coder::getInstance().put(this);
 		}
 
 		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			var orderType:String = _id + Core.SIGN + type;
+			var orderType:String = _id + Engine.SIGN + type;
 			if (elisor.hasOrder(orderType, OrderMode.EVENT_ORDER) == false) {
 				var order:EventOrder = elisor.createEventOrder(this.id, type, listener);
 				elisor.addOrder(order);
@@ -44,7 +44,7 @@
 		override public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			var orderType:String = _id + Core.SIGN + type;
+			var orderType:String = _id + Engine.SIGN + type;
 			if (elisor.hasOrder(orderType, OrderMode.EVENT_ORDER) == true) {
 				var order:EventOrder = elisor.removeOrder(orderType, OrderMode.EVENT_ORDER) as EventOrder;
 				if (order) {

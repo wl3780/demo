@@ -1,6 +1,6 @@
 ﻿package com.engine.core.controls.wealth.loader
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.IOrderDispatcher;
 	import com.engine.core.controls.IOrder;
 	import com.engine.core.controls.elisor.Elisor;
@@ -27,10 +27,10 @@
 
 		public var vo:WealthVo;
 		
-		protected var $oid:String;
-		protected var $proto:Object;
-		
 		private var _id:String;
+		private var _oid:String;
+		private var _proto:Object;
+		
 		private var _successFunc:Function;
 		private var _errorFunc:Function;
 		private var _progressFunc:Function;
@@ -58,7 +58,7 @@
 			try {
 				this.load(new URLRequest(vo.path), loaderContext);
 			} catch(e:Error) {
-				var lc:LoaderContext = new LoaderContext(false, Core.stage.loaderInfo.applicationDomain);
+				var lc:LoaderContext = new LoaderContext(false, Engine.stage.loaderInfo.applicationDomain);
 				this.load(new URLRequest(vo.path), lc);
 			}
 		}
@@ -95,7 +95,7 @@
 		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			var orderKey:String = _id + Core.SIGN + type;
+			var orderKey:String = _id + Engine.SIGN + type;
 			if (elisor.hasOrder(orderKey, OrderMode.EVENT_ORDER) == false) {
 				var order:EventOrder = elisor.createEventOrder(this.id, type, listener);
 				elisor.addOrder(order);
@@ -108,7 +108,7 @@
 		override public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			var orderKey:String = _id + Core.SIGN + type;
+			var orderKey:String = _id + Engine.SIGN + type;
 			if (elisor.hasOrder(orderKey, OrderMode.EVENT_ORDER) == true) {
 				var order:EventOrder = elisor.removeOrder(orderKey, OrderMode.EVENT_ORDER) as EventOrder;
 				if (order) {
@@ -175,28 +175,28 @@
 
 		public function set proto(val:Object):void
 		{
-			this.$proto = val;
+			_proto = val;
 		}
 		public function get proto():Object
 		{
-			return this.$proto;
+			return _proto;
 		}
 		
 		public function set oid(val:String):void
 		{
-			this.$oid = val;
+			_oid = val;
 		}
 		public function get oid():String
 		{
-			return this.$oid;
+			return _oid;
 		}
 		
 		public function clone():IProto
 		{
 			var p:Proto = new Proto();
 			p.coder::id = _id;
-			p.coder::oid = this.$oid;
-			p.proto = this.$proto;
+			p.coder::oid = _oid;
+			p.proto = _proto;
 			return p;
 		}
 
@@ -206,8 +206,8 @@
 			this.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, _errorFunc_);
 			this.contentLoaderInfo.removeEventListener(ProgressEvent.PROGRESS, _progressFunc_);
 			_successFunc = null;
-			_progressFunc = null;
 			_errorFunc = null;
+			_progressFunc = null;
 			
 			var list:Vector.<IOrder> = this.disposeGroupOrders(OrderMode.TOTAL);
 			for each (var item:IOrder in list) {
@@ -217,8 +217,8 @@
 			}
 			DisplayObjectPort.coder::getInstance().remove(_id);
 			_id = null;
-			this.$oid = null;
-			this.$proto = null;
+			_oid = null;
+			_proto = null;
 			this.vo = null;
 			this.unloadAndStop();
 		}

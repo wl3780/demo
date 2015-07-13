@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.role
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.tile.Pt;
 	import com.engine.core.tile.TileConst;
 	import com.engine.core.view.BitmapScale9Grid;
@@ -174,7 +174,7 @@
 				this.wordTxt.width = (this.wordTxt.textWidth + 10);
 				this.wordTxt.x = (this.wordTxt.y = 2);
 				if (bitmapScale9Grid == null) {
-					bitmapScale9Grid = new BitmapScale9Grid(Core.chat_bitmapData, new Rectangle(1, 1, 100, 35));
+					bitmapScale9Grid = new BitmapScale9Grid(Engine.chat_bitmapData, new Rectangle(1, 1, 100, 35));
 				}
 				bitmapScale9Grid.width = (this.wordTxt.width + 5);
 				bitmapScale9Grid.height = (this.wordTxt.height + 15);
@@ -840,7 +840,7 @@
 				this.shape.x = this.x;
 				this.shape.y = this.y;
 			}
-			if (Core.stopMove) {
+			if (Engine.stopMove) {
 				this.jumping = false;
 				this.runing = false;
 				this.pathArr = [];
@@ -958,7 +958,7 @@
 			if (((((((((this.pathArr) && ((this.pathArr.length >= 0)))) && (((jumping) || (runing))))) && (!(this.isDeath)))) && ((((avatarParts.state == CharAction.WALK)) || ((avatarParts.state == CharAction.SKILL2)))))) {
 				_local_1 = getTimer();
 				if (this == Scene.scene.mainChar) {
-					Core.moveTime = ((_local_1 - this.time) / 100);
+					Engine.moveTime = ((_local_1 - this.time) / 100);
 				}
 				this.totalTime = (this.totalTime + (_local_1 - this.time));
 				if ((((this.totalTime > 0)) && (this.tar_point))) {
@@ -1041,7 +1041,7 @@
 			var _local_2:BitmapData;
 			var _local_3:ShoawdBitmap;
 			if (this.popsinger == 4) {
-				if ((Core.delayTime - this.jumpTimeNum) > 120) {
+				if ((Engine.delayTime - this.jumpTimeNum) > 120) {
 					_local_1 = new Rectangle();
 					if (((bitmapdata_mid) && (bitmapdata_mid.bitmapData))) {
 						_local_1 = _local_1.union(bitmapdata_mid.bitmapData.rect);
@@ -1055,7 +1055,7 @@
 						_local_3.y = ((this.y - _local_2.height) + this.onMonutHeight);
 						Scene.scene.$itemLayer.addChild(_local_3);
 					}
-					this.jumpTimeNum = Core.delayTime;
+					this.jumpTimeNum = Engine.delayTime;
 				}
 			}
 		}
@@ -1166,8 +1166,8 @@
 
 		public function addHeadShow(_arg_1:HeadShowShape):void
 		{
-			if (Core.stage) {
-				if (Core.stage.frameRate < 5) {
+			if (Engine.stage) {
+				if (Engine.stage.frameRate < 5) {
 					return;
 				}
 			}
@@ -1201,7 +1201,7 @@
 			var _local_2:Rectangle;
 			if (((((((headShape) && (this.showList))) && (this.showList.length))) && (((getTimer() - this.showTime) > 300)))) {
 				_local_1 = this.showList.shift();
-				this.showTime = Core.delayTime;
+				this.showTime = Engine.delayTime;
 				if (_local_1) {
 					_local_1.dy = 1;
 					_local_1.y = -(this.height_old);
@@ -1448,31 +1448,30 @@
 		{
 		}
 
-		public function jump(_arg_1:Array, _arg_2:Boolean=true, _arg_3:int=0):void
+		public function jump(paths:Array, _arg_2:Boolean=true, _arg_3:int=0):void
 		{
 			var _local_6:Point;
 			var _local_7:AvatarRestrict;
 			var _local_8:int;
 			var _local_9:Number;
 			var _local_10:Number;
-			if (((this.jumping) || (!(avatarParts)))) {
+			if (this.jumping || !this.avatarParts) {
 				return;
 			}
-			if (((!(_arg_1)) || ((_arg_1.length == 0)))) {
+			if (!paths || paths.length == 0) {
 				return;
 			}
 			this.actionPlaySpeed = this.avatarParts.attackSpeed;
 			this.meditation = false;
 			this.isGroupSongModel = false;
-			this.jumpIndex = _arg_1.length;
-			var _local_4:int = Point.distance(_arg_1[0], _arg_1[(_arg_1.length - 1)]);
-			var _local_5:int = this.speed;
-			this.jump_deafult_speed = ((this.speed * 2) + ((this.speed / 2) * (1 - (_local_4 / 400))));
-			this.avatarParts.attackSpeed = ((this.actionPlaySpeed * _local_4) / 400);
+			this.jumpIndex = paths.length;
+			var dis:int = Point.distance(paths[0], paths[paths.length-1]);
+			this.jump_deafult_speed = ((this.speed * 2) + ((this.speed / 2) * (1 - (dis / 400))));
+			this.avatarParts.attackSpeed = ((this.actionPlaySpeed * dis) / 400);
 			if (this.isOnMonut == false) {
 				this.shadowMode = false;
 			}
-			this.pathArr = _arg_1.slice();
+			this.pathArr = paths.slice();
 			if (this.pathArr.length > 0) {
 				_local_6 = this.pathArr[(this.pathArr.length - 1)];
 				dir = this.getDretion(_local_6.x, _local_6.y);
@@ -1492,9 +1491,9 @@
 				this.totalTime = 0;
 				this.tar_point = this.pathArr.shift();
 				this.cur_point = point;
-				_local_8 = this.needTime(_arg_1, (this.jump_deafult_speed * 0.96));
-				_local_9 = _arg_1[(_arg_1.length - 1)].x;
-				_local_10 = _arg_1[(_arg_1.length - 1)].y;
+				_local_8 = this.needTime(paths, (this.jump_deafult_speed * 0.96));
+				_local_9 = paths[(paths.length - 1)].x;
+				_local_10 = paths[(paths.length - 1)].y;
 				TweenLite.to(shape, (_local_8 / 1000), {
 					"x":_local_9,
 					"y":_local_10,

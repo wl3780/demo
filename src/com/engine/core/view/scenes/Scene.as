@@ -1,6 +1,7 @@
 ﻿package com.engine.core.view.scenes
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
+	import com.engine.core.EngineGlobal;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.controls.wealth.WealthPool;
 	import com.engine.core.controls.wealth.loader.DisplayLoader;
@@ -41,6 +42,7 @@
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.filters.BlurFilter;
 	import flash.filters.ColorMatrixFilter;
 	import flash.filters.GlowFilter;
@@ -49,6 +51,7 @@
 	import flash.geom.Rectangle;
 	import flash.system.System;
 	import flash.utils.Dictionary;
+	import flash.utils.Timer;
 	import flash.utils.getTimer;
 
 	public class Scene extends BaseSprite 
@@ -220,11 +223,11 @@
 
 		private function init():void
 		{
-			if (Core.char_shadow == null) {
+			if (Engine.char_shadow == null) {
 				this.drawShadow();
 			}
 			
-			this.$nodeTree = new NodeTree(Core.SCENE_ITEM_NODER);
+			this.$nodeTree = new NodeTree(Engine.SCENE_ITEM_NODER);
 			
 			this.mouseChildren = this.mouseEnabled = false;
 			this.tabChildren = this.tabEnabled = false;
@@ -265,40 +268,45 @@
 
 		public function setup(stage:Stage, container:DisplayObjectContainer):void
 		{
-			Core.stage = stage;
+			Engine.stage = stage;
 			_container = container;
 			_container.addChild(this);
 			_container.addChildAt(this.$mapLayer, 0);
-			Core.stage.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDownFunc);
-			Core.stage.addEventListener(MouseEvent.MOUSE_UP, this.mouseUpFunc);
-			Core.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.keyDownFunc);
-			Core.stage.addEventListener(KeyboardEvent.KEY_UP, this.keyUpFunc);
-			Core.stage.addEventListener(Event.ENTER_FRAME, this.enterFrameFunc);
+			
+			this.stage.addEventListener("rightMouseDown", _EngineMouseRightDownFunc_);
+			this.stage.addEventListener("rightMouseUp", _EngineMouseRightUpFunc_);
+			this.stage.addEventListener(MouseEvent.MOUSE_DOWN, _EngineMouseDownFunc_);
+			this.stage.addEventListener(MouseEvent.MOUSE_UP, _EngineMouseUpFunc_);
+			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, _EngineKeyDownFunc_);
+			this.stage.addEventListener(KeyboardEvent.KEY_UP, _EngineKeyUpFunc_);
+			
+			var timer:Timer = new Timer(0);
+			timer.addEventListener(TimerEvent.TIMER, enterFrameFunc);
+			timer.start();
 		}
 
-		public function updateMainChar(avatarID:int, weaponID:int=0, mountID:int=0, wingID:int=0):void
+		public function updateMainChar(modelId:int, weaponId:int=0, mountId:int=0, wingId:int=0):void
 		{
 			if (_mainChar == null) {
 				_mainChar = new MainChar();
 				_mainChar.type = SceneConstant.CHAR;
-				_mainChar.char_id = Core.mainCharId;
 				_mainChar.showBodyShoadw(true);
 			}
-			this.updateCharAvatarPart(_mainChar, avatarID, weaponID, mountID, wingID);
+			this.updateCharAvatarPart(_mainChar, modelId, weaponId, mountId, wingId);
 		}
 
-		public function updateCharAvatarPart(char:Char, clothesID:int, weaponID:int=0, mountID:int=0, wingID:int=0):void
+		public function updateCharAvatarPart(char:Char, modelId:int, weaponId:int=0, mountId:int=0, wingId:int=0):void
 		{
 			if (char) {
-				if (mountID == 0) {
+				if (mountId == 0) {
 					char.hp_height = 120;
 				} else {
 					char.hp_height = 150;
 				}
-				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "clothes/mid_" + clothesID + Core.TMP_FILE + "?version=" + Core.version);
-				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "weapons/wid_" + weaponID + Core.TMP_FILE + "?version=" + Core.version);
-				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "flys/fid_" + wingID + Core.TMP_FILE + "?version=" + Core.version);
-				char.loadAvatarPart(Core.hostPath + Core.avatarAssetsPath + "mounts/midm_" + mountID + Core.TMP_FILE + "?version=" + Core.version);
+				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "clothes/mid_" + modelId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
+				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "weapons/wid_" + weaponId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
+				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "flys/fid_" + wingId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
+				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "mounts/midm_" + mountId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
 				char.avatarParts.bodyRender(true);
 				if (_sceneFlyMode) {
 					this.addItem(char, SceneConstant.FLY_LAYER);
@@ -598,18 +606,18 @@
 			}
 		}
 
-		protected function keyDownFunc(evt:KeyboardEvent):void
+		protected function _EngineKeyDownFunc_(evt:KeyboardEvent):void
 		{
 			_shiftKey = evt.shiftKey;
-			Core.stage.removeEventListener(KeyboardEvent.KEY_DOWN, this.keyDownFunc);
-			Core.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.keyDownFunc);
+			Engine.stage.removeEventListener(KeyboardEvent.KEY_DOWN, this._EngineKeyDownFunc_);
+			Engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, this._EngineKeyDownFunc_);
 		}
 
-		protected function keyUpFunc(evt:KeyboardEvent):void
+		protected function _EngineKeyUpFunc_(evt:KeyboardEvent):void
 		{
 			_shiftKey = evt.shiftKey;
-			Core.stage.removeEventListener(KeyboardEvent.KEY_UP, this.keyUpFunc);
-			Core.stage.addEventListener(KeyboardEvent.KEY_UP, this.keyUpFunc);
+			Engine.stage.removeEventListener(KeyboardEvent.KEY_UP, this._EngineKeyUpFunc_);
+			Engine.stage.addEventListener(KeyboardEvent.KEY_UP, this._EngineKeyUpFunc_);
 		}
 
 		public function getSkillTile(p:Point):Avatar
@@ -619,15 +627,23 @@
 			return HitTest.getChildUnderPoint(this, p, items, Avatar) as Avatar;
 		}
 
-		protected function mouseUpFunc(evt:MouseEvent):void
+		protected function _EngineMouseUpFunc_(evt:MouseEvent):void
 		{
 			this.isMouseDown = false;
-			if (Core.sceneClickAbled == false) {
+			if (Engine.sceneClickAbled == false) {
 				return;
 			}
 		}
 		
-		protected function mouseDownFunc(evt:MouseEvent):void
+		protected function _EngineMouseRightDownFunc_(evt:MouseEvent):void
+		{
+		}
+		
+		protected function _EngineMouseRightUpFunc_(evt:MouseEvent):void
+		{
+		}
+		
+		protected function _EngineMouseDownFunc_(evt:MouseEvent):void
 		{
 			if (Scene.clickEnbeled == false) {
 				return;
@@ -663,8 +679,8 @@
 			var pt_inter:Point = pt_to;
 			var mapX:Number = (1 - this.$mapLayer.scaleX) * pt_inter.x;
 			var mapY:Number = (1 - this.$mapLayer.scaleY) * pt_inter.y;
-			pt_inter.x = (pt_inter.x - mapX) + (Core.stage.stageWidth / 2) * (1 - this.$mapLayer.scaleX);
-			pt_inter.y = (pt_inter.y - mapY) + (Core.stage.stageHeight / 2) * (1 - this.$mapLayer.scaleY);
+			pt_inter.x = (pt_inter.x - mapX) + (Engine.stage.stageWidth / 2) * (1 - this.$mapLayer.scaleX);
+			pt_inter.y = (pt_inter.y - mapY) + (Engine.stage.stageHeight / 2) * (1 - this.$mapLayer.scaleY);
 			pt_inter.x = Number(pt_inter.x.toFixed(1));
 			pt_inter.y = Number(pt_inter.y.toFixed(1));
 			this.x = pt_inter.x;
@@ -704,8 +720,8 @@
 		{
 			var fx:Number;
 			var fy:Number;
-			var stageW:int = Core.stage.stageWidth;
-			var stageH:int = Core.stage.stageHeight;
+			var stageW:int = Engine.stage.stageWidth;
+			var stageH:int = Engine.stage.stageHeight;
 			var mapW:int = 4000;
 			var mapH:int = 4000;
 			if (this.mapData && this.mapData.width > 0 && this.mapData.height > 0) {
@@ -739,8 +755,8 @@
 		{
 			var fx:Number;
 			var fy:Number;
-			var stageW:int = Core.stage.stageWidth;
-			var stageH:int = Core.stage.stageHeight;
+			var stageW:int = Engine.stage.stageWidth;
+			var stageH:int = Engine.stage.stageHeight;
 			var mapPW:int = 4000;
 			var mapPH:int = 4000;
 			if (this.mapData && this.mapData.width > 0 && this.mapData.height > 0) {
@@ -869,7 +885,7 @@
 			}
 			
 			var interval:int;
-			if (Core.fps < 12) {
+			if (Engine.fps < 12) {
 				interval = 2000;
 			} else {
 				interval = 600;
@@ -883,7 +899,7 @@
 				this.sortDepth();
 			}
 			
-			if (Core.screenShaking == false) {
+			if (Engine.screenShaking == false) {
 				try {
 					TweenLite.killTweensOf(this);
 					TweenLite.killTweensOf(this.$mapLayer);
@@ -1056,7 +1072,7 @@
 			mtx.tx = 10;
 			mtx.ty = 5;
 			bmd.draw(pen, mtx);
-			Core.char_shadow = bmd;
+			Engine.char_shadow = bmd;
 			pen.graphics.clear();
 			pen.graphics.beginGradientFill(GradientType.LINEAR, [0, 0, 0, 0], [0.8, 0.7, 0.6, 0.6], [1, 1, 1, 1]);
 			pen.graphics.drawEllipse(0, 0, 100, 40);
@@ -1067,7 +1083,7 @@
 			mtx.tx = 10;
 			mtx.ty = 5;
 			bmd.draw(pen, mtx);
-			Core.char_big_shadow = bmd;
+			Engine.char_big_shadow = bmd;
 			pen.graphics.clear();
 		}
 		

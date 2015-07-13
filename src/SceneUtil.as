@@ -1,6 +1,7 @@
 ﻿package 
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
+	import com.engine.core.EngineGlobal;
 	import com.engine.core.tile.square.Square;
 	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.tile.square.SquarePt;
@@ -20,9 +21,9 @@
 			if (((!(_arg_1)) || (!(_arg_1.avatarParts)))) {
 				return;
 			}
-			_arg_1.loadAvatarPart((((((Core.hostPath + "assets/") + Core.language) + "/avatars/clothes/mid_") + _arg_2) + Core.TMP_FILE));
-			_arg_1.loadAvatarPart((((((Core.hostPath + "assets/") + Core.language) + "/avatars/weapons/wid_") + _arg_3) + Core.TMP_FILE));
-			_arg_1.loadAvatarPart((((((Core.hostPath + "assets/") + Core.language) + "/avatars/mounts/midm_") + _arg_4) + Core.TMP_FILE));
+			_arg_1.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "clothes/mid_" + _arg_2 + Engine.TMP_FILE);
+			_arg_1.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "weapons/wid_" + _arg_3 + Engine.TMP_FILE);
+			_arg_1.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "mounts/midm_" + _arg_4 + Engine.TMP_FILE);
 			_arg_1.avatarParts.bodyRender(true);
 		}
 

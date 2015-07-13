@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items.avatar
 {
-    import com.engine.core.Core;
+    import com.engine.core.Engine;
     import com.engine.core.ItemConst;
     import com.engine.core.tile.square.SquarePt;
     import com.engine.core.view.items.Item;
@@ -191,7 +191,7 @@
             var _local_1:Boolean = true;
             if (((Scene.scene) && (this.isSceneItem))){
                 _local_2 = Scene.scene.globalToLocal(recovery_point);
-                _local_3 = new Rectangle(_local_2.x, _local_2.y, Core.stage.stageWidth, (Core.stage.stageHeight + 150));
+                _local_3 = new Rectangle(_local_2.x, _local_2.y, Engine.stage.stageWidth, (Engine.stage.stageHeight + 150));
                 _local_4 = new Rectangle(x, y, 1, 1);
                 if (this.curr_rect != null){
                     _local_4.x = (x + this.curr_rect.topLeft.x);
@@ -267,9 +267,9 @@
                 };
                 _arg_1 = _local_4.join("/");
                 _local_7 = _local_5.split("_")[0];
-                _local_5 = _local_5.split(Core.TMP_FILE)[0];
+                _local_5 = _local_5.split(Engine.TMP_FILE)[0];
                 _local_7 = _local_5.split("_")[0];
-                _arg_1 = _arg_1.split(Core.TMP_FILE).join(".sm");
+                _arg_1 = _arg_1.split(Engine.TMP_FILE).join(".sm");
                 _local_8 = _local_5.split("_");
                 _local_9 = int(_local_8[1]);
                 if (_local_9 > 0){
@@ -323,7 +323,7 @@
             var _local_2:Dictionary = this.avatarParts.avatarParts[_arg_1];
             for each (_local_3 in _local_2) {
                 _local_4 = _local_3.assetsPath;
-                _local_4 = _local_4.split(Core.TMP_FILE).join((("_" + _arg_1) + Core.TMP_FILE));
+                _local_4 = _local_4.split(Engine.TMP_FILE).join((("_" + _arg_1) + Engine.TMP_FILE));
                 AvatarAssetManager.getInstance().loadAvatarAssets(_local_4, _arg_1, this.avatarParts.id);
             };
         }
@@ -554,12 +554,12 @@
                         if (_local_10.bitmapData != _arg_3){
                             _local_10.bitmapData = _arg_3;
                         };
-                        if ((((_arg_3 == Core.shadow_bitmapData)) && (Core.shadow_bitmapData))){
+                        if ((((_arg_3 == Engine.shadow_bitmapData)) && (Engine.shadow_bitmapData))){
                             if (_local_10.x != _local_11){
-                                _local_10.x = (-(Core.shadow_bitmapData.width) / 2);
+                                _local_10.x = (-(Engine.shadow_bitmapData.width) / 2);
                             };
                             if (_local_10.y != _local_12){
-                                _local_10.y = -(Core.shadow_bitmapData.height);
+                                _local_10.y = -(Engine.shadow_bitmapData.height);
                             };
                         } else {
                             if (_local_10.x != _local_11){

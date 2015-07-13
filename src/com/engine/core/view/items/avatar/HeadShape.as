@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items.avatar
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.view.items.BloodBar;
 	import com.engine.core.view.quadTree.NoderSprite;
@@ -77,7 +77,7 @@
 		{
 			_clickEnabled = _arg_1;
 			if (_arg_1) {
-				this.registerNodeTree(Core.SCENE_ITEM_NODER);
+				this.registerNodeTree(Engine.SCENE_ITEM_NODER);
 				activate();
 			} else {
 				unactivate();
@@ -382,7 +382,7 @@
 
 		public function stageIntersects():void
 		{
-			if (((((!(Core.CORE_RECT)) || ((this.visible == false)))) || (!(this.owner)))) {
+			if (((((!(Engine.CORE_RECT)) || ((this.visible == false)))) || (!(this.owner)))) {
 				if (this.parent) {
 					this.parent.removeChild(this);
 				}

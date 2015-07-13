@@ -1,6 +1,6 @@
 ﻿package com.engine.utils
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	
 	import flash.display.Stage;
 	import flash.events.Event;
@@ -33,7 +33,7 @@
 				tfDelay = 0;
 				fps = (1000 * tfDelayMax) / (getTimer() - tfTimer);
 				tfTimer = getTimer();
-				Core.fps = fps;
+				Engine.fps = fps;
 			}
 		}
 

@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items.avatar
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.view.role.MainChar;
 	import com.engine.core.view.scenes.Scene;
 	import com.engine.core.view.scenes.SceneConstant;
@@ -36,7 +36,7 @@
 			_avatarParams_ = [];
 			this.onceTime = Math.ceil(1000 / 30);
 			super();
-			Core.stage.addEventListener(Event.ENTER_FRAME, this.onEnterFrame);
+			Engine.stage.addEventListener(Event.ENTER_FRAME, this.onEnterFrame);
 		}
 
 		coder static function getInstance():AvatarManager
@@ -49,24 +49,24 @@
 
 		private function onEnterFrame(evt:Event):void
 		{
-			Core.totalAvatarAssetsIndex = this.avatars_lengh;
-			Core.totalEffectAssetsIndex = this.effects_length;
+			Engine.totalAvatarAssetsIndex = this.avatars_lengh;
+			Engine.totalEffectAssetsIndex = this.effects_length;
 			var passTime:int = getTimer() - this.lastHandleTimer;
-			Core.handleCount = Math.ceil(passTime / this.onceTime);
+			Engine.handleCount = Math.ceil(passTime / this.onceTime);
 			var handleCount:int;
-			if (Core.fps > 10) {
-				handleCount = Core.handleCount;
+			if (Engine.fps > 10) {
+				handleCount = Engine.handleCount;
 			} else {
 				handleCount = 1;
 			}
-			if (Core.fps <= 3) {
-				handleCount = Core.handleCount;
+			if (Engine.fps <= 3) {
+				handleCount = Engine.handleCount;
 			}
 			while (handleCount > 0) {
 				this.onRenderFunc(evt);
 				handleCount--;
 			}
-			handleCount = Core.handleCount;
+			handleCount = Engine.handleCount;
 			while (handleCount > 0) {
 				this.onRenderFunc2(evt);
 				handleCount--;
@@ -113,7 +113,7 @@
 
 		private function onRenderFunc(... args):void
 		{
-			Core.delayTime = getTimer();
+			Engine.delayTime = getTimer();
 			var num:int = 2;
 			if (Scene.scene && Scene.scene.mainChar) {
 				if (Scene.scene.mainChar.runing == false) {

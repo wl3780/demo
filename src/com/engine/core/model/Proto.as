@@ -1,6 +1,6 @@
 ﻿package com.engine.core.model
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.ObjectUtils;
 	
@@ -17,7 +17,7 @@
 		public function Proto()
 		{
 			registerClassAlias("saiman.save.ProtoVo", Proto);
-			$id = Core.SIGN + Core.coder::nextInstanceIndex().toString(16);
+			$id = Engine.SIGN + Engine.coder::nextInstanceIndex().toString(16);
 		}
 
 		public function get oid():String

@@ -1,6 +1,7 @@
 ﻿package 
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
+	import com.engine.core.EngineGlobal;
 	import com.engine.core.view.items.avatar.ItemAvatar;
 	import com.engine.core.view.role.Char;
 	import com.engine.core.view.scenes.SceneConstant;
@@ -290,7 +291,7 @@
 			var _local_5:ItemAvatar = new ItemAvatar();
 			_local_5.isSkillEffect = true;
 			_local_5.isSceneItem = true;
-			var _local_6:String = (((Core.hostPath + "assets/avatars/effects/eid_") + _arg_1) + Core.TMP_FILE);
+			var _local_6:String = EngineGlobal.AVATAR_ASSETS_DIR + "effects/eid_" + _arg_1 + Engine.TMP_FILE;
 			_local_5.loadAvatarPart(_local_6);
 			_local_5.x = _arg_2.x;
 			_local_5.y = _arg_2.y;

@@ -7,7 +7,7 @@ package com.engine.core.view.items.avatar
 {
     import flash.display.Bitmap;
     import com.engine.core.view.scenes.Scene;
-    import com.engine.core.Core;
+    import com.engine.core.Engine;
     import flash.display.BitmapData;
 
     public class ShoawdBitmap extends Bitmap 
@@ -19,13 +19,13 @@ package com.engine.core.view.items.avatar
         {
             super(_arg_1, _arg_2, _arg_3);
             Scene.scene.addShoawdBitmap(this);
-            this.time = Core.delayTime;
+            this.time = Engine.delayTime;
             this.visible = false;
         }
 
         public function reander():void
         {
-            if ((Core.delayTime - this.time) > 30){
+            if ((Engine.delayTime - this.time) > 30){
                 if (!visible){
                     visible = true;
                 };

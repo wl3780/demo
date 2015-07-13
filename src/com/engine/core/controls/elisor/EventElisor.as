@@ -1,6 +1,6 @@
 ﻿package com.engine.core.controls.elisor
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.controls.IOrder;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
@@ -59,7 +59,7 @@
 
 		public function removeOrder(orderId:String):EventOrder
 		{
-			var arr:Array = orderId.split(Core.SIGN);
+			var arr:Array = orderId.split(Engine.SIGN);
 			if (arr.length != 2) {
 				return null;
 			}
@@ -75,7 +75,7 @@
 
 		public function hasOrder(orderId:String):Boolean
 		{
-			var arr:Array = orderId.split(Core.SIGN);
+			var arr:Array = orderId.split(Engine.SIGN);
 			if (arr.length != 2) {
 				return false;
 			}
@@ -89,7 +89,7 @@
 
 		public function takeOrder(orderId:String):EventOrder
 		{
-			var arr:Array = orderId.split(Core.SIGN);
+			var arr:Array = orderId.split(Engine.SIGN);
 			if (arr.length != 2) {
 				return null;
 			}

@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.base
 {
-    import com.engine.core.Core;
+    import com.engine.core.Engine;
     import com.engine.core.IOrderDispatcher;
     import com.engine.core.controls.IOrder;
     import com.engine.core.controls.elisor.Elisor;
@@ -29,7 +29,7 @@
         {
             var _local_8:EventOrder;
             var _local_6:Elisor = Elisor.getInstance();
-            var _local_7:String = ((this._id + Core.SIGN) + _arg_1);
+            var _local_7:String = ((this._id + Engine.SIGN) + _arg_1);
             if (_local_6.hasOrder(_local_7, OrderMode.EVENT_ORDER) == false){
                 _local_8 = _local_6.createEventOrder(this.id, _arg_1, _arg_2);
                 _local_6.addOrder(_local_8);
@@ -43,7 +43,7 @@
         {
             var _local_6:EventOrder;
             var _local_4:Elisor = Elisor.getInstance();
-            var _local_5:String = ((this._id + Core.SIGN) + _arg_1);
+            var _local_5:String = ((this._id + Engine.SIGN) + _arg_1);
             if (_local_4.hasOrder(_local_5, OrderMode.EVENT_ORDER) == true){
                 _local_6 = (_local_4.removeOrder(_local_5, OrderMode.EVENT_ORDER) as EventOrder);
                 if (_local_6){

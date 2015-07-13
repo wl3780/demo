@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items.avatar
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.model.IProto;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
@@ -91,7 +91,7 @@
 		public function getBitmapData(dir:int, frame:int):BitmapData
 		{
 			try {
-				var key:String = this.oid + Core.SIGN + this.link + Core.SIGN + this.bitmapdatas[dir];
+				var key:String = this.oid + Engine.SIGN + this.link + Engine.SIGN + this.bitmapdatas[dir];
 				var manager:AvatarAssetManager = AvatarAssetManager.getInstance();
 				return manager.bitmapdatas[key][frame] as BitmapData;
 			} catch(e:Error) {

@@ -1,6 +1,7 @@
 ﻿package com.engine.core.view.world
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
+	import com.engine.core.EngineGlobal;
 	import com.engine.core.model.map.SquareMapData;
 	import com.engine.core.tile.TileGroup;
 	import com.engine.core.view.scenes.Scene;
@@ -56,10 +57,10 @@
 
 		private function resizeFunc(evt:Event):void
 		{
-			_stageMinP.x = Core.stage.stageWidth/2;
-			_stageMinP.y = Core.stage.stageHeight/2;
-			_stageMaxP.x = Core.stage.stageWidth;
-			_stageMaxP.y = Core.stage.stageHeight;
+			_stageMinP.x = Engine.stage.stageWidth/2;
+			_stageMinP.y = Engine.stage.stageHeight/2;
+			_stageMaxP.x = Engine.stage.stageWidth;
+			_stageMaxP.y = Engine.stage.stageHeight;
 			if (this.stage && Scene.scene && Scene.scene.mainChar) {
 				this.loadImage(Scene.scene.mainChar.x, Scene.scene.mainChar.y);
 			}
@@ -67,8 +68,8 @@
 
 		private function getMapDataPath(mapID:String):String
 		{
-			var path:String = Core.hostPath + Core.mapPath + "map_data/" + mapID + ".data?version=" + Core.version;
-			return path.replace("$language$", Core.language);
+			var path:String = EngineGlobal.SCENE_IMAGE_DIR + "map_data/" + mapID + ".data?version=" + EngineGlobal.version;
+			return path;
 		}
 
 		public function init(mapID:String):void
@@ -93,8 +94,8 @@
 			}
 			
 			_stageMinP = new Point(0, 0);
-			_stageMidP = new Point(Core.stage.stageWidth/2, Core.stage.stageHeight/2);
-			_stageMaxP = new Point(Core.stage.stageWidth, Core.stage.stageHeight);
+			_stageMidP = new Point(Engine.stage.stageWidth/2, Engine.stage.stageHeight/2);
+			_stageMaxP = new Point(Engine.stage.stageWidth, Engine.stage.stageHeight);
 			
 			var mapPath:String = this.getMapDataPath(mapID);
 			this.scene_data_path = mapPath;
@@ -103,7 +104,7 @@
 			this.loader_.addEventListener(Event.COMPLETE, this.loadedDataFunc);
 			this.loader_.addEventListener(IOErrorEvent.IO_ERROR, this.loadedDataErrorFunc);
 			this.loader_.load(new URLRequest(mapPath));
-			Core.stage.addEventListener(Event.RESIZE, this.resizeFunc);
+			Engine.stage.addEventListener(Event.RESIZE, this.resizeFunc);
 			log("saiman", "加载地图数据文件---------------");
 		}
 
@@ -137,7 +138,7 @@
 			this.loader_.close();
 			
 			this.graphics.clear();
-			var miniPath:String = Core.hostPath + Core.mapPath + "map_mini/" + this.map_id + ".jpg?version=" + Core.version;
+			var miniPath:String = EngineGlobal.SCENE_IMAGE_DIR + "map_mini/" + this.map_id + ".jpg?version=" + EngineGlobal.version;
 			var context:LoaderContext = new LoaderContext();
 			context.imageDecodingPolicy = ImageDecodingPolicy.ON_LOAD;	// 解码策略
 			this.loader = new Loader();
@@ -201,7 +202,7 @@
 			var endX:int;
 			var endY:int;
 			
-			var psize:int = Core.IMAGE_SZIE;
+			var psize:int = Engine.IMAGE_SZIE;
 			var pMin:Point = this.globalToLocal(_stageMinP);
 			var pMax:Point = this.globalToLocal(_stageMaxP);
 			var startCol:int = Math.floor(pMin.x / psize);
@@ -340,10 +341,10 @@
 				mtx.scale(sx, sy);
 				this.graphics.beginBitmapFill(this.bg_bmd, mtx, false);
 				this.graphics.drawRect(0, 0, this.mapData.pixel_width, this.mapData.pixel_height);
-				if (Core.mini_bitmapData) {
-					Core.mini_bitmapData.dispose();
+				if (Engine.mini_bitmapData) {
+					Engine.mini_bitmapData.dispose();
 				}
-				Core.mini_bitmapData = this.bg_bmd.clone();
+				Engine.mini_bitmapData = this.bg_bmd.clone();
 			}
 			this.reRender();
 			this.inited = true;
@@ -378,11 +379,11 @@
 
 		private function drawMini(px:Number, py:Number, pw:Number, ph:Number):void
 		{
-			if (!this.mapData || !Core.mini_bitmapData) {
+			if (!this.mapData || !Engine.mini_bitmapData) {
 				return;
 			}
 			
-			var miniMap:BitmapData = Core.mini_bitmapData;
+			var miniMap:BitmapData = Engine.mini_bitmapData;
 			var sx:Number = this.mapData.pixel_width / miniMap.width;
 			var sy:Number = this.mapData.pixel_height / miniMap.height;
 			var mtx:Matrix = new Matrix();
@@ -399,7 +400,7 @@
 			var obj:Object = this.wealthQuene.shift();
 			var px:Number = obj.px;
 			var py:Number = obj.py;
-			var psize:int = Core.IMAGE_SZIE;
+			var psize:int = Engine.IMAGE_SZIE;
 			
 			var pMin:Point = this.globalToLocal(_stageMinP);
 			var pMid:Point = this.globalToLocal(_stageMaxP);
@@ -414,7 +415,7 @@
 			if (_bgHash == null) {
 				_bgHash = [];
 			}
-			var pathPrefix:String = Core.hostPath + Core.mapPath + "map_image/" + this.map_id + "/";
+			var pathPrefix:String = EngineGlobal.SCENE_IMAGE_DIR + "map_image/" + this.map_id + "/";
 			var path:String;
 			var bgLoader:Loader;
 			var bgContext:LoaderContext;
@@ -423,7 +424,7 @@
 			var tmpLimit:int = 1;
 			var bgPt:Point = new Point();
 			var bgArea:Rectangle = new Rectangle(0, 0, psize, psize);
-			var stageArea:Rectangle = new Rectangle(0, 0, Core.stage.stageWidth, Core.stage.stageHeight);
+			var stageArea:Rectangle = new Rectangle(0, 0, Engine.stage.stageWidth, Engine.stage.stageHeight);
 			
 			var j:int;
 			var i:int = startY;
@@ -431,7 +432,7 @@
 				j = startX;
 				while (j <= midX) {
 					if (i >= 0 && j >= 0) {
-						path = pathPrefix + j + "_" + i + ".jpg?version=" + Core.version;
+						path = pathPrefix + j + "_" + i + ".jpg?version=" + EngineGlobal.version;
 						if (_bgHash[j] == null) {
 							_bgHash[j] = [];
 						}
@@ -479,8 +480,8 @@
 			var _local_6:Point;
 			var _local_7:int;
 			var _local_8:int;
-			var _local_1:Rectangle = new Rectangle(0, 0, Core.stage.stageWidth, Core.stage.stageHeight);
-			var _local_3:Rectangle = new Rectangle(0, 0, 300, 300);Core.IMAGE_SZIE
+			var _local_1:Rectangle = new Rectangle(0, 0, Engine.stage.stageWidth, Engine.stage.stageHeight);
+			var _local_3:Rectangle = new Rectangle(0, 0, 300, 300);Engine.IMAGE_SZIE
 			for (_local_4 in this.loadHash) {
 				_local_5 = this.loadHash[_local_4];
 				_local_2 = (_local_5.loader as Loader);

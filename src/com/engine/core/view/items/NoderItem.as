@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.view.quadTree.NoderSprite;
 
 	public class NoderItem extends NoderSprite implements IItem 
@@ -14,7 +14,7 @@
 		public function NoderItem()
 		{
 			super();
-			this.registerNodeTree(Core.SCENE_ITEM_NODER);
+			this.registerNodeTree(Engine.SCENE_ITEM_NODER);
 		}
 
 		public function get char_id():String

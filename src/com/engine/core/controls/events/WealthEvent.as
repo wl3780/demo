@@ -1,13 +1,22 @@
 ﻿package com.engine.core.controls.events
 {
-	import flash.events.Event;
 	import com.engine.core.model.wealth.WealthVo;
+	
+	import flash.events.Event;
 
 	public class WealthEvent extends Event 
 	{
-
+		/**
+		 * 单个加载完毕
+		 */
 		public static const WEALTH_LOADED:String = "WEALTH_LOADED";
-		public static const WEALTH_GROUP_LOADED:String = "WEalth_GROUP_LOADED";
+		/**
+		 * 组加载完毕
+		 */		
+		public static const WEALTH_GROUP_LOADED:String = "WEALTH_GROUP_LOADED";
+		/**
+		 * 加载失败
+		 */
 		public static const WEALTH_ERROR:String = "WEALTH_ERROR";
 
 		public var vo:WealthVo;

@@ -12,14 +12,18 @@
 	import flash.display.Stage;
 	import flash.geom.Rectangle;
 
-	public class Core 
+	public class Engine 
 	{
 
 		public static const TMP_FILE:String = ".tmp";
 		public static const SM_FILE:String = ".sm";
-		public static const SIGN:String = "#";
-		public static const LINE:String = "-";
+		public static const SIGN:String = "@";
+		public static const LINE:String = "_";
 		public static const IMAGE_SZIE:int = 300;
+		
+		public static const SWF_Files:Vector.<String> = new <String>["swf","tmp"];
+		public static const IMG_Files:Vector.<String> = new <String>["png","jpg","jpeg","gif","jxr",""];
+		public static const TEXT_Files:Vector.<String> = new <String>["text","css","as","xml","html"];
 		
 		public static var totalAvatarAssetsIndex:int;
 		public static var totalEffectAssetsIndex:int;
@@ -34,12 +38,6 @@
 		public static var CORE_RECT:Rectangle;
 		public static var _Lessen_Frame_:int = 1;
 		public static var stopMove:Boolean = true;
-		
-		public static var version:String = "v1.0";
-		public static var language:String = "zh_CN";
-		public static var hostPath:String = "/assets/src/";
-		public static var avatarAssetsPath:String = "assets/$language$/avatars/";
-		public static var mapPath:String = "assets/$language$/maps/";
 		
 		public static var shadowBitmap:Bitmap;
 		public static var mini_bitmapData:BitmapData;
@@ -59,7 +57,7 @@
 		
 		private static var coreTarget:DisplayObjectContainer;
 		private static var INSTANCE_INDEX:int = 0;
-		private static var _instance:Core;
+		private static var _instance:Engine;
 
 		coder static function nextInstanceIndex():int
 		{
@@ -70,10 +68,10 @@
 			return INSTANCE_INDEX;
 		}
 
-		public static function getInstance():Core
+		public static function getInstance():Engine
 		{
-			if (!_instance) {
-				_instance = new Core();
+			if (_instance == null) {
+				_instance = new Engine();
 			}
 			return _instance;
 		}
@@ -81,12 +79,11 @@
 		public static function setup(target:DisplayObjectContainer, path:String, lang:String="zh_CN", ver:String="v1.0"):void
 		{
 			var pStage:Stage = target.stage;
-			Core.coreTarget = target;
-			Core.stage = pStage;
-			Core.version = ver;
-			Core.hostPath = path;
-			Core.avatarAssetsPath = Core.avatarAssetsPath.replace("$language$", lang);
-			Core.mapPath = Core.mapPath.replace("$language$", lang);
+			Engine.coreTarget = target;
+			Engine.stage = pStage;
+			EngineGlobal.assetsHost = path;
+			EngineGlobal.language = lang;
+			EngineGlobal.version = ver;
 			
 			FPSUtils.setup(pStage);
 			SuperKey.getInstance().setUp(pStage);

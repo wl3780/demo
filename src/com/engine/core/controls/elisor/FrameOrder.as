@@ -1,6 +1,6 @@
 ﻿package com.engine.core.controls.elisor
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.controls.Order;
 	import com.engine.namespaces.coder;
 	
@@ -23,7 +23,7 @@
 		{
 			registerClassAlias("saiman.save.FrameOrder", FrameOrder);
 			this.$type = OrderMode.FRAME_ORDER;
-			this.$id = Core.coder::nextInstanceIndex().toString(16);
+			this.$id = Engine.coder::nextInstanceIndex().toString(16);
 			_stop = true;
 		}
 
@@ -49,7 +49,7 @@
 		public function setUp(oid:String, delay:int, between:int=-1):void
 		{
 			if (oid == null){
-				this.$oid = Core.coder::nextInstanceIndex().toString(16);
+				this.$oid = Engine.coder::nextInstanceIndex().toString(16);
 			} else {
 				this.$oid = oid;
 			}
@@ -79,7 +79,7 @@
 
 		public function start():void
 		{
-			_startTime = Core.delayTime;
+			_startTime = Engine.delayTime;
 			_stop = false;
 		}
 
@@ -109,7 +109,7 @@
 					this.callback([applyRet]);
 				}
 				if (_between != -1) {
-					var delayTime:int = Core.delayTime;
+					var delayTime:int = Engine.delayTime;
 					if ((delayTime - (_startTime + _between)) >= 0) {
 						_stop = true;
 						if (_timeOutargs == null) {

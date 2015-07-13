@@ -1,6 +1,6 @@
 ﻿package com.engine.utils
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.model.IProto;
 	import com.engine.namespaces.coder;
 	
@@ -17,7 +17,7 @@
 		public function Hash()
 		{
 			super(false);
-			_id = Core.coder::nextInstanceIndex().toString(16);
+			_id = Engine.coder::nextInstanceIndex().toString(16);
 		}
 		
 		public function take(key:Object):Object
@@ -116,7 +116,7 @@
 		public function reset():void
 		{
 			this.dispose();
-			_id = Core.getInstance().coder::nextInstanceIndex().toString(16);
+			_id = Engine.getInstance().coder::nextInstanceIndex().toString(16);
 		}
 		
 		public function get className():String

@@ -31,19 +31,18 @@
 			GameScene.scene = this;
 		}
 
-		override protected function mouseDownFunc(evt:MouseEvent):void
+		override protected function _EngineMouseDownFunc_(evt:MouseEvent):void
 		{
 			if (Scene.clickEnbeled == false) {
 				return;
 			}
 			
-			_shiftKey = evt.shiftKey;
 			this.isMouseDown = true;
 			this.mouseDownTime = getTimer();
 			this.mouseDownPoint = new Point(this.mouseX, this.mouseY);
 			if (_shiftKey) {
-				var path:Array = SceneUtil.getJumpPath(this.mainChar.point, this.mouseDownPoint);
-				this.mainChar.jump(path);
+				this.mainChar.stopMove();
+				this.mainChar.play(CharAction.SKILL1);
 			} else {
 				var area:Rectangle = new Rectangle(this.mouseX - 100, this.mouseY - 100, 200, 200);
 				var arr:Array = this.find(area, false, 100);
@@ -52,7 +51,7 @@
 					var keys:Array = [Keyboard.NUMBER_2, Keyboard.NUMBER_3];
 					var keyEvent:KeyboardEvent = new KeyboardEvent(KeyboardEvent.KEY_DOWN);
 					keyEvent.keyCode = keys[(Math.random() * keys.length) >> 0];
-					this.keyDownFunc(keyEvent);
+					this._EngineKeyDownFunc_(keyEvent);
 				} else {
 					if ((getTimer() - this.time) > 500) {
 						this.mainCharWalk(this.mouseDownPoint);
@@ -90,8 +89,9 @@
 			}
 		}
 
-		override protected function keyDownFunc(evt:KeyboardEvent):void
+		override protected function _EngineKeyDownFunc_(evt:KeyboardEvent):void
 		{
+			super._EngineKeyDownFunc_(evt);
 			var passEffect:int;
 			if (this.selectAvatar == null || this.selectAvatar.parent == null) {
 				var arr:Array = avatarHash.coder::values();
@@ -123,7 +123,7 @@
 						passEffect = 201000002;
 						mainChar.stopMove();
 						mainChar.faceTo(selectAvatar);
-						mainChar.play(CharAction.ATTACK, null, false, function ():void
+						mainChar.play(CharAction.SKILL1, null, false, function ():void
 						{
 							if (selectAvatar) {
 								var p1:Point = new Point(mainChar.x, mainChar.y);
@@ -138,5 +138,18 @@
 			}
 		}
 
+		override protected function _EngineMouseRightDownFunc_(evt:MouseEvent):void
+		{
+			if (Scene.clickEnbeled == false) {
+				return;
+			}
+			
+			this.isMouseDown = true;
+			this.mouseDownTime = getTimer();
+			this.mouseDownPoint = new Point(this.mouseX, this.mouseY);
+			var path:Array = SceneUtil.getJumpPath(this.mainChar.point, this.mouseDownPoint);
+			this.mainChar.jump(path);
+		}
+		
 	}
 }

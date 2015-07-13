@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.quadTree
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.Hash;
@@ -48,7 +48,7 @@
 			var rectHW:int = rectW / 2;
 			var rectHH:int = rectH / 2;
 			
-			$id = (rectX + rectHW) + Core.SIGN + (rectY + rectHH);
+			$id = (rectX + rectHW) + Engine.SIGN + (rectY + rectHH);
 			$oid = oid;
 			_tree = NodeTreePool.getInstance().take(tid) as NodeTree;
 			_tree.addNode($id, this);

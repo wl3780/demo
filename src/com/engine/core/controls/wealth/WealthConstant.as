@@ -2,8 +2,11 @@
 {
 	public class WealthConstant 
 	{
-
+		/**
+		 */
 		public static const BUBBLE_LEVEL:int = 1;
+		/**
+		 */
 		public static const PRIORITY_LEVEL:int = 2;
 		
 		public static const SWF_WEALTH:String = "SWF";

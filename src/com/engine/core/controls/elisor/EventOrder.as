@@ -1,6 +1,6 @@
 ﻿package com.engine.core.controls.elisor
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.IOrderDispatcher;
 	import com.engine.core.controls.Order;
 	import com.engine.core.view.DisplayObjectPort;
@@ -26,7 +26,7 @@
 			_listener = listener;
 			this.listenerType = type;
 			this.$oid = oid;
-			this.$id = this.$oid + Core.SIGN + type;
+			this.$id = this.$oid + Engine.SIGN + type;
 		}
 
 		override public function dispose():void

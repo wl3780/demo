@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items.avatar
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.ItemConst;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.model.IProto;
@@ -237,10 +237,10 @@
 				this.shape.graphics.clear();
 				Scene.scene.$itemLayer.addChild(this.shape);
 				var mtx:Matrix = RecoverUtils.matrix;
-				mtx.tx = (-(Core.char_shadow.width) / 2);
-				mtx.ty = (-(Core.char_shadow.height) / 2);
-				this.shape.graphics.beginBitmapFill(Core.char_shadow, mtx);
-				this.shape.graphics.drawRect((-(Core.char_shadow.width) / 2), (-(Core.char_shadow.height) / 2), Core.char_shadow.width, Core.char_shadow.height);
+				mtx.tx = (-(Engine.char_shadow.width) / 2);
+				mtx.ty = (-(Engine.char_shadow.height) / 2);
+				this.shape.graphics.beginBitmapFill(Engine.char_shadow, mtx);
+				this.shape.graphics.drawRect((-(Engine.char_shadow.width) / 2), (-(Engine.char_shadow.height) / 2), Engine.char_shadow.width, Engine.char_shadow.height);
 				this.shape.cacheAsBitmap = true;
 				if (this.shape.parent == null) {
 					Scene.scene.$itemLayer.addChild(this.shape);
@@ -260,18 +260,18 @@
 				if (!_arg_1) {
 					this.shape.graphics.clear();
 					_local_2 = RecoverUtils.matrix;
-					_local_2.tx = (-(Core.char_big_shadow.width) / 2);
-					_local_2.ty = ((-(Core.char_big_shadow.height) / 2) + 10);
-					this.shape.graphics.beginBitmapFill(Core.char_big_shadow, _local_2);
-					this.shape.graphics.drawRect(_local_2.tx, _local_2.ty, Core.char_big_shadow.width, Core.char_big_shadow.height);
+					_local_2.tx = (-(Engine.char_big_shadow.width) / 2);
+					_local_2.ty = ((-(Engine.char_big_shadow.height) / 2) + 10);
+					this.shape.graphics.beginBitmapFill(Engine.char_big_shadow, _local_2);
+					this.shape.graphics.drawRect(_local_2.tx, _local_2.ty, Engine.char_big_shadow.width, Engine.char_big_shadow.height);
 					this.shape.cacheAsBitmap = true;
 				} else {
 					this.shape.graphics.clear();
 					_local_2 = RecoverUtils.matrix;
-					_local_2.tx = (-(Core.char_shadow.width) / 2);
-					_local_2.ty = (-(Core.char_shadow.height) / 2);
-					this.shape.graphics.beginBitmapFill(Core.char_shadow, _local_2);
-					this.shape.graphics.drawRect((-(Core.char_shadow.width) / 2), (-(Core.char_shadow.height) / 2), Core.char_shadow.width, Core.char_shadow.height);
+					_local_2.tx = (-(Engine.char_shadow.width) / 2);
+					_local_2.ty = (-(Engine.char_shadow.height) / 2);
+					this.shape.graphics.beginBitmapFill(Engine.char_shadow, _local_2);
+					this.shape.graphics.drawRect((-(Engine.char_shadow.width) / 2), (-(Engine.char_shadow.height) / 2), Engine.char_shadow.width, Engine.char_shadow.height);
 					this.shape.cacheAsBitmap = true;
 				}
 			}
@@ -832,12 +832,12 @@
 		public function showBodyShoadw(val:Boolean):void
 		{
 			this.graphics.clear();
-			if (val && Core.shadow_bitmapData) {
+			if (val && Engine.shadow_bitmapData) {
 				var mtx:Matrix = RecoverUtils.matrix;
-				mtx.tx = -(Core.shadow_bitmapData.width/2);
-				mtx.ty = -(Core.shadow_bitmapData.height);
-				this.graphics.beginBitmapFill(Core.shadow_bitmapData, mtx);
-				this.graphics.drawRect(-(Core.shadow_bitmapData.width/2), -(Core.shadow_bitmapData.height), Core.shadow_bitmapData.width, Core.shadow_bitmapData.height);
+				mtx.tx = -(Engine.shadow_bitmapData.width/2);
+				mtx.ty = -(Engine.shadow_bitmapData.height);
+				this.graphics.beginBitmapFill(Engine.shadow_bitmapData, mtx);
+				this.graphics.drawRect(-(Engine.shadow_bitmapData.width/2), -(Engine.shadow_bitmapData.height), Engine.shadow_bitmapData.width, Engine.shadow_bitmapData.height);
 			}
 		}
 
@@ -890,7 +890,7 @@
 				if (AvatarAssetManager.getInstance().checkLoadedFunc(assetPath) == true) {
 					return;
 				}
-				assetPath = assetPath.split(Core.TMP_FILE).join("_" + state + Core.TMP_FILE);
+				assetPath = assetPath.split(Engine.TMP_FILE).join("_" + state + Engine.TMP_FILE);
 				AvatarAssetManager.getInstance().loadAvatarAssets(assetPath, state, this.avatarParts.id);
 			}
 		}
@@ -903,14 +903,14 @@
 			var smPath:String = filePath;
 			var arr:Array = smPath.split("/");
 			var avatarId:String = arr[arr.length-1];
-			avatarId = avatarId.split(Core.TMP_FILE)[0];
+			avatarId = avatarId.split(Engine.TMP_FILE)[0];
 			if (arr.length >= 2) {
 				arr[arr.length-2] = "output";
 			} else if (arr.length == 1) {
 				arr.unshift("output");
 			}
 			smPath = arr.join("/");
-			smPath = smPath.split(Core.TMP_FILE).join(Core.SM_FILE);
+			smPath = smPath.split(Engine.TMP_FILE).join(Engine.SM_FILE);
 			var avatarType:String = avatarId.split("_")[0];
 			var avatarNum:int = avatarId.split("_")[1];
 			if (avatarType == ItemConst.MOUNT_TYPE) {
@@ -1401,12 +1401,12 @@
 									_local_15 = false;
 								}
 							}
-							if ((((((_arg_3 == Core.shadow_bitmapData)) && (_local_15))) && (_local_10.stage))) {
+							if ((((((_arg_3 == Engine.shadow_bitmapData)) && (_local_15))) && (_local_10.stage))) {
 								if (_local_10.x != _local_12) {
-									_local_10.x = (-(Core.shadow_bitmapData.width) / 2);
+									_local_10.x = (-(Engine.shadow_bitmapData.width) / 2);
 								}
 								if (_local_10.y != _local_13) {
-									_local_10.y = (-(Core.shadow_bitmapData.height) + this.onMonutHeight);
+									_local_10.y = (-(Engine.shadow_bitmapData.height) + this.onMonutHeight);
 								}
 							} else {
 								if (((!((_local_10.bitmapData == _arg_3))) && (_local_10.stage))) {
@@ -1474,8 +1474,8 @@
 				var _local_4:Number = 1 + (1 - Scene.scene.scaleY) * 2;
 				stageRect.x = pt_local.x;
 				stageRect.y = pt_local.y;
-				stageRect.width = Core.stage.stageWidth * _local_3;
-				stageRect.height = Core.stage.stageHeight * _local_4;
+				stageRect.width = Engine.stage.stageWidth * _local_3;
+				stageRect.height = Engine.stage.stageHeight * _local_4;
 				if (this.curr_rect != null) {
 					intersectsRect.x = this.x + this.curr_rect.topLeft.x;
 					intersectsRect.y = this.y + this.curr_rect.topLeft.y;

@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items.avatar
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.view.scenes.Scene;
 	
 	import flash.display.Sprite;
@@ -50,11 +50,11 @@
 
 		public function stageIntersects():void
 		{
-			if (!Core.CORE_RECT || this.visible == false || !this.owner) {
+			if (!Engine.CORE_RECT || this.visible == false || !this.owner) {
 				return;
 			}
-			var sw:int = Core.char_shadow.width;
-			var sh:int = Core.char_shadow.height;
+			var sw:int = Engine.char_shadow.width;
+			var sh:int = Engine.char_shadow.height;
 			var bounds:Rectangle = this.getBounds(this);
 			var pt:Point = ShoadwShape.recovery_point;
 			pt.x = bounds.x;

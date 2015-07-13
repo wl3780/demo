@@ -51,5 +51,9 @@
 		 */		
 		public static const SKILL3:String = "skill3";
 
+		
+		public static const All_Actions:Array = [
+			WALK,STAND,DEATH,QUNGONG,ATTACK,FLY,HIT,COLLECTION,MEDITATION,SKILL1,SKILL2,SKILL3
+			];
 	}
 }

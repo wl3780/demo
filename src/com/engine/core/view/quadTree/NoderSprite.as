@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.quadTree
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.view.BaseSprite;
 	import com.engine.namespaces.coder;
 
@@ -90,7 +90,7 @@
 		{
 			var dx:int = (int(this.x / NodeTree.doubleMinWidth) * NodeTree.doubleMinWidth) + NodeTree.minWidth;
 			var dy:int = (int(this.y / NodeTree.doubleMinHeight) * NodeTree.doubleMinHeight) + NodeTree.minHeight;
-			return dx + Core.SIGN + dy;
+			return dx + Engine.SIGN + dy;
 		}
 
 		public function activate():void

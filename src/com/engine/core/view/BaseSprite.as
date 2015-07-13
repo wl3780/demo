@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view
 {
-	import com.engine.core.Core;
+	import com.engine.core.Engine;
 	import com.engine.core.controls.IOrder;
 	import com.engine.core.controls.elisor.Elisor;
 	import com.engine.core.controls.elisor.EventOrder;
@@ -23,14 +23,14 @@
 		public function BaseSprite()
 		{
 			super();
-			_id = Core.coder::nextInstanceIndex().toString(16);
+			_id = Engine.coder::nextInstanceIndex().toString(16);
 			DisplayObjectPort.coder::getInstance().put(this);
 		}
 
 		override public function addEventListener(type:String, handler:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			var key:String = _id + Core.SIGN + type;
+			var key:String = _id + Engine.SIGN + type;
 			if (elisor.hasOrder(key, OrderMode.EVENT_ORDER) == false) {
 				var order:EventOrder = elisor.createEventOrder(this.id, type, handler);
 				elisor.addOrder(order);
@@ -41,7 +41,7 @@
 		override public function removeEventListener(type:String, handler:Function, useCapture:Boolean=false):void
 		{
 			var elisor:Elisor = Elisor.getInstance();
-			var key:String = _id + Core.SIGN + type;
+			var key:String = _id + Engine.SIGN + type;
 			if (elisor.hasOrder(key, OrderMode.EVENT_ORDER) == true) {
 				var order:EventOrder = elisor.removeOrder(key, OrderMode.EVENT_ORDER) as EventOrder;
 				if (order) {
