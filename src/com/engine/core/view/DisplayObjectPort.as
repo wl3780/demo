@@ -1,22 +1,26 @@
 ﻿package com.engine.core.view
 {
 	import com.engine.core.IOrderDispatcher;
-	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.Hash;
 
-	public class DisplayObjectPort extends Proto 
+	public class DisplayObjectPort extends Object 
 	{
 
 		private static var _instance:DisplayObjectPort;
 
-		private var hash:Hash;
+		private var _hash:Hash;
+		
+		public function DisplayObjectPort()
+		{
+			super();
+			_hash = new Hash();
+		}
 
 		coder static function getInstance():DisplayObjectPort
 		{
 			if (_instance == null) {
 				_instance = new DisplayObjectPort();
-				_instance.hash = new Hash();
 			}
 			return _instance;
 		}
@@ -24,36 +28,36 @@
 
 		public function put(order:IOrderDispatcher):void
 		{
-			this.hash.put(order.id, order);
+			_hash.put(order.id, order);
 		}
 
 		public function remove(id:String):IOrderDispatcher
 		{
-			return this.hash.remove(id) as IOrderDispatcher;
+			return _hash.remove(id) as IOrderDispatcher;
 		}
 
 		public function has(id:String):Boolean
 		{
-			return this.hash.has(id);
+			return _hash.has(id);
 		}
 
 		public function task(id:String):IOrderDispatcher
 		{
-			return this.hash.take(id) as IOrderDispatcher;
+			return _hash.take(id) as IOrderDispatcher;
 		}
 
 		public function get length():int
 		{
-			return this.hash.length;
+			return _hash.length;
 		}
 
-		override public function dispose():void
+		public function dispose():void
 		{
-			for each (var order:IOrderDispatcher in this.hash) {
+			for each (var order:IOrderDispatcher in _hash) {
 				order.dispose();
 			}
-			this.hash.dispose();
-			this.hash = null;
+			_hash.dispose();
+			_hash = null;
 			_instance = null;
 		}
 

@@ -21,6 +21,10 @@
 		public static const LINE:String = "-";
 		public static const IMAGE_SZIE:int = 300;
 		
+		public static const SWF_Files:Vector.<String> = new <String>["swf","tmp"];
+		public static const IMG_Files:Vector.<String> = new <String>["png","jpg","jpeg","gif","jxr",""];
+		public static const TEXT_Files:Vector.<String> = new <String>["text","css","as","xml","html"];
+		
 		public static var totalAvatarAssetsIndex:int;
 		public static var totalEffectAssetsIndex:int;
 		public static var handleCount:int = 0;

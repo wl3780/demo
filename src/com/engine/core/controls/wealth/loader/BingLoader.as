@@ -27,10 +27,10 @@
 
 		public var vo:WealthVo;
 		
-		protected var $oid:String;
-		protected var $proto:Object;
-		
 		private var _id:String;
+		private var _oid:String;
+		private var _proto:Object;
+		
 		private var _successFunc:Function;
 		private var _errorFunc:Function;
 		private var _progressFunc:Function;
@@ -180,28 +180,28 @@
 
 		public function set proto(val:Object):void
 		{
-			this.$proto = val;
+			_proto = val;
 		}
 		public function get proto():Object
 		{
-			return this.$proto;
+			return _proto;
 		}
 
 		public function set oid(val:String):void
 		{
-			this.$oid = val;
+			_oid = val;
 		}
 		public function get oid():String
 		{
-			return this.$oid;
+			return _oid;
 		}
 
 		public function clone():IProto
 		{
 			var p:Proto = new Proto();
 			p.coder::id = _id;
-			p.coder::oid = this.$oid;
-			p.proto = this.$proto;
+			p.coder::oid = _oid;
+			p.proto = _proto;
 			return p;
 		}
 
@@ -211,8 +211,8 @@
 			this.removeEventListener(IOErrorEvent.IO_ERROR, _errorFunc_);
 			this.removeEventListener(ProgressEvent.PROGRESS, _progressFunc_);
 			_successFunc = null;
-			_progressFunc = null;
 			_errorFunc = null;
+			_progressFunc = null;
 			
 			var list:Vector.<IOrder> = this.disposeGroupOrders(OrderMode.TOTAL);
 			for each (var item:IOrder in list) {
@@ -222,8 +222,8 @@
 			}
 			DisplayObjectPort.coder::getInstance().remove(_id);
 			_id = null;
-			this.$oid = null;
-			this.$proto = null;
+			_oid = null;
+			_proto = null;
 			this.vo = null;
 		}
 

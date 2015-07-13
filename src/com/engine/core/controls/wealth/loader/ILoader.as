@@ -9,7 +9,8 @@
 	{
 
 		function unloadAndStop(gc:Boolean=true):void;
-		function loadElemt(_arg_1:WealthVo, _arg_2:Function=null, _arg_3:Function=null, _arg_4:Function=null, context:LoaderContext=null):void;
+		
+		function loadElemt(wealthVo:WealthVo, successFunc:Function=null, errorFunc:Function=null, progressFunc:Function=null, context:LoaderContext=null):void;
 
 	}
 }

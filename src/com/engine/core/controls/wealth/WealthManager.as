@@ -95,89 +95,61 @@
 			delete _requestHash[path];
 		}
 
-		coder function callSuccess(path:String, _arg_2:Boolean):void
+		coder function callSuccess(path:String):void
 		{
 			var dict:Dictionary = _requestHash[path];
 			for each (var item:Object in dict) {
 				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
 				var groupId:String = item.oid.split(path+Core.SIGN)[1];
 				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
-				var wealthVo:WealthVo = groupVo.take(item.oid);
-				if (wealthVo) {
-					wealthVo.coder::loaded = true;
-				}
 				if (groupVo.lock) {
 					quene.removeGroup(groupVo.id);
 					groupVo.dispose();
-					break;
+					continue;
 				}
-				if (_arg_2 == false) {
-					quene.limitIndex++;
-				}
-				if (groupVo.lock == false) {
-					groupVo.checkFinish();
-				}
+				
+				var wealthVo:WealthVo = groupVo.take(item.oid);
+				wealthVo.coder::loaded = true;
 				quene.dispatchWealthEvent(WealthEvent.WEALTH_LOADED, wealthVo);
+				
+				groupVo.checkFinish();
 				if (groupVo.loaded) {
-					if (groupVo.lock == false) {
-						quene.removeGroup(wealthVo.oid);
-						quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
-					}
+					quene.removeGroup(wealthVo.oid);
+					quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
 				}
 			}
 			delete _requestHash[wealthVo.path];
 		}
 
-		coder function callError(path:String, _arg_2:Boolean):void
+		coder function callError(path:String):void
 		{
-			var item:Object;
-			var arr:Array = [];
-			for each (item in _requestHash[path]) {
-				arr.push(item);
-			}
-			var idx:int = 0;
-			while (idx < arr.length) {
-				item = arr[idx];
+			var dict:Dictionary = _requestHash[path];
+			for each (var item:Object in dict) {
 				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
-				if (quene == null) {
-					break;
-				}
 				var groupId:String = item.oid.split(path+Core.SIGN)[1];
 				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
-				if (groupVo == null) {
-					break;
+				if (groupVo.lock) {
+					quene.removeGroup(groupVo.id);
+					groupVo.dispose();
+					continue;
 				}
+				
 				var wealthVo:WealthVo = groupVo.take(item.oid);
-				if (wealthVo == null) {
-					break;
-				}
-				delete _requestHash[path][wealthVo.id];
-				if (_arg_2 == false) {
-					quene.limitIndex++;
-				}
-				if (wealthVo.loadIndex > 0) {
-					wealthVo.loadIndex--;
+				if (wealthVo.retryCount > 0) {
+					wealthVo.retryCount--;
 					wealthVo.coder::lock = false;
 				} else {
 					wealthVo.coder::loaded = true;
-					if (groupVo.lock) {
-						quene.removeGroup(groupVo.id);
-						groupVo.dispose();
-						return;
-					}
 					quene.dispatchWealthEvent(WealthEvent.WEALTH_ERROR, wealthVo);
-					if (groupVo.lock == false) {
-						groupVo.checkFinish();
-					}
+					
+					groupVo.checkFinish();
 					if (groupVo.loaded) {
-						if (groupVo.lock == false) {
-							quene.removeGroup(wealthVo.oid);
-							quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
-						}
+						quene.removeGroup(wealthVo.oid);
+						quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
 					}
 				}
-				idx++;
 			}
+			delete _requestHash[path];
 		}
 
 		coder function proFunc(path:String, evt:ProgressEvent):void
@@ -203,10 +175,7 @@
 		coder function removeGroupRequest(groupVo:WealthGroupVo):void
 		{
 			var values:Vector.<WealthVo> = groupVo.coder::values();
-			var len:int = values.length;
-			var idx:int;
-			while (idx < len) {
-				var wealthVo:WealthVo = values[idx];
+			for each (var wealthVo:WealthVo in values) {
 				if (_requestHash[wealthVo.path]) {
 					delete _requestHash[wealthVo.path][wealthVo.id];
 					for each (var item:Object in _requestHash[wealthVo.path]) {
@@ -225,7 +194,6 @@
 						}
 					}
 				}
-				idx++;
 			}
 		}
 

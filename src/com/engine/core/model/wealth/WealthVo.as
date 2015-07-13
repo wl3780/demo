@@ -10,22 +10,27 @@
 	public class WealthVo extends Proto 
 	{
 		
-		public var loadIndex:int = 0;
-		public var group_totalNum:int;
-		public var group_loadedIndex:int;
+		public var retryCount:int = 0;
 		public var dataFormat:String;
 
-		coder var $index:int;
-		
 		private var _path:String;
 		private var _data:Object;
 		private var _loaded:Boolean;
 		private var _lock:Boolean;
+		private var _index:int;
 
 		public function WealthVo()
 		{
 			super();
 			registerClassAlias("saiman.save.WealthVo", WealthVo);
+		}
+
+		public function setUp(path:String, data:Object=null, owner:String=null):void
+		{
+			_path = path;
+			_data = data;
+			this.$oid = owner;
+			this.$id = path + Core.SIGN + owner;
 		}
 
 		public function get path():String
@@ -38,6 +43,10 @@
 			return _data;
 		}
 
+		/**
+		 * 正在加载中？？？
+		 * @return 
+		 */		
 		public function get lock():Boolean
 		{
 			return _lock;
@@ -56,17 +65,13 @@
 			_loaded = val;
 		}
 
-		public function setUp(path:String, data:Object=null, owner:String=null):void
-		{
-			_path = path;
-			_data = data;
-			this.$oid = owner;
-			this.$id = path + Core.SIGN + owner;
-		}
-
 		public function get index():int
 		{
-			return this.coder::$index;
+			return _index;
+		}
+		coder function set index(val:int):void
+		{
+			_index = val;
 		}
 
 		public function get type():String
