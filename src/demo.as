@@ -17,6 +17,9 @@
 	import flash.text.TextField;
 	import flash.utils.getTimer;
 
+	/**
+	 * 入口
+	 */
 	public class demo extends Sprite 
 	{
 		
