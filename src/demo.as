@@ -18,7 +18,7 @@
 	import flash.utils.getTimer;
 
 	/**
-	 * 入口
+	 * 入
 	 */
 	public class demo extends Sprite 
 	{
