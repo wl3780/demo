@@ -626,14 +626,6 @@
 			var items:Array = this.find(area, false, 150);
 			return HitTest.getChildUnderPoint(this, p, items, Avatar) as Avatar;
 		}
-
-		protected function _EngineMouseUpFunc_(evt:MouseEvent):void
-		{
-			this.isMouseDown = false;
-			if (Engine.sceneClickAbled == false) {
-				return;
-			}
-		}
 		
 		protected function _EngineMouseRightDownFunc_(evt:MouseEvent):void
 		{
@@ -645,9 +637,10 @@
 		
 		protected function _EngineMouseDownFunc_(evt:MouseEvent):void
 		{
-			if (Scene.clickEnbeled == false) {
-				return;
-			}
+		}
+
+		protected function _EngineMouseUpFunc_(evt:MouseEvent):void
+		{
 		}
 
 		public function sceneMoveTo(px:Number, py:Number):void

@@ -123,6 +123,7 @@
 			btn.cacheAsBitmap = true;
 			btn.buttonMode = true;
 			btn.addEventListener(MouseEvent.CLICK, handler);
+			btn.addEventListener(MouseEvent.MOUSE_DOWN, onUIPressed);
 			this.addChild(btn);
 			btn.x = px;
 			btn.y = py;
@@ -276,10 +277,9 @@
 			return char;
 		}
 
-		private function getCamera():Point
+		private function onUIPressed(evt:MouseEvent):void
 		{
-			var p:Point = new Point(stage.stageWidth / 2, stage.stageHeight / 2);
-			return new Point(3700, 1200);
+			Engine.sceneClickAbled = false;
 		}
 
 	}

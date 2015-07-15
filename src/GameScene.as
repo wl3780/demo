@@ -1,5 +1,6 @@
 ﻿package 
 {
+	import com.engine.core.Engine;
 	import com.engine.core.view.items.avatar.Avatar;
 	import com.engine.core.view.items.avatar.CharAction;
 	import com.engine.core.view.scenes.Scene;
@@ -33,7 +34,7 @@
 
 		override protected function _EngineMouseDownFunc_(evt:MouseEvent):void
 		{
-			if (Scene.clickEnbeled == false) {
+			if (Engine.sceneClickAbled == false || Scene.clickEnbeled == false) {
 				return;
 			}
 			
@@ -58,6 +59,14 @@
 						this.time = getTimer();
 					}
 				}
+			}
+		}
+		
+		override protected function _EngineMouseUpFunc_(evt:MouseEvent):void
+		{
+			this.isMouseDown = false;
+			if (Engine.sceneClickAbled == false) {
+				Engine.sceneClickAbled = true;
 			}
 		}
 
@@ -140,7 +149,7 @@
 
 		override protected function _EngineMouseRightDownFunc_(evt:MouseEvent):void
 		{
-			if (Scene.clickEnbeled == false) {
+			if (Engine.sceneClickAbled == false || Scene.clickEnbeled == false) {
 				return;
 			}
 			
