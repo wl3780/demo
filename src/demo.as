@@ -18,7 +18,7 @@
 	import flash.utils.getTimer;
 
 	/**
-	 * 入口
+	 * 入口类
 	 */
 	public class demo extends Sprite 
 	{
@@ -42,7 +42,7 @@
 			this.scene = new GameScene();
 			this.text = new TextField();
 			this.init();
-		} 
+		}
 
 		private function init():void
 		{
