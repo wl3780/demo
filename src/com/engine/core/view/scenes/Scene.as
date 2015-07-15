@@ -69,7 +69,6 @@
 		
 		public var mouseDownPoint:Point;
 		public var mapData:SquareMapData;
-		public var mainPet:Char;
 		public var changing:Boolean = false;
 		public var isReady:Boolean = false;
 		public var lockSceneMove:Boolean;
@@ -80,7 +79,7 @@
 		protected var _shiftKey:Boolean;
 		protected var _flying:Boolean = false;
 		protected var _mainChar:MainChar;
-		protected var time:int;
+		protected var charWalkTime:int;
 		protected var stop:Boolean;
 		protected var isMouseDown:Boolean = false;
 		protected var avatarHash:Hash;

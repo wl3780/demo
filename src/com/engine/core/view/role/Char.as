@@ -17,6 +17,7 @@
 	import com.engine.core.view.scenes.SceneEvent;
 	import com.engine.core.view.scenes.SceneEventDispatcher;
 	import com.engine.namespaces.coder;
+	import com.engine.utils.gome.LinearUtils;
 	import com.engine.utils.gome.TileUtils;
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Linear;
@@ -1077,14 +1078,13 @@
 
 		protected function walkEnd():void
 		{
-			var t:int;
 			var ee:SceneEvent = new SceneEvent(SceneEvent.WALK_END);
 			ee.proto = this;
 			this.shadowMode = false;
 			this.totalTime = 0;
 			this.runing = false;
 			if (((!(this.walkendStandOutSide)) && (this.runing))) {
-				this.play("stand");
+				this.play(CharAction.STAND);
 				ee.walkEndType = 1;
 			}
 			if (this.jumping) {
@@ -1099,14 +1099,15 @@
 					this.actionPlaySpeed = 0;
 				}
 				this.jumping = false;
+				var t:int;
 				t = (getTimer() - this.jumpStartTime);
 				if (t < 500) {
 					this.jumpTimerIndex = setTimeout(function ():void
 					{
-						play("stand");
-					}, (500 - t));
+						play(CharAction.STAND);
+					}, (500-t));
 				} else {
-					this.play("stand");
+					this.play(CharAction.STAND);
 				}
 			}
 			if (this.meditation) {
@@ -1114,8 +1115,8 @@
 			}
 			if (this.tar_point) {
 				this.point = this.tar_point;
+				this.tar_point = null;
 			}
-			this.tar_point = null;
 			if (this.walkEndFunc != null) {
 				this.walkEndFunc();
 			}
@@ -1623,44 +1624,10 @@
 			return (new Point(_local_7, _local_8));
 		}
 
-		public function getDretion(_arg_1:Number, _arg_2:Number):int
+		public function getDretion(px:Number, py:Number):int
 		{
-			var _local_3:int;
-			var _local_4:Number = (this.x - _arg_1);
-			var _local_5:Number = (this.y - _arg_2);
-			var _local_6:Number = ((Math.atan2(_local_5, _local_4) * 180) / Math.PI);
-			if ((((_local_6 >= -15)) && ((_local_6 < 15)))) {
-				_local_3 = 6;
-			} else {
-				if ((((_local_6 >= 15)) && ((_local_6 < 75)))) {
-					_local_3 = 7;
-				} else {
-					if ((((_local_6 >= 75)) && ((_local_6 < 105)))) {
-						_local_3 = 0;
-					} else {
-						if ((((_local_6 >= 105)) && ((_local_6 < 170)))) {
-							_local_3 = 1;
-						} else {
-							if ((((_local_6 >= 170)) || ((_local_6 < -170)))) {
-								_local_3 = 2;
-							} else {
-								if ((((_local_6 >= -75)) && ((_local_6 < -15)))) {
-									_local_3 = 5;
-								} else {
-									if ((((_local_6 >= -105)) && ((_local_6 < -75)))) {
-										_local_3 = 4;
-									} else {
-										if ((((_local_6 >= -170)) && ((_local_6 < -105)))) {
-											_local_3 = 3;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			return (_local_3);
+			var ret:int = LinearUtils.getDirection(this.x, this.y, px, py);
+			return ret;
 		}
 
 	}

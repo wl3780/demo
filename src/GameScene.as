@@ -32,6 +32,19 @@
 			GameScene.scene = this;
 		}
 
+		override public function setupReady():void
+		{
+			super.setupReady();
+			if (this.setupReadyFunc != null) {
+				this.setupReadyFunc();
+			}
+		}
+
+		public function mainCharWalk(target:Point, callback:Function=null, _arg_3:int=1000, moveType:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
+		{
+			MainCharWalkManager.getInstance().mainCharWalk(target, callback, _arg_3, moveType, _arg_5);
+		}
+
 		override protected function _EngineMouseDownFunc_(evt:MouseEvent):void
 		{
 			if (Engine.sceneClickAbled == false || Scene.clickEnbeled == false) {
@@ -54,9 +67,9 @@
 					keyEvent.keyCode = keys[(Math.random() * keys.length) >> 0];
 					this._EngineKeyDownFunc_(keyEvent);
 				} else {
-					if ((getTimer() - this.time) > 500) {
+					if ((getTimer() - this.charWalkTime) > 500) {
 						this.mainCharWalk(this.mouseDownPoint);
-						this.time = getTimer();
+						this.charWalkTime = getTimer();
 					}
 				}
 			}
@@ -68,11 +81,6 @@
 			if (Engine.sceneClickAbled == false) {
 				Engine.sceneClickAbled = true;
 			}
-		}
-
-		public function mainCharWalk(target:Point, callback:Function=null, _arg_3:int=1000, moveType:int=1, _arg_5:Boolean=true, _arg_6:Boolean=false):void
-		{
-			MainCharWalkManager.getInstance().mainCharWalk(target, callback, _arg_3, moveType, _arg_5);
 		}
 
 		override protected function enterFrameFunc(evt:Event):void
@@ -87,14 +95,6 @@
 				dis = $itemLayer.getChildAt(idx) as DisplayObject;
 				this.fill(dis.x, dis.y, 200, 300);
 				idx++;
-			}
-		}
-
-		override public function setupReady():void
-		{
-			super.setupReady();
-			if (this.setupReadyFunc != null) {
-				this.setupReadyFunc();
 			}
 		}
 
