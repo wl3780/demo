@@ -1,7 +1,7 @@
 ﻿package com.engine.core.view.scenes
 {
 	import com.engine.core.Engine;
-	import com.engine.core.EngineGlobal;
+	import com.engine.core.ItemConst;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.controls.wealth.WealthPool;
 	import com.engine.core.controls.wealth.loader.DisplayLoader;
@@ -284,7 +284,7 @@
 			timer.start();
 		}
 
-		public function updateMainChar(modelId:int, weaponId:int=0, mountId:int=0, wingId:int=0):void
+		public function updateMainChar(modelId:String, weaponId:String=null, mountId:String=null, wingId:String=null):void
 		{
 			if (_mainChar == null) {
 				_mainChar = new MainChar();
@@ -294,18 +294,18 @@
 			this.updateCharAvatarPart(_mainChar, modelId, weaponId, mountId, wingId);
 		}
 
-		public function updateCharAvatarPart(char:Char, modelId:int, weaponId:int=0, mountId:int=0, wingId:int=0):void
+		public function updateCharAvatarPart(char:Char, modelId:String, weaponId:String=null, mountId:String=null, wingId:String=null):void
 		{
 			if (char) {
-				if (mountId == 0) {
+				if (mountId) {
 					char.hp_height = 120;
 				} else {
 					char.hp_height = 150;
 				}
-				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "clothes/mid_" + modelId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
-				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "weapons/wid_" + weaponId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
-				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "flys/fid_" + wingId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
-				char.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "mounts/midm_" + mountId + Engine.TMP_FILE + "?version=" + EngineGlobal.version);
+				char.loadAvatarPart(ItemConst.BODY_TYPE, modelId);
+				char.loadAvatarPart(ItemConst.WEAPON_TYPE, weaponId);
+				char.loadAvatarPart(ItemConst.FLY_TYPE, wingId);
+				char.loadAvatarPart(ItemConst.MOUNT_TYPE, mountId);
 				char.avatarParts.bodyRender(true);
 				if (_sceneFlyMode) {
 					this.addItem(char, SceneConstant.FLY_LAYER);

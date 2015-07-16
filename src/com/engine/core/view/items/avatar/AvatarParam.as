@@ -29,7 +29,6 @@
 		public var bitmapdatas:Array;
 		public var startPlayTime:int = 0;
 		public var counter:int;
-		public var assetsPath:String;
 		public var maxRects:Array;
 		
 		coder var assets_id:String;
@@ -75,7 +74,6 @@
 				ret.tys[idx] = tmp;
 				idx++;
 			}
-			ret.assetsPath = this.assetsPath;
 			return ret;
 		}
 
@@ -111,7 +109,6 @@
 			this.bitmapdatas = null;
 			this.link = null;
 			this.maxRects = null;
-			this.assetsPath = null;
 			this.type = null;
 			this.startPlayTime = 0;
 			this.speed = 0;

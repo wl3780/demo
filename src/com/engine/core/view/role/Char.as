@@ -1,6 +1,7 @@
 ﻿package com.engine.core.view.role
 {
 	import com.engine.core.Engine;
+	import com.engine.core.ItemConst;
 	import com.engine.core.tile.Pt;
 	import com.engine.core.tile.TileConst;
 	import com.engine.core.view.BitmapScale9Grid;
@@ -241,7 +242,7 @@
 			_wing_effect_1.avatarParts.isTimeoutDelete = false;
 			_wing_effect_1.avatarParts.lockEffectState = false;
 			_wing_effect_1.isSceneItem = false;
-			_wing_effect_1.loadAvatarPart(_arg_1);
+			_wing_effect_1.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
 			_wing_effect_1.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
 			this.addChildAt(_wing_effect_1, 0);
 			_wing_effect_1.visible = this.bodyVisible;
@@ -260,7 +261,7 @@
 			_wing_effect_2.avatarParts.isTimeoutDelete = false;
 			_wing_effect_2.avatarParts.lockEffectState = false;
 			_wing_effect_2.isSceneItem = false;
-			_wing_effect_2.loadAvatarPart(_arg_2);
+			_wing_effect_2.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_2);	// 有问题
 			this.addChildAt(_wing_effect_2, 0);
 			_wing_effect_2.visible = this.bodyVisible;
 			_wing_effect_2.play(CharAction.STAND);
@@ -321,7 +322,7 @@
 			}
 			_suit_effect.isSceneItem = false;
 			_suit_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			_suit_effect.loadAvatarPart(url);
+			_suit_effect.loadAvatarPart(ItemConst.EFFECT_TYPE, url);	// 有问题
 			this.addChild(_suit_effect);
 			_suit_effect.visible = this.bodyVisible;
 		}
@@ -351,7 +352,7 @@
 				}
 				_local_3.isSceneItem = false;
 				_local_3.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-				_local_3.loadAvatarPart(_arg_1);
+				_local_3.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
 				if (_arg_2 == null) {
 					this.addChild(_local_3);
 					_local_3.visible = this.bodyVisible;
@@ -378,9 +379,9 @@
 			}
 		}
 
-		override public function loadAvatarPart(url:String, _arg_2:AvatarRestrict=null):String
+		override public function loadAvatarPart(avatarType:String, avatarNum:String):String
 		{
-			var loadKey:String = super.loadAvatarPart(url, _arg_2);
+			var loadKey:String = super.loadAvatarPart(avatarType, avatarNum);
 			if (_halo_effect) {
 				if (this.isOnMonut) {
 					_halo_effect.y = 20;
@@ -406,7 +407,7 @@
 			}
 			_halo_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
 			_halo_effect.isSceneItem = false;
-			_halo_effect.loadAvatarPart(_arg_1);
+			_halo_effect.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
 			_halo_effect.visible = this.bodyVisible;
 			shape.addChild(_halo_effect);
 		}
@@ -484,7 +485,7 @@
 				}
 				_song_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
 				_song_effect.isSceneItem = false;
-				_song_effect.loadAvatarPart(_arg_1);
+				_song_effect.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
 				_song_effect.dir = this.dir;
 				_song_effect.y = this.onMonutHeight;
 				this.addChildAt(_song_effect, 0);
@@ -497,7 +498,7 @@
 				}
 				_song_effect2.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
 				_song_effect2.isSceneItem = false;
-				_song_effect2.loadAvatarPart(_arg_2);
+				_song_effect2.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_2);	// 有问题
 				_song_effect2.dir = this.dir;
 				_song_effect2.y = this.onMonutHeight;
 				this.addChild(_song_effect2);

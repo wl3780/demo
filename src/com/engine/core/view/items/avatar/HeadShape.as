@@ -1,6 +1,7 @@
 ﻿package com.engine.core.view.items.avatar
 {
 	import com.engine.core.Engine;
+	import com.engine.core.ItemConst;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.view.items.BloodBar;
 	import com.engine.core.view.quadTree.NoderSprite;
@@ -334,7 +335,7 @@
 			if (_arg_1) {
 				if ((_arg_1 as String)) {
 					_local_3 = new ItemAvatar();
-					ItemAvatar(_local_3).loadAvatarPart((_arg_1 as String));
+					ItemAvatar(_local_3).loadAvatarPart(ItemConst.EFFECT_TYPE, (_arg_1 as String));	// 有问题
 				} else {
 					if ((_arg_1 as BitmapData)) {
 						_local_3 = new Bitmap();

@@ -58,7 +58,7 @@
 
 		override public function set isAutoDispose(val:Boolean):void
 		{
-			_isAutoDispose = val;
+			super.isAutoDispose = val;
 			if (_ap) {
 				_ap.isAutoDispose = val;
 			}
@@ -136,23 +136,20 @@
 		
 		public function get stageIntersects():Boolean
 		{
-			var _local_2:Point;
-			var _local_3:Rectangle;
-			var _local_4:Rectangle;
-			var _local_1:Boolean = true;
-			if (((Scene.scene) && (this.isSceneItem))) {
-				_local_2 = Scene.scene.globalToLocal(recovery_point);
-				_local_3 = new Rectangle(_local_2.x, _local_2.y, Engine.stage.stageWidth, (Engine.stage.stageHeight + 150));
-				_local_4 = new Rectangle(x, y, 1, 1);
+			var ret:Boolean = true;
+			if (Scene.scene && this.isSceneItem) {
+				var pp:Point = Scene.scene.globalToLocal(ItemAvatar.recovery_point);
+				var stageRect:Rectangle = new Rectangle(pp.x, pp.y, Engine.stage.stageWidth, Engine.stage.stageHeight+150);
+				var avatarRect:Rectangle = new Rectangle(this.x, this.y, 1, 1);
 				if (this.curr_rect != null) {
-					_local_4.x = (x + this.curr_rect.topLeft.x);
-					_local_4.y = (y + this.curr_rect.topLeft.y);
-					_local_4.width = this.curr_rect.width;
-					_local_4.height = this.curr_rect.height;
+					avatarRect.x = this.x + this.curr_rect.topLeft.x;
+					avatarRect.y = this.y + this.curr_rect.topLeft.y;
+					avatarRect.width = this.curr_rect.width;
+					avatarRect.height = this.curr_rect.height;
 				}
-				_local_1 = _local_3.intersects(_local_4);
+				ret = stageRect.intersects(avatarRect);
 			}
-			return (_local_1);
+			return ret;
 		}
 		
 		public function set nameEnabled(val:Boolean):void
@@ -254,73 +251,41 @@
 			}
 		}
 
-		public function loadAvatarPart(url:String, _arg_2:AvatarRestrict=null):String
+		public function loadAvatarPart(avatarType:String, avatarNum:String):String
 		{
-			var _local_3:String;
-			var _local_4:Array;
-			var _local_5:String;
-			var _local_6:String;
-			var _local_7:String;
-			var _local_8:Array;
-			var _local_9:int;
-			if (this.isDisposed) {
+			if (this.isDisposed || this.avatarParts == null) {
 				return null;
 			}
-			if (this.avatarParams) {
-				_local_3 = url;
-				_local_4 = url.split("/");
-				_local_5 = _local_4[(_local_4.length - 1)];
-				_local_6 = _local_4[(_local_4.length - 2)];
-				if ((_local_6 == null)) {
-					_local_6 = "";
+			if (avatarNum) {
+				if (this.avatarParams[avatarType] == null) {
+					this.avatarParams[avatarType] = avatarNum;
 				}
-				if (_local_4.length >= 2) {
-					_local_4[(_local_4.length - 2)] = "output";
-				} else {
-					if (_local_4.length == 1) {
-						_local_4.unshift("output");
-					}
-				}
-				url = _local_4.join("/");
-				_local_7 = _local_5.split("_")[0];
-				_local_5 = _local_5.split(Engine.TMP_FILE)[0];
-				_local_7 = _local_5.split("_")[0];
-				url = url.split(Engine.TMP_FILE).join(".sm");
-				_local_8 = _local_5.split("_");
-				_local_9 = int(_local_8[1]);
-				if (_local_9 > 0) {
-					if (this.avatarParams[_local_5] == null) {
-						this.avatarParams[_local_5] = _local_5;
-					}
-					this.avatarParts.type = SceneConstant.EFFECT;
-					AvatarManager.coder::getInstance().put(this.avatarParts);
-					AvatarAssetManager.getInstance().loadAvatar(url, this.avatarParts.id, _local_3);
-				} else {
-					if (this.avatarParts) {
-						this.avatarParts.removeAvatarPartByType(_local_7);
-						switch (_local_7) {
-							case ItemConst.BODY_TYPE:
-								if (this.bitmapdata_mid) {
-									this.bitmapdata_mid.bitmapData = null;
-								}
-								break;
-							case ItemConst.WEAPON_TYPE:
-								if (this.bitmapdata_wid) {
-									this.bitmapdata_wid.bitmapData = null;
-								}
-								break;
-							case ItemConst.MOUNT_TYPE:
-								if (this.bitmapdata_midm) {
-									this.bitmapdata_midm.bitmapData = null;
-								}
-								break;
-							case ItemConst.WING_TYPE:
-								if (this.bitmapdata_wgid) {
-									this.bitmapdata_wgid.bitmapData = null;
-								}
-								break;
+				this.avatarParts.type = SceneConstant.EFFECT;
+				AvatarManager.coder::getInstance().put(this.avatarParts);
+				AvatarAssetManager.getInstance().loadAvatar(avatarType, avatarNum, this.avatarParts.id);
+			} else {
+				this.avatarParts.removeAvatarPartByType(avatarType);
+				switch (avatarType) {
+					case ItemConst.BODY_TYPE:
+						if (this.bitmapdata_mid) {
+							this.bitmapdata_mid.bitmapData = null;
 						}
-					}
+						break;
+					case ItemConst.WEAPON_TYPE:
+						if (this.bitmapdata_wid) {
+							this.bitmapdata_wid.bitmapData = null;
+						}
+						break;
+					case ItemConst.MOUNT_TYPE:
+						if (this.bitmapdata_midm) {
+							this.bitmapdata_midm.bitmapData = null;
+						}
+						break;
+					case ItemConst.WING_TYPE:
+						if (this.bitmapdata_wgid) {
+							this.bitmapdata_wgid.bitmapData = null;
+						}
+						break;
 				}
 			}
 			return null;
@@ -328,7 +293,6 @@
 
 		public function loadCharActionAssets(action:String):void
 		{
-			var _local_4:String;
 			if (this.isDisposed) {
 				return;
 			}
@@ -340,9 +304,7 @@
 			}
 			var dict:Dictionary = this.avatarParts.avatarParts[action];
 			for each (var _local_3:AvatarParam in dict) {
-				_local_4 = _local_3.assetsPath;
-				_local_4 = _local_4.split(Engine.TMP_FILE).join((("_" + action) + Engine.TMP_FILE));
-				AvatarAssetManager.getInstance().loadAvatarAssets(_local_4, action, this.avatarParts.id);
+				AvatarAssetManager.getInstance().loadAvatarAssets(_local_3.oid, action, this.avatarParts.id);
 			}
 		}
 
@@ -360,12 +322,12 @@
 			this.dir = this.getDretion(target.x, target.y);
 		}
 
-		public function setRotation(_arg_1:Number, _arg_2:Number):void
+		public function setRotation(px:Number, py:Number):void
 		{
-			_arg_1 = (_arg_1 - this.x);
-			_arg_2 = (_arg_2 - this.y);
-			var _local_3:Number = Math.atan2(_arg_2, _arg_1);
-			this.rotation = ((_local_3 * 180) / Math.PI);
+			px = px - this.x;
+			py = py - this.y;
+			var radian:Number = Math.atan2(py, px);
+			this.rotation = LinearUtils.radian2Angle(radian);
 		}
 
 		public function getDretion(px:Number, py:Number):int
@@ -532,12 +494,12 @@
 		{
 		}
 
-		public function removeAvatarPartByType(_arg_1:String):void
+		public function removeAvatarPartByType(avatarType:String):void
 		{
 			if (!this.avatarParts) {
 				return;
 			}
-			switch (_arg_1) {
+			switch (avatarType) {
 				case ItemConst.EFFECT_TYPE:
 					return;
 				case ItemConst.BODY_TYPE:

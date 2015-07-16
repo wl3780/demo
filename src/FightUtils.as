@@ -1,7 +1,6 @@
 ﻿package 
 {
-	import com.engine.core.Engine;
-	import com.engine.core.EngineGlobal;
+	import com.engine.core.ItemConst;
 	import com.engine.core.view.items.avatar.ItemAvatar;
 	import com.engine.core.view.role.Char;
 	import com.engine.core.view.scenes.SceneConstant;
@@ -17,7 +16,7 @@
 	public class FightUtils 
 	{
 
-		public static function areaAttack(effect_id:int, point:Point, area:int=100, num:int=4, delay:int=150, points:Array=null):void
+		public static function areaAttack(effect_id:String, point:Point, area:int=100, num:int=4, delay:int=150, points:Array=null):void
 		{
 			var num_:int;
 			var dir:Array;
@@ -54,7 +53,7 @@
 			timer.start();
 		}
 
-		public static function lineAttack(effect_id:int, startPoint:Point, endPoint:Point, delay:int=100, interval:int=45, playEndFunc:Function=null):void
+		public static function lineAttack(effect_id:String, startPoint:Point, endPoint:Point, delay:int=100, interval:int=45, playEndFunc:Function=null):void
 		{
 			var array:Array;
 			var arr:Array;
@@ -82,7 +81,7 @@
 			timer.addEventListener(TimerEvent.TIMER, timeFunc);
 		}
 
-		public static function attackToPoint(speed:Number, pass_effect:int, startPoint:Point, endPoint:Point, playEndFunc:Function=null):void
+		public static function attackToPoint(speed:Number, pass_effect:String, startPoint:Point, endPoint:Point, playEndFunc:Function=null):void
 		{
 			var _playEndFunc:Function;
 			var effect:ItemAvatar;
@@ -116,7 +115,7 @@
 			});
 		}
 
-		public static function attackToTarget(speed:Number, pass_effect:int, startPoint:Point, attatched:Char, playEndFunc:Function=null):void
+		public static function attackToTarget(speed:Number, pass_effect:String, startPoint:Point, attatched:Char, playEndFunc:Function=null):void
 		{
 			var _playEndFunc:Function;
 			var effect:ItemAvatar;
@@ -218,7 +217,7 @@
 			}
 		}
 
-		public static function fanAttack(pass_effect:int, startPoint:Point, endPoint:Point, size:int=90, num:int=3, delay:int=100, minRadius:int=-1):void
+		public static function fanAttack(pass_effect:String, startPoint:Point, endPoint:Point, size:int=90, num:int=3, delay:int=100, minRadius:int=-1):void
 		{
 			var time:Number;
 			var effect:ItemAvatar;
@@ -286,13 +285,12 @@
 			}
 		}
 
-		public static function getEffect(_arg_1:int, _arg_2:Point, _arg_3:Point=null, _arg_4:String=null):ItemAvatar
+		public static function getEffect(_arg_1:String, _arg_2:Point, _arg_3:Point=null, _arg_4:String=null):ItemAvatar
 		{
 			var _local_5:ItemAvatar = new ItemAvatar();
 			_local_5.isSkillEffect = true;
 			_local_5.isSceneItem = true;
-			var _local_6:String = EngineGlobal.AVATAR_ASSETS_DIR + "effects/eid_" + _arg_1 + Engine.TMP_FILE;
-			_local_5.loadAvatarPart(_local_6);
+			_local_5.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);
 			_local_5.x = _arg_2.x;
 			_local_5.y = _arg_2.y;
 			if (_arg_3) {

@@ -63,7 +63,7 @@
 			this.scene.setup(Engine.stage, this);
 			this.scene.changeScene(5);
 			this.scene.$mapLayer.init("scene_" + 4);
-			this.scene.updateMainChar(100000002, 0, 0);
+			this.scene.updateMainChar("100000002", null, null);
 			
 			this.scene.mainChar.speed = 270;
 			this.scene.mainChar.char_id = "saiman";
@@ -267,8 +267,8 @@
 			char.x = pos.x;
 			char.y = pos.y;
 			
-			var clothes:Array = [100000001, 100000002, 100000003, 100000004];
-			this.scene.updateCharAvatarPart(char, clothes[Math.random() * clothes.length >> 0], 0, 0);
+			var clothes:Array = ["100000001", "100000002", "100000003", "100000004"];
+			this.scene.updateCharAvatarPart(char, clothes[Math.random() * clothes.length >> 0], null, null);
 			char.speed = 250;
 			char.headVisible = this.headVisible;
 			char.bodyVisible = this.bodyVisible;

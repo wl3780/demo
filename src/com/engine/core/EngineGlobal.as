@@ -63,7 +63,6 @@
 		
 		public static function getAvatarAssetsConfigPath(idName:String):String
 		{
-			var idType:String = idName.split(Engine.LINE)[0];
 			return AVATAR_ASSETS_DIR + "output/" + idName + SM_EXTENSION;
 		}
 	}

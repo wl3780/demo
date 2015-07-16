@@ -1,7 +1,6 @@
 ﻿package 
 {
-	import com.engine.core.Engine;
-	import com.engine.core.EngineGlobal;
+	import com.engine.core.ItemConst;
 	import com.engine.core.tile.square.Square;
 	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.tile.square.SquarePt;
@@ -16,14 +15,14 @@
 	public class SceneUtil 
 	{
 
-		public static function updataCharParts(_arg_1:Avatar, _arg_2:int=0, _arg_3:int=0, _arg_4:int=0):void
+		public static function updataCharParts(_arg_1:Avatar, _arg_2:String=null, _arg_3:String=null, _arg_4:String=null):void
 		{
 			if (((!(_arg_1)) || (!(_arg_1.avatarParts)))) {
 				return;
 			}
-			_arg_1.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "clothes/mid_" + _arg_2 + Engine.TMP_FILE);
-			_arg_1.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "weapons/wid_" + _arg_3 + Engine.TMP_FILE);
-			_arg_1.loadAvatarPart(EngineGlobal.AVATAR_ASSETS_DIR + "mounts/midm_" + _arg_4 + Engine.TMP_FILE);
+			_arg_1.loadAvatarPart(ItemConst.BODY_TYPE, _arg_2);
+			_arg_1.loadAvatarPart(ItemConst.WEAPON_TYPE, _arg_3);
+			_arg_1.loadAvatarPart(ItemConst.MOUNT_TYPE, _arg_4);
 			_arg_1.avatarParts.bodyRender(true);
 		}
 

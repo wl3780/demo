@@ -23,7 +23,7 @@
 
 		public var setupReadyFunc:Function;
 		
-		private var _avatarArray:Array = [100000002, 100000004, 100000003, 100000001];
+		private var _avatarArray:Array = ["100000002", "100000004", "100000003", "100000001"];
 		private var _avatarIndex:int = 0;
 
 		public function GameScene()
@@ -101,7 +101,7 @@
 		override protected function _EngineKeyDownFunc_(evt:KeyboardEvent):void
 		{
 			super._EngineKeyDownFunc_(evt);
-			var passEffect:int;
+			var passEffect:String;
 			if (this.selectAvatar == null || this.selectAvatar.parent == null) {
 				var arr:Array = avatarHash.coder::values();
 				this.selectAvatar = arr[arr.length - 2];
@@ -116,20 +116,20 @@
 					break;
 				case Keyboard.NUMBER_2:
 					if (this.mainChar && this.selectAvatar) {
-						passEffect = 201000002;
+						passEffect = "300000009";
 						mainChar.stopMove();
 						mainChar.faceTo(selectAvatar);
 						mainChar.play(CharAction.ATTACK, null, false, function ():void
 						{
 							if (selectAvatar) {
-								FightUtils.lineAttack(300000009, new Point(mainChar.x, mainChar.y), new Point(selectAvatar.x, selectAvatar.y), 150, 60);
+								FightUtils.lineAttack(passEffect, new Point(mainChar.x, mainChar.y), new Point(selectAvatar.x, selectAvatar.y), 150, 60);
 							}
 						});
 					}
 					break;
 				case Keyboard.NUMBER_3:
 					if (this.mainChar && this.selectAvatar) {
-						passEffect = 201000002;
+						passEffect = "201000002";
 						mainChar.stopMove();
 						mainChar.faceTo(selectAvatar);
 						mainChar.play(CharAction.SKILL1, null, false, function ():void

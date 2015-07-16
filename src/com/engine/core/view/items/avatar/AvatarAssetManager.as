@@ -1,6 +1,7 @@
 ﻿package com.engine.core.view.items.avatar
 {
 	import com.engine.core.Engine;
+	import com.engine.core.EngineGlobal;
 	import com.engine.core.ItemConst;
 	import com.engine.core.controls.events.WealthEvent;
 	import com.engine.core.controls.wealth.WealthConstant;
@@ -160,12 +161,10 @@
 					var size:int = bytes.readInt();
 					var str:String = bytes.readUTFBytes(size);
 					var xml:XML = new XML(str);
-					var assetsPath:String = evt.vo.data.assetsPath;
-					dict = this.analyzeData(fileName, xml, assetsPath);
+					dict = this.analyzeData(fileName, xml);
 					this.elements[fileName] = dict;
-					assetsPath = assetsPath.split(Engine.TMP_FILE).join("_" + CharAction.STAND + Engine.TMP_FILE);
-					this.loadAvatarAssets(assetsPath, CharAction.STAND, evt.vo.data.owner);
-					this.loadAvatarAssets(assetsPath, CharAction.WALK, evt.vo.data.owner);
+					this.loadAvatarAssets(fileName, CharAction.STAND, evt.vo.data.owner);
+					this.loadAvatarAssets(fileName, CharAction.WALK, evt.vo.data.owner);
 				} else {
 					dict = this.elements[fileName];
 				}
@@ -179,14 +178,14 @@
 			AvatarManager.coder::getInstance().loadedAvatarError(evt.vo.data.owner as String);
 		}
 
-		public function loadAvatar(smPath:String, oid:String, filePath:String=null):String
+		public function loadAvatar(avatarType:String, avatarNum:String, oid:String, filePath:String=null):String
 		{
+			var avatarId:String = avatarType + Engine.LINE + avatarNum;
+			var smPath:String = EngineGlobal.getAvatarAssetsConfigPath(avatarId);
 			log("saiman", "加载动作资源：", smPath);
 			var key:String = Engine.coder::nextInstanceIndex().toString(16);
 			var groupVo:WealthGroupVo = new WealthGroupVo();
-			if (smPath.indexOf(Engine.SM_FILE) == -1) {
-				groupVo.level = WealthConstant.BUBBLE_LEVEL;
-			}
+			groupVo.level = WealthConstant.BUBBLE_LEVEL;
 			groupVo.addWealth(smPath, {
 				"owner":oid,
 				"startTime":Engine.delayTime,
@@ -200,11 +199,12 @@
 			return key;
 		}
 		
-		public function loadAvatarAssets(url:String, action:String, parts_id:String):void
+		public function loadAvatarAssets(avatarId:String, action:String, parts_id:String):void
 		{
-			if (!url) {
+			if (!avatarId || !action) {
 				return;
 			}
+			var url:String = EngineGlobal.getAvatarAssetsPath(avatarId + Engine.LINE + action);
 			if (this.checkLoadedFunc(url) == false) {
 				var groupVo:WealthGroupVo = new WealthGroupVo();
 				groupVo.level = WealthConstant.BUBBLE_LEVEL;
@@ -495,7 +495,7 @@
 			}
 		}
 
-		private function analyzeData(fileName:String, xml:XML, path:String):Dictionary
+		private function analyzeData(fileName:String, xml:XML):Dictionary
 		{
 			var bmdKey:String;
 			var frameIdx:int;
@@ -508,20 +508,19 @@
 			var flipFrameX:int;
 			var _local_30:String;
 			var _local_31:int;
-			var type:String = fileName.split("_")[0];
+			var avatarType:String = fileName.split("_")[0];
 			var dict:Dictionary = new Dictionary();
 			var xmlList:XMLList = xml.children();
 			var len:int = xmlList.length();
 			var idx:int;
 			while (idx < len) {
 				var xmlItem:XML = xmlList[idx];
-				var avatarID:String = xml.@id;
+				var avatarId:String = xml.@id;
 				var param:AvatarParam = new AvatarParam();
-				param.assetsPath = path;
-				param.type = type;
+				param.type = avatarType;
 				param.link = xmlItem.@id;
 				param.frames = xmlItem.@frames;
-				if (type != ItemConst.EFFECT_TYPE) {
+				if (avatarType != ItemConst.EFFECT_TYPE) {
 					param.speed = int(int(xmlItem.@speed) / Engine._Lessen_Frame_);
 				} else {
 					param.speed = xmlItem.@speed;
@@ -539,7 +538,7 @@
 				var actLen:int = actList.length();
 				var actIdx:int = 0;
 				var dirs:int = 8;
-				if (type == ItemConst.EFFECT_TYPE || type == ItemConst.MOUNT_TYPE) {
+				if (avatarType == ItemConst.EFFECT_TYPE || avatarType == ItemConst.MOUNT_TYPE) {
 					if (actLen >= 5) {
 						dirs = 8;
 					} else {
@@ -547,7 +546,7 @@
 					}
 				}
 				var once:Boolean = false;
-				if (type != ItemConst.EFFECT_TYPE && actLen == 1) {
+				if (avatarType != ItemConst.EFFECT_TYPE && actLen == 1) {
 					once = true;
 				}
 				actIdx = 0;
@@ -567,11 +566,11 @@
 						param.widths[dirIdx] = [];
 						param.heights[dirIdx] = [];
 						if (!once) {
-							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + dirIdx;
-							bmdKey = param.id + Engine.SIGN + avatarID + "." + param.link + "." + dirIdx;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + dirIdx;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + dirIdx;
 						} else {
-							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + 0;
-							bmdKey = param.id + Engine.SIGN + avatarID + "." + param.link + "." + 0;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + 0;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + 0;
 						}
 						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
 							frameList = actXML.children();
@@ -619,20 +618,20 @@
 						param.widths[dirIdx] = param.widths[flipIdx];
 						param.heights[dirIdx] = param.heights[flipIdx];
 						if (!once) {
-							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + dirIdx;
-							bmdKey = param.id + Engine.SIGN + avatarID + "." + param.link + "." + dirIdx;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + dirIdx;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + dirIdx;
 						} else {
-							param.bitmapdatas[dirIdx] = avatarID + "." + param.link + "." + 0;
-							bmdKey = param.id + Engine.SIGN + avatarID + "." + param.link + "." + 0;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + 0;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + 0;
 						}
 						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
-							_local_30 = param.id + Engine.SIGN + avatarID + "." + param.link + "." + flipIdx;
+							_local_30 = param.id + Engine.SIGN + avatarId + "." + param.link + "." + flipIdx;
 							if (this.bitmapdatas[bmdKey] == null) {
 								this.bitmapdatas[bmdKey] = [];
 							}
 							_local_31 = 0;
 							while (_local_31 < this.bitmapdatas[_local_30].length) {
-								if (type == ItemConst.BODY_TYPE) {
+								if (avatarType == ItemConst.BODY_TYPE) {
 									this.bitmapdatas[bmdKey].push(Engine.shadow_bitmapData);
 								} else {
 									this.bitmapdatas[bmdKey].push(null);

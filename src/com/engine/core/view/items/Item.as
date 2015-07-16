@@ -9,8 +9,7 @@
 		private var _type:String;
 		private var _isSceneItem:Boolean = true;
 		private var _char_id:String;
-		
-		protected var _isAutoDispose:Boolean = true;
+		private var _isAutoDispose:Boolean = true;
 
 		public function Item()
 		{

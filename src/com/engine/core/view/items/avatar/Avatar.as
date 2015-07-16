@@ -883,85 +883,58 @@
 			if (this.avatarParts.avatarParts == null) {
 				return;
 			}
-			var assetPath:String;
 			var dict:Dictionary = this.avatarParts.avatarParts[state];
 			for each (var paramItem:AvatarParam in dict) {
-				assetPath = paramItem.assetsPath;
-				if (AvatarAssetManager.getInstance().checkLoadedFunc(assetPath) == true) {
-					return;
-				}
-				assetPath = assetPath.split(Engine.TMP_FILE).join("_" + state + Engine.TMP_FILE);
-				AvatarAssetManager.getInstance().loadAvatarAssets(assetPath, state, this.avatarParts.id);
+				AvatarAssetManager.getInstance().loadAvatarAssets(paramItem.oid, state, this.avatarParts.id);
 			}
 		}
 
-		public function loadAvatarPart(filePath:String, _arg_2:AvatarRestrict=null):String
+		public function loadAvatarPart(avatarType:String, avatarNum:String):String
 		{
-			if (this.isDisposed) {
+			if (this.isDisposed || this.avatarParts == null) {
 				return null;
 			}
-			var smPath:String = filePath;
-			var arr:Array = smPath.split("/");
-			var avatarId:String = arr[arr.length-1];
-			avatarId = avatarId.split(Engine.TMP_FILE)[0];
-			if (arr.length >= 2) {
-				arr[arr.length-2] = "output";
-			} else if (arr.length == 1) {
-				arr.unshift("output");
-			}
-			smPath = arr.join("/");
-			smPath = smPath.split(Engine.TMP_FILE).join(Engine.SM_FILE);
-			var avatarType:String = avatarId.split("_")[0];
-			var avatarNum:int = avatarId.split("_")[1];
 			if (avatarType == ItemConst.MOUNT_TYPE) {
-				if (avatarNum == 0) {
-					this.isOnMonut = false;
-					this.onMonutHeight = 0;
-				} else {
+				if (avatarNum) {
 					this.isOnMonut = true;
 					this.onMonutHeight = _monutHeight;
+				} else {
+					this.isOnMonut = false;
+					this.onMonutHeight = 0;
 				}
 			}
-			if (avatarNum > 0) {
-				if (this.avatarParts) {
-					AvatarManager.coder::getInstance().put(this.avatarParts);
-					avatarId = AvatarAssetManager.getInstance().loadAvatar(smPath, this.avatarParts.id, filePath);
-					if (avatarType == ItemConst.EFFECT_TYPE && _arg_2) {
-						_arg_2.coder::oid = avatarId;
-						this.avatarParts.addEffectRestrict(avatarId, _arg_2);
-					}
-					return avatarId;
-				}
+			if (avatarNum) {
+				AvatarManager.coder::getInstance().put(this.avatarParts);
+				var avatarId:String = AvatarAssetManager.getInstance().loadAvatar(avatarType, avatarNum, this.avatarParts.id);
+				return avatarId;
 			} else {
-				if (this.avatarParts) {
-					this.avatarParts.removeAvatarPartByType(avatarType);
-					switch (avatarType) {
-						case ItemConst.BODY_TYPE:
-							if (this.bitmapdata_mid) {
-								this.bitmapdata_mid.bitmapData = null;
-							}
-							break;
-						case ItemConst.WEAPON_TYPE:
-							if (this.bitmapdata_wid) {
-								this.bitmapdata_wid.bitmapData = null;
-							}
-							break;
-						case ItemConst.WING_TYPE:
-							if (this.bitmapdata_wgid) {
-								this.bitmapdata_wgid.bitmapData = null;
-							}
-							break;
-						case ItemConst.MOUNT_TYPE:
-							if (this.bitmapdata_midm) {
-								this.bitmapdata_midm.bitmapData = null;
-							}
-							break;
-						case ItemConst.FLY_TYPE:
-							if (this.bitmapdata_fid) {
-								this.bitmapdata_fid.bitmapData = null;
-							}
-							break;
-					}
+				this.avatarParts.removeAvatarPartByType(avatarType);
+				switch (avatarType) {
+					case ItemConst.BODY_TYPE:
+						if (this.bitmapdata_mid) {
+							this.bitmapdata_mid.bitmapData = null;
+						}
+						break;
+					case ItemConst.WEAPON_TYPE:
+						if (this.bitmapdata_wid) {
+							this.bitmapdata_wid.bitmapData = null;
+						}
+						break;
+					case ItemConst.WING_TYPE:
+						if (this.bitmapdata_wgid) {
+							this.bitmapdata_wgid.bitmapData = null;
+						}
+						break;
+					case ItemConst.MOUNT_TYPE:
+						if (this.bitmapdata_midm) {
+							this.bitmapdata_midm.bitmapData = null;
+						}
+						break;
+					case ItemConst.FLY_TYPE:
+						if (this.bitmapdata_fid) {
+							this.bitmapdata_fid.bitmapData = null;
+						}
+						break;
 				}
 			}
 			return null;

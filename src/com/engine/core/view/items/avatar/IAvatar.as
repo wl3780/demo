@@ -19,7 +19,7 @@
 		function get avatarParts():AvatartParts;
 		
 		function hitIcon():Boolean;
-		function loadAvatarPart(_arg_1:String, _arg_2:AvatarRestrict=null):String;
+		function loadAvatarPart(avatarType:String, avatarNum:String):String;
 
 	}
 }
