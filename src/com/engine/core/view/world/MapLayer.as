@@ -66,15 +66,15 @@
 			}
 		}
 
-		private function getMapDataPath(mapID:String):String
+		private function getMapDataPath(mapId:String):String
 		{
-			var path:String = EngineGlobal.SCENE_IMAGE_DIR + "map_data/" + mapID + ".data?version=" + EngineGlobal.version;
+			var path:String = EngineGlobal.SCENE_IMAGE_DIR + "map_data/" + mapId + ".data?version=" + EngineGlobal.version;
 			return path;
 		}
 
-		public function init(mapID:String):void
+		public function init(mapId:String):void
 		{
-			this.map_id = mapID;
+			this.map_id = mapId;
 			if (this.bg_bmd) {
 				this.bg_bmd.dispose();
 				this.bg_bmd = null;
@@ -97,7 +97,7 @@
 			_stageMidP = new Point(Engine.stage.stageWidth/2, Engine.stage.stageHeight/2);
 			_stageMaxP = new Point(Engine.stage.stageWidth, Engine.stage.stageHeight);
 			
-			var mapPath:String = this.getMapDataPath(mapID);
+			var mapPath:String = this.getMapDataPath(mapId);
 			this.scene_data_path = mapPath;
 			this.loader_ = new URLLoader();
 			this.loader_.dataFormat = URLLoaderDataFormat.BINARY;
@@ -244,7 +244,7 @@
 			}
 		}
 
-		public function clean(sceneID:int=-1):void
+		public function clean(sceneId:int=-1):void
 		{
 			if (this.loader) {
 				this.loader.unloadAndStop();
@@ -257,7 +257,7 @@
 			for (var loaderKey:String in this.loadHash) {
 				loaderObj = this.loadHash[loaderKey];
 				loaderItem = loaderObj.loader;
-				if (loaderItem.name.indexOf("scene_" + sceneID) == -1) {
+				if (loaderItem.name.indexOf("scene_" + sceneId) == -1) {
 					loaderItem.unloadAndStop();
 				} else {
 					newHash[loaderKey] = loaderObj;
@@ -271,7 +271,7 @@
 				for (var bgKey:String in this.bgHash) {
 					bgLoader = this.bgHash[bgKey];
 					if (bgLoader) {
-						if (bgLoader.name.indexOf("scene_" + sceneID) == -1) {
+						if (bgLoader.name.indexOf("scene_" + sceneId) == -1) {
 							if (bgLoader.content) {
 								Bitmap(bgLoader.content).bitmapData.dispose();
 							}

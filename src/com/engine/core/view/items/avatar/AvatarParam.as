@@ -12,12 +12,12 @@
 	public class AvatarParam extends Proto 
 	{
 
+		public var action:String;
+		public var avatarType:String;
+		
 		public var replay:int = -1;
 		public var holdOnLastFrame:Boolean = false;
 		public var currentFrame:int;
-		public var depth:int;
-		public var type:String;
-		public var link:String;
 		public var frames:int;
 		public var speed:int;
 		public var offset_x:int;
@@ -89,7 +89,7 @@
 		public function getBitmapData(dir:int, frame:int):BitmapData
 		{
 			try {
-				var key:String = this.oid + Engine.SIGN + this.link + Engine.SIGN + this.bitmapdatas[dir];
+				var key:String = this.oid + Engine.SIGN + this.action + Engine.SIGN + this.bitmapdatas[dir];
 				var manager:AvatarAssetManager = AvatarAssetManager.getInstance();
 				return manager.bitmapdatas[key][frame] as BitmapData;
 			} catch(e:Error) {
@@ -107,9 +107,9 @@
 			this.widths = null;
 			this.heights = null;
 			this.bitmapdatas = null;
-			this.link = null;
+			this.action = null;
 			this.maxRects = null;
-			this.type = null;
+			this.avatarType = null;
 			this.startPlayTime = 0;
 			this.speed = 0;
 			this.frames = 0;

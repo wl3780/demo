@@ -27,7 +27,6 @@
 		
 		private static var recovery_point:Point = new Point();
 
-		public var avatarParams:Dictionary;
 		public var playEndFunc:Function;
 		public var effect_id:String;
 		public var curr_rect:Rectangle;
@@ -35,13 +34,14 @@
 		
 		protected var bitmapdata_midm:Bitmap;
 		protected var bitmapdata_wgid:Bitmap;
+		protected var bitmapdata_mid:Bitmap;
+		protected var bitmapdata_wid:Bitmap;
+		
 		protected var $isDisposed:Boolean = false;
 		protected var _pt:SquarePt;
 		protected var _point:Point;
 		
 		private var _ap:AvatartParts;
-		private var bitmapdata_mid:Bitmap;
-		private var bitmapdata_wid:Bitmap;
 		private var eid_avatarBitmaps:Dictionary;
 		private var nameText:TextField;
 		private var _nameEnabled:Boolean = true;
@@ -215,7 +215,6 @@
 
 		public function setup():void
 		{
-			this.avatarParams = new Dictionary();
 			this.avatarParts = new AvatartParts();
 			this.avatarParts.type = SceneConstant.EFFECT;
 			this.avatarParts.onRender = this.onRender;
@@ -238,7 +237,7 @@
 
 		coder function setupReady():void
 		{
-			if (this.avatarParams) {
+			if (this.avatarParts) {
 				var action:String = this.avatarParts.state;
 				this.loadCharActionAssets(action);
 			}
@@ -257,9 +256,6 @@
 				return null;
 			}
 			if (avatarNum) {
-				if (this.avatarParams[avatarType] == null) {
-					this.avatarParams[avatarType] = avatarNum;
-				}
 				this.avatarParts.type = SceneConstant.EFFECT;
 				AvatarManager.coder::getInstance().put(this.avatarParts);
 				AvatarAssetManager.getInstance().loadAvatar(avatarType, avatarNum, this.avatarParts.id);
@@ -303,8 +299,8 @@
 				return;
 			}
 			var dict:Dictionary = this.avatarParts.avatarParts[action];
-			for each (var _local_3:AvatarParam in dict) {
-				AvatarAssetManager.getInstance().loadAvatarAssets(_local_3.oid, action, this.avatarParts.id);
+			for each (var param:AvatarParam in dict) {
+				AvatarAssetManager.getInstance().loadAvatarAssets(param.oid, action, this.avatarParts.id);
 			}
 		}
 
@@ -349,7 +345,7 @@
 
 		public function hitIcon():Boolean
 		{
-			return (false);
+			return false;
 		}
 
 		coder function disposeEffects(_arg_1:String):void
@@ -368,122 +364,113 @@
 			this.dispose();
 		}
 
-		public function onRender(_arg_1:String, _arg_2:int, _arg_3:BitmapData, _arg_4:Rectangle, _arg_5:String, _arg_6:String=null, _arg_7:int=0, _arg_8:int=0, _arg_9:BitmapData=null):void
+		public function onRender(parts_id:String, pdir:int, bmd:BitmapData, _arg_4:Rectangle, avatarType:String, _arg_6:String=null, px:int=0, py:int=0, _arg_9:BitmapData=null):void
 		{
-			var _local_10:Bitmap;
-			var _local_11:int;
-			var _local_12:int;
-			if (this.avatarParts.id != _arg_1) {
+			if (this.avatarParts.id != parts_id) {
 				return;
 			}
-			if (((((!(this.isDisposed)) && (this.stage))) && (!((this.parent == null))))) {
-				if (this.stageIntersects) {
-					if (_arg_5 == ItemConst.BODY_TYPE) {
-						if (this.bitmapdata_mid == null) {
-							this.bitmapdata_mid = new Bitmap();
-							if (this.bitmapdata_midm) {
-								this.addChild(this.bitmapdata_midm);
-							}
-							if (this.bitmapdata_mid) {
-								this.addChild(this.bitmapdata_mid);
-							}
-							if (this.bitmapdata_wid) {
-								this.addChild(this.bitmapdata_wid);
-							}
-							if (this.bitmapdata_wgid) {
-								this.addChild(this.bitmapdata_wgid);
-							}
+			if (this.isDisposed || !this.stage || !this.parent) {
+				return;
+			}
+			if (this.stageIntersects) {
+				var bmp:Bitmap;
+				if (avatarType == ItemConst.BODY_TYPE) {
+					if (this.bitmapdata_mid == null) {
+						this.bitmapdata_mid = new Bitmap();
+						if (this.bitmapdata_midm) {
+							this.addChild(this.bitmapdata_midm);
 						}
-						_local_10 = this.bitmapdata_mid;
-					} else {
-						if (_arg_5 == ItemConst.WEAPON_TYPE) {
-							if (this.bitmapdata_wid == null) {
-								this.bitmapdata_wid = new Bitmap();
-								if (this.bitmapdata_midm) {
-									this.addChild(this.bitmapdata_midm);
-								}
-								if (this.bitmapdata_mid) {
-									this.addChild(this.bitmapdata_mid);
-								}
-								if (this.bitmapdata_wid) {
-									this.addChild(this.bitmapdata_wid);
-								}
-								if (this.bitmapdata_wgid) {
-									this.addChild(this.bitmapdata_wgid);
-								}
-							}
-							_local_10 = this.bitmapdata_wid;
-						} else {
-							if (_arg_5 == ItemConst.MOUNT_TYPE) {
-								if (this.bitmapdata_midm == null) {
-									this.bitmapdata_midm = new Bitmap();
-									if (this.bitmapdata_midm) {
-										this.addChild(this.bitmapdata_midm);
-									}
-									if (this.bitmapdata_mid) {
-										this.addChild(this.bitmapdata_mid);
-									}
-									if (this.bitmapdata_wid) {
-										this.addChild(this.bitmapdata_wid);
-									}
-									if (this.bitmapdata_wgid) {
-										this.addChild(this.bitmapdata_wgid);
-									}
-								}
-								_local_10 = this.bitmapdata_midm;
-							} else {
-								if (_arg_5 == ItemConst.WING_TYPE) {
-									if (this.bitmapdata_midm == null) {
-										this.bitmapdata_wgid = new Bitmap();
-										if (this.bitmapdata_midm) {
-											this.addChild(this.bitmapdata_midm);
-										}
-										if (this.bitmapdata_mid) {
-											this.addChild(this.bitmapdata_mid);
-										}
-										if (this.bitmapdata_wid) {
-											this.addChild(this.bitmapdata_wid);
-										}
-										if (this.bitmapdata_wgid) {
-											this.addChild(this.bitmapdata_wgid);
-										}
-									}
-									_local_10 = this.bitmapdata_wgid;
-								} else {
-									if (_arg_5 == ItemConst.EFFECT_TYPE) {
-										if (this.eid_avatarBitmaps == null) {
-											this.eid_avatarBitmaps = new Dictionary();
-										}
-										if (this.eid_avatarBitmaps[_arg_6] == null) {
-											this.eid_avatarBitmaps[_arg_6] = new Bitmap();
-											this.addChild(this.eid_avatarBitmaps[_arg_6]);
-										}
-										_local_10 = this.eid_avatarBitmaps[_arg_6];
-									}
-								}
-							}
+						if (this.bitmapdata_mid) {
+							this.addChild(this.bitmapdata_mid);
+						}
+						if (this.bitmapdata_wid) {
+							this.addChild(this.bitmapdata_wid);
+						}
+						if (this.bitmapdata_wgid) {
+							this.addChild(this.bitmapdata_wgid);
 						}
 					}
-					if (_local_10) {
-						_local_11 = -(_arg_7);
-						_local_12 = -(_arg_8);
-						if (_local_10.bitmapData != _arg_3) {
-							_local_10.bitmapData = _arg_3;
+					bmp = this.bitmapdata_mid;
+				} else if (avatarType == ItemConst.WEAPON_TYPE) {
+					if (this.bitmapdata_wid == null) {
+						this.bitmapdata_wid = new Bitmap();
+						if (this.bitmapdata_midm) {
+							this.addChild(this.bitmapdata_midm);
 						}
-						if ((((_arg_3 == Engine.shadow_bitmapData)) && (Engine.shadow_bitmapData))) {
-							if (_local_10.x != _local_11) {
-								_local_10.x = (-(Engine.shadow_bitmapData.width) / 2);
-							}
-							if (_local_10.y != _local_12) {
-								_local_10.y = -(Engine.shadow_bitmapData.height);
-							}
-						} else {
-							if (_local_10.x != _local_11) {
-								_local_10.x = _local_11;
-							}
-							if (_local_10.y != _local_12) {
-								_local_10.y = _local_12;
-							}
+						if (this.bitmapdata_mid) {
+							this.addChild(this.bitmapdata_mid);
+						}
+						if (this.bitmapdata_wid) {
+							this.addChild(this.bitmapdata_wid);
+						}
+						if (this.bitmapdata_wgid) {
+							this.addChild(this.bitmapdata_wgid);
+						}
+					}
+					bmp = this.bitmapdata_wid;
+				} else if (avatarType == ItemConst.MOUNT_TYPE) {
+					if (this.bitmapdata_midm == null) {
+						this.bitmapdata_midm = new Bitmap();
+						if (this.bitmapdata_midm) {
+							this.addChild(this.bitmapdata_midm);
+						}
+						if (this.bitmapdata_mid) {
+							this.addChild(this.bitmapdata_mid);
+						}
+						if (this.bitmapdata_wid) {
+							this.addChild(this.bitmapdata_wid);
+						}
+						if (this.bitmapdata_wgid) {
+							this.addChild(this.bitmapdata_wgid);
+						}
+					}
+					bmp = this.bitmapdata_midm;
+				} else if (avatarType == ItemConst.WING_TYPE) {
+					if (this.bitmapdata_midm == null) {
+						this.bitmapdata_wgid = new Bitmap();
+						if (this.bitmapdata_midm) {
+							this.addChild(this.bitmapdata_midm);
+						}
+						if (this.bitmapdata_mid) {
+							this.addChild(this.bitmapdata_mid);
+						}
+						if (this.bitmapdata_wid) {
+							this.addChild(this.bitmapdata_wid);
+						}
+						if (this.bitmapdata_wgid) {
+							this.addChild(this.bitmapdata_wgid);
+						}
+					}
+					bmp = this.bitmapdata_wgid;
+				} else if (avatarType == ItemConst.EFFECT_TYPE) {
+					if (this.eid_avatarBitmaps == null) {
+						this.eid_avatarBitmaps = new Dictionary();
+					}
+					if (this.eid_avatarBitmaps[_arg_6] == null) {
+						this.eid_avatarBitmaps[_arg_6] = new Bitmap();
+						this.addChild(this.eid_avatarBitmaps[_arg_6]);
+					}
+					bmp = this.eid_avatarBitmaps[_arg_6];
+				}
+				if (bmp) {
+					var xx:int = -px;
+					var yy:int = -py;
+					if (bmp.bitmapData != bmd) {
+						bmp.bitmapData = bmd;
+					}
+					if (bmd == Engine.shadow_bitmapData && Engine.shadow_bitmapData) {
+						if (bmp.x != xx) {
+							bmp.x = -(Engine.shadow_bitmapData.width / 2);
+						}
+						if (bmp.y != yy) {
+							bmp.y = -Engine.shadow_bitmapData.height;
+						}
+					} else {
+						if (bmp.x != xx) {
+							bmp.x = xx;
+						}
+						if (bmp.y != yy) {
+							bmp.y = yy;
 						}
 					}
 				}
@@ -551,10 +538,6 @@
 				_local_1 = null;
 			}
 			this.eid_avatarBitmaps = null;
-			for (_local_2 in this.avatarParams) {
-				delete this.avatarParams[_local_2];
-			}
-			this.avatarParams = null;
 			_point = null;
 			super.dispose();
 			this.isDisposed = true;

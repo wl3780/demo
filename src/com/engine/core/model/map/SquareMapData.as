@@ -18,9 +18,7 @@
 		public var pixel_height:int;
 		public var width:int;
 		public var height:int;
-		public var len:int;
 		public var items:Array;
-		public var sceneData:Object;
 
 		public function prasePro(px:int, py:int, num:int):Square
 		{

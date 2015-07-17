@@ -780,8 +780,8 @@
 
 		coder function playEffectFunc(_arg_1:AvatarParam):void
 		{
-			if (_arg_1.type == ItemConst.BODY_TYPE) {
-				if (((((this.$playEndFunc) && (this.$playState))) && ((_arg_1.link == this.$playState)))) {
+			if (_arg_1.avatarType == ItemConst.BODY_TYPE) {
+				if (((((this.$playEndFunc) && (this.$playState))) && ((_arg_1.action == this.$playState)))) {
 					this.$playEndFunc();
 				}
 			}
@@ -1099,7 +1099,7 @@
 			}
 		}
 
-		public function onRender(_arg_1:String, _arg_2:int, _arg_3:BitmapData, _arg_4:Rectangle, _arg_5:String, _arg_6:String=null, _arg_7:int=0, _arg_8:int=0, _arg_9:BitmapData=null):void
+		public function onRender(parts_id:String, _arg_2:int, _arg_3:BitmapData, _arg_4:Rectangle, _arg_5:String, _arg_6:String=null, _arg_7:int=0, _arg_8:int=0, _arg_9:BitmapData=null):void
 		{
 			var _local_10:Bitmap;
 			var _local_11:int;
@@ -1107,10 +1107,10 @@
 			var _local_13:int;
 			var _local_14:int;
 			var _local_15:Boolean;
-			if (this.isDisposed) {
+			if (this.avatarParts.id != parts_id) {
 				return;
 			}
-			if (this.avatarParts.id != _arg_1) {
+			if (this.isDisposed || !this.stage || !this.parent) {
 				return;
 			}
 			if (((this.isShowbodyShoadw) && (((getTimer() - this.deayTime) > 500)))) {
@@ -1120,9 +1120,6 @@
 					this.showBodyShoadw(false);
 				}
 				this.isShowbodyShoadw = false;
-			}
-			if ((((((_arg_6 == null)) || ((this.avatarParts == null)))) || ((this.parent == null)))) {
-				return;
 			}
 			if (((!((this.avatarParts.state == CharAction.STAND))) && (!((this.avatarParts.state == CharAction.WALK))))) {
 				this.loadCharActionAssets(this.avatarParts.state);

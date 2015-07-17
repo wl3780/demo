@@ -42,7 +42,7 @@
 		private var _assetsQuene:Array;
 		private var _bmdQuene:Array;
 		private var _oldFrameRate:int;
-		private var _time:int = 0;
+		private var _delayTime:int = 0;
 
 		public function AvatarAssetManager()
 		{
@@ -91,8 +91,8 @@
 			} else {
 				interval = 20;
 			}
-			if (_loaderQuene.length && (Engine.delayTime - _time) > interval) {
-				_time = Engine.delayTime;
+			if (_loaderQuene.length && (Engine.delayTime - _delayTime) > interval) {
+				_delayTime = Engine.delayTime;
 				var loaderItem:Object = _loaderQuene.shift();
 				this.analyze(loaderItem.avatarParam, loaderItem.loader);
 			}
@@ -432,7 +432,7 @@
 			var frames:int = avatarParam.frames;
 			var id:String = avatarParam.oid;
 			var l:int = avatarParam.heights.length;
-			var type:String = avatarParam.type;
+			var type:String = avatarParam.avatarType;
 			var num:int = 8;
 			if (l >= 5) {
 				num = 8;
@@ -463,7 +463,7 @@
 					}
 				} else {
 					index = 8 - i;
-					indexLink = avatarParam.id + Engine.SIGN + id + "." + avatarParam.link + "." + index;
+					indexLink = avatarParam.id + Engine.SIGN + id + "." + avatarParam.action + "." + index;
 					j = 0;
 					while (j < frames) {
 						bmd_ = this.bitmapdatas[indexLink][j];
@@ -513,12 +513,12 @@
 			var xmlList:XMLList = xml.children();
 			var len:int = xmlList.length();
 			var idx:int;
+			var avatarId:String = xml.@id;
 			while (idx < len) {
 				var xmlItem:XML = xmlList[idx];
-				var avatarId:String = xml.@id;
 				var param:AvatarParam = new AvatarParam();
-				param.type = avatarType;
-				param.link = xmlItem.@id;
+				param.avatarType = avatarType;
+				param.action = xmlItem.@id;
 				param.frames = xmlItem.@frames;
 				if (avatarType != ItemConst.EFFECT_TYPE) {
 					param.speed = int(int(xmlItem.@speed) / Engine._Lessen_Frame_);
@@ -532,7 +532,7 @@
 					param.replay = -1;
 				}
 				param.coder::oid = fileName;
-				param.coder::id = fileName + Engine.SIGN + param.link;
+				param.coder::id = fileName + Engine.SIGN + param.action;
 				
 				var actList:XMLList = xmlItem.children();
 				var actLen:int = actList.length();
@@ -566,11 +566,11 @@
 						param.widths[dirIdx] = [];
 						param.heights[dirIdx] = [];
 						if (!once) {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + dirIdx;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + dirIdx;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + dirIdx;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + dirIdx;
 						} else {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + 0;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + 0;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + 0;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + 0;
 						}
 						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
 							frameList = actXML.children();
@@ -618,14 +618,14 @@
 						param.widths[dirIdx] = param.widths[flipIdx];
 						param.heights[dirIdx] = param.heights[flipIdx];
 						if (!once) {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + dirIdx;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + dirIdx;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + dirIdx;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + dirIdx;
 						} else {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.link + "." + 0;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.link + "." + 0;
+							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + 0;
+							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + 0;
 						}
 						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
-							_local_30 = param.id + Engine.SIGN + avatarId + "." + param.link + "." + flipIdx;
+							_local_30 = param.id + Engine.SIGN + avatarId + "." + param.action + "." + flipIdx;
 							if (this.bitmapdatas[bmdKey] == null) {
 								this.bitmapdatas[bmdKey] = [];
 							}
@@ -644,7 +644,7 @@
 				}
 				if (this.avatarParams.hasOwnProperty(param.id) == false) {
 					this.avatarParams[param.id] = param;
-					dict[param.link] = param;
+					dict[param.action] = param;
 				}
 				idx++;
 			}

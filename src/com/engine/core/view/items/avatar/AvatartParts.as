@@ -187,7 +187,7 @@
 				actionState = CharAction.STAND;
 			}
 			if (this.specialMode == 1) {
-				actionState = "skill2";
+				actionState = CharAction.SKILL2;
 			}
 			var actionDict:Dictionary = this.avatarParts[actionState] as Dictionary;
 			if (this.oldState != this.state) {
@@ -231,13 +231,13 @@
 					for each (param in actionDict) {
 						var callParam:Object = {
 							"assets_id":param.coder::assets_id,
-							"link":param.link,
-							"type":param.type,
+							"link":param.action,
+							"type":param.avatarType,
 							"avatarParm_oid":param.oid,
 							"avatarParm_id":param.id
 						}
 						_totalFrames = param.frames;
-						var _local_8:String = param.type;
+						var _local_8:String = param.avatarType;
 						if (_currentFrame >= param.frames && (!this.isFlyMode || (this.isFlyMode && _local_8 != ItemConst.MOUNT_TYPE))) {
 							if (this.specialMode == 1 && _currentFrame >= param.frames) {
 								_currentFrame = 0;
@@ -299,17 +299,17 @@
 							break;
 						}
 						if (param.replay > 0) {
-							if (!((((((this.hiedBody) && ((param.type == ItemConst.BODY_TYPE)))) || (((this.hiedWeapon) && ((param.type == ItemConst.WEAPON_TYPE)))))) || (((this.hiedMount) && ((param.type == ItemConst.MOUNT_TYPE)))))) {
-								if (param.type == ItemConst.BODY_TYPE) {
+							if (!((((((this.hiedBody) && ((param.avatarType == ItemConst.BODY_TYPE)))) || (((this.hiedWeapon) && ((param.avatarType == ItemConst.WEAPON_TYPE)))))) || (((this.hiedMount) && ((param.avatarType == ItemConst.MOUNT_TYPE)))))) {
+								if (param.avatarType == ItemConst.BODY_TYPE) {
 									_local_14 = false;
 								}
-								if (param.type == ItemConst.MOUNT_TYPE) {
+								if (param.avatarType == ItemConst.MOUNT_TYPE) {
 									_local_15 = false;
 								}
 								if (((this.isFlyMode) && ((_local_8 == "midm")))) {
-									this.onRender(this.id, _dir, _local_3, _local_4, param.type, param.id, param.txs[_dir][_fly_currentFrame], param.tys[_dir][_fly_currentFrame], _local_5);
+									this.onRender(this.id, _dir, _local_3, _local_4, param.avatarType, param.id, param.txs[_dir][_fly_currentFrame], param.tys[_dir][_fly_currentFrame], _local_5);
 								} else {
-									this.onRender(this.id, _dir, _local_3, _local_4, param.type, param.id, param.txs[_dir][_currentFrame], param.tys[_dir][_currentFrame], _local_5);
+									this.onRender(this.id, _dir, _local_3, _local_4, param.avatarType, param.id, param.txs[_dir][_currentFrame], param.tys[_dir][_currentFrame], _local_5);
 								}
 							}
 							if (_currentFrame >= param.frames) {
@@ -317,17 +317,17 @@
 							}
 						} else {
 							if (param.replay == -1) {
-								if (!((((((this.hiedBody) && ((param.type == ItemConst.BODY_TYPE)))) || (((this.hiedWeapon) && ((param.type == ItemConst.WEAPON_TYPE)))))) || (((this.hiedMount) && ((param.type == ItemConst.MOUNT_TYPE)))))) {
-									if (param.type == ItemConst.BODY_TYPE) {
+								if (!((((((this.hiedBody) && ((param.avatarType == ItemConst.BODY_TYPE)))) || (((this.hiedWeapon) && ((param.avatarType == ItemConst.WEAPON_TYPE)))))) || (((this.hiedMount) && ((param.avatarType == ItemConst.MOUNT_TYPE)))))) {
+									if (param.avatarType == ItemConst.BODY_TYPE) {
 										_local_14 = false;
 									}
-									if (param.type == ItemConst.MOUNT_TYPE) {
+									if (param.avatarType == ItemConst.MOUNT_TYPE) {
 										_local_15 = false;
 									}
 									if (((this.isFlyMode) && ((_local_8 == "midm")))) {
-										this.onRender(this.id, _dir, _local_3, _local_4, param.type, param.id, param.txs[_dir][_fly_currentFrame], param.tys[_dir][_fly_currentFrame], _local_5);
+										this.onRender(this.id, _dir, _local_3, _local_4, param.avatarType, param.id, param.txs[_dir][_fly_currentFrame], param.tys[_dir][_fly_currentFrame], _local_5);
 									} else {
-										this.onRender(this.id, _dir, _local_3, _local_4, param.type, param.id, param.txs[_dir][_currentFrame], param.tys[_dir][_currentFrame], _local_5);
+										this.onRender(this.id, _dir, _local_3, _local_4, param.avatarType, param.id, param.txs[_dir][_currentFrame], param.tys[_dir][_currentFrame], _local_5);
 									}
 								}
 							}
@@ -371,8 +371,8 @@
 					}
 					var _local_12:Object = {
 						"assets_id":_local_1.coder::assets_id,
-						"link":_local_1.link,
-						"type":_local_1.type,
+						"link":_local_1.action,
+						"type":_local_1.avatarType,
 						"avatarParm_oid":_local_1.oid,
 						"avatarParm_id":_local_1.id
 					};
@@ -405,7 +405,7 @@
 					if (((((this.isTimeoutDelete) && ((ItemAvatar.coder::$itemAvataInstanceNumber > 500)))) && (int(((getTimer() / 1000) < 30))))) {
 						_local_1.replay = 0;
 						_local_6 = (_local_1.id + _local_1.oid);
-						this.onRender(0, null, _local_3, _local_1.type);
+						this.onRender(0, null, _local_3, _local_1.avatarType);
 						this.disposeEffectsFunc(_local_1.id);
 						delete actionDict[_local_6];
 						_local_1.dispose();
@@ -432,7 +432,7 @@
 							}
 							if (_local_1.replay == 0) {
 								_local_6 = (_local_1.id + _local_1.oid);
-								this.onRender(this.id, 0, null, _local_3, _local_1.type);
+								this.onRender(this.id, 0, null, _local_3, _local_1.avatarType);
 								this.disposeEffectsFunc(_local_1.id);
 								delete actionDict[_local_6];
 								_local_1.dispose();
@@ -440,7 +440,7 @@
 								break;
 							}
 							if (_local_1.replay > 0) {
-								this.onRender(this.id, _local_11, _local_2, _local_3, _local_1.type, _local_1.id, _local_1.txs[_local_11][_local_10], _local_1.tys[_local_11][_local_10]);
+								this.onRender(this.id, _local_11, _local_2, _local_3, _local_1.avatarType, _local_1.id, _local_1.txs[_local_11][_local_10], _local_1.tys[_local_11][_local_10]);
 								if (_local_1.currentFrame >= _local_1.frames) {
 									if (!_local_13) {
 										_local_1.currentFrame = 0;
@@ -451,7 +451,7 @@
 									}
 								}
 							} else {
-								this.onRender(this.id, _local_11, _local_2, _local_3, _local_1.type, _local_1.id, _local_1.txs[_local_11][_local_10], _local_1.tys[_local_11][_local_10]);
+								this.onRender(this.id, _local_11, _local_2, _local_3, _local_1.avatarType, _local_1.id, _local_1.txs[_local_11][_local_10], _local_1.tys[_local_11][_local_10]);
 								if (_local_1.currentFrame >= _local_1.frames) {
 									_local_1.currentFrame = 0;
 									if (this.playEndFunc != null) {
@@ -462,7 +462,7 @@
 						} else {
 							if (((((((!(_local_2)) && (this.isTimeoutDelete))) && ((_local_1.startPlayTime > 0)))) && (((_local_1.counter - _local_1.startPlayTime) > 15000)))) {
 								_local_6 = (_local_1.id + _local_1.oid);
-								this.onRender(this.id, 0, null, _local_3, _local_1.type);
+								this.onRender(this.id, 0, null, _local_3, _local_1.avatarType);
 								this.disposeEffectsFunc(_local_1.id);
 								delete actionDict[_local_6];
 								_local_1.dispose();
@@ -567,10 +567,10 @@
 			if (param == null) {
 				return;
 			}
-			var tmpLink:String = param.link;
+			var tmpLink:String = param.action;
 			var tmpOid:String = param.oid;
 			if (tmpOid) {
-				if (param.type == ItemConst.EFFECT_TYPE) {
+				if (param.avatarType == ItemConst.EFFECT_TYPE) {
 					if (this.effectsParts == null) {
 						this.effectsParts = new Dictionary();
 					}
@@ -595,9 +595,6 @@
 					}
 					if (this.avatarParts[tmpLink] == null) {
 						this.avatarParts[tmpLink] = new Dictionary();
-					}
-					if (this.avatarParts[tmpLink][tmpOid]) {
-						delete this.avatarParts[tmpLink][tmpOid];
 					}
 					this.avatarParts[tmpLink][tmpOid] = param;
 				}
