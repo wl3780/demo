@@ -1,7 +1,7 @@
 ﻿package com.engine.core.view.items.avatar
 {
 	import com.engine.core.Engine;
-	import com.engine.core.ItemConst;
+	import com.engine.core.AvatarTypes;
 	import com.engine.core.tile.square.SquarePt;
 	import com.engine.core.view.items.Item;
 	import com.engine.core.view.scenes.Scene;
@@ -262,22 +262,22 @@
 			} else {
 				this.avatarParts.removeAvatarPartByType(avatarType);
 				switch (avatarType) {
-					case ItemConst.BODY_TYPE:
+					case AvatarTypes.BODY_TYPE:
 						if (this.bitmapdata_mid) {
 							this.bitmapdata_mid.bitmapData = null;
 						}
 						break;
-					case ItemConst.WEAPON_TYPE:
+					case AvatarTypes.WEAPON_TYPE:
 						if (this.bitmapdata_wid) {
 							this.bitmapdata_wid.bitmapData = null;
 						}
 						break;
-					case ItemConst.MOUNT_TYPE:
+					case AvatarTypes.MOUNT_TYPE:
 						if (this.bitmapdata_midm) {
 							this.bitmapdata_midm.bitmapData = null;
 						}
 						break;
-					case ItemConst.WING_TYPE:
+					case AvatarTypes.WING_TYPE:
 						if (this.bitmapdata_wgid) {
 							this.bitmapdata_wgid.bitmapData = null;
 						}
@@ -374,7 +374,7 @@
 			}
 			if (this.stageIntersects) {
 				var bmp:Bitmap;
-				if (avatarType == ItemConst.BODY_TYPE) {
+				if (avatarType == AvatarTypes.BODY_TYPE) {
 					if (this.bitmapdata_mid == null) {
 						this.bitmapdata_mid = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -391,7 +391,7 @@
 						}
 					}
 					bmp = this.bitmapdata_mid;
-				} else if (avatarType == ItemConst.WEAPON_TYPE) {
+				} else if (avatarType == AvatarTypes.WEAPON_TYPE) {
 					if (this.bitmapdata_wid == null) {
 						this.bitmapdata_wid = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -408,7 +408,7 @@
 						}
 					}
 					bmp = this.bitmapdata_wid;
-				} else if (avatarType == ItemConst.MOUNT_TYPE) {
+				} else if (avatarType == AvatarTypes.MOUNT_TYPE) {
 					if (this.bitmapdata_midm == null) {
 						this.bitmapdata_midm = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -425,7 +425,7 @@
 						}
 					}
 					bmp = this.bitmapdata_midm;
-				} else if (avatarType == ItemConst.WING_TYPE) {
+				} else if (avatarType == AvatarTypes.WING_TYPE) {
 					if (this.bitmapdata_midm == null) {
 						this.bitmapdata_wgid = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -442,7 +442,7 @@
 						}
 					}
 					bmp = this.bitmapdata_wgid;
-				} else if (avatarType == ItemConst.EFFECT_TYPE) {
+				} else if (avatarType == AvatarTypes.EFFECT_TYPE) {
 					if (this.eid_avatarBitmaps == null) {
 						this.eid_avatarBitmaps = new Dictionary();
 					}
@@ -487,13 +487,13 @@
 				return;
 			}
 			switch (avatarType) {
-				case ItemConst.EFFECT_TYPE:
+				case AvatarTypes.EFFECT_TYPE:
 					return;
-				case ItemConst.BODY_TYPE:
+				case AvatarTypes.BODY_TYPE:
 					return;
-				case ItemConst.WEAPON_TYPE:
+				case AvatarTypes.WEAPON_TYPE:
 					return;
-				case ItemConst.MOUNT_TYPE:
+				case AvatarTypes.MOUNT_TYPE:
 					return;
 			}
 		}
@@ -508,23 +508,23 @@
 			}
 			if (this.bitmapdata_wid) {
 				this.bitmapdata_wid.bitmapData = null;
+				this.bitmapdata_wid = null;
 			}
 			if (this.bitmapdata_midm) {
 				this.bitmapdata_midm.bitmapData = null;
+				this.bitmapdata_midm = null;
 			}
 			if (this.bitmapdata_mid) {
 				this.bitmapdata_mid.bitmapData = null;
+				this.bitmapdata_mid = null;
 			}
 			if (this.bitmapdata_wgid) {
 				this.bitmapdata_wgid.bitmapData = null;
+				this.bitmapdata_wgid = null;
 			}
 			if (((this.nameText) && (this.nameText.parent))) {
 				this.nameText.parent.removeChild(this.nameText);
 			}
-			this.bitmapdata_midm = null;
-			this.bitmapdata_wid = null;
-			this.bitmapdata_mid = null;
-			this.bitmapdata_wgid = null;
 			_point = null;
 			this.nameText = null;
 			_nameEnabled = true;

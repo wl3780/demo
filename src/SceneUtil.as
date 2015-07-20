@@ -1,6 +1,6 @@
 ﻿package 
 {
-	import com.engine.core.ItemConst;
+	import com.engine.core.AvatarTypes;
 	import com.engine.core.tile.square.Square;
 	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.tile.square.SquarePt;
@@ -20,9 +20,9 @@
 			if (((!(_arg_1)) || (!(_arg_1.avatarParts)))) {
 				return;
 			}
-			_arg_1.loadAvatarPart(ItemConst.BODY_TYPE, _arg_2);
-			_arg_1.loadAvatarPart(ItemConst.WEAPON_TYPE, _arg_3);
-			_arg_1.loadAvatarPart(ItemConst.MOUNT_TYPE, _arg_4);
+			_arg_1.loadAvatarPart(AvatarTypes.BODY_TYPE, _arg_2);
+			_arg_1.loadAvatarPart(AvatarTypes.WEAPON_TYPE, _arg_3);
+			_arg_1.loadAvatarPart(AvatarTypes.MOUNT_TYPE, _arg_4);
 			_arg_1.avatarParts.bodyRender(true);
 		}
 

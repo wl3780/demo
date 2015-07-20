@@ -1,7 +1,6 @@
 ﻿package com.engine.core.view.role
 {
 	import com.engine.core.Engine;
-	import com.engine.core.ItemConst;
 	import com.engine.core.tile.Pt;
 	import com.engine.core.tile.TileConst;
 	import com.engine.core.view.BitmapScale9Grid;
@@ -47,8 +46,6 @@
 		private static var matrix:Matrix = new Matrix();
 		
 		public var popsinger:int;
-		public var suitURL:String;
-		public var haloURL:String;
 		public var isTeleporting:Boolean = false;
 		public var effectSpeed:int = 350;
 		public var isBackMoving:Boolean = false;
@@ -74,15 +71,8 @@
 		
 		private var buffSprite:Item;
 		private var _walkEndFunc:Function;
-		private var _song_effect:ItemAvatar;
-		private var _song_effect2:ItemAvatar;
-		private var _halo_effect:ItemAvatar;
-		private var _suit_effect:ItemAvatar;
-		private var _wing_effect_1:ItemAvatar;
-		private var _wing_effect_2:ItemAvatar;
 		
 		private var _dropShape:Shape;
-		private var _suitVisible:Boolean = true;
 		private var effectDic:Dictionary;
 		private var timex:int = 0;
 		private var jumpTimeNum:int;
@@ -227,64 +217,6 @@
 			this.addChild(_dropShape);
 		}
 
-		public function showWing(_arg_1:String, _arg_2:String):void
-		{
-			if (_wing_effect_1) {
-				_wing_effect_1.dispose();
-				if (_wing_effect_1.parent) {
-					_wing_effect_1.parent.removeChild(_wing_effect_1);
-				}
-			}
-			_wing_effect_1 = new ItemAvatar();
-			if (this.isMainChar) {
-				_wing_effect_1.isAutoDispose = false;
-			}
-			_wing_effect_1.avatarParts.isTimeoutDelete = false;
-			_wing_effect_1.avatarParts.lockEffectState = false;
-			_wing_effect_1.isSceneItem = false;
-			_wing_effect_1.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
-			_wing_effect_1.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			this.addChildAt(_wing_effect_1, 0);
-			_wing_effect_1.visible = this.bodyVisible;
-			_wing_effect_1.play(CharAction.STAND);
-			if (_wing_effect_2) {
-				_wing_effect_2.dispose();
-				if (_wing_effect_2.parent) {
-					_wing_effect_2.parent.removeChild(_wing_effect_2);
-				}
-			}
-			_wing_effect_2 = new ItemAvatar();
-			if (this.isMainChar) {
-				_wing_effect_2.isAutoDispose = false;
-			}
-			_wing_effect_2.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			_wing_effect_2.avatarParts.isTimeoutDelete = false;
-			_wing_effect_2.avatarParts.lockEffectState = false;
-			_wing_effect_2.isSceneItem = false;
-			_wing_effect_2.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_2);	// 有问题
-			this.addChildAt(_wing_effect_2, 0);
-			_wing_effect_2.visible = this.bodyVisible;
-			_wing_effect_2.play(CharAction.STAND);
-		}
-
-		public function removeWing():void
-		{
-			if (_wing_effect_1) {
-				if (_wing_effect_1.parent) {
-					removeChild(_wing_effect_1);
-				}
-				_wing_effect_1.dispose();
-			}
-			if (_wing_effect_2) {
-				if (_wing_effect_2.parent) {
-					removeChild(_wing_effect_2);
-				}
-				_wing_effect_2.dispose();
-			}
-			_wing_effect_1 = null;
-			_wing_effect_2 = null;
-		}
-
 		override public function get transform():Transform
 		{
 			if (this.bitmapdata_mid) {
@@ -299,117 +231,10 @@
 			}
 		}
 
-		public function setSuitVisible(val:Boolean):void
-		{
-			_suitVisible = val;
-			if (_suit_effect) {
-				_suit_effect.visible = val;
-			}
-		}
-
-		public function showSuit(url:String):void
-		{
-			this.suitURL = url;
-			if (_suit_effect) {
-				_suit_effect.dispose();
-				if (_suit_effect.parent) {
-					_suit_effect.parent.removeChild(_suit_effect);
-				}
-			}
-			_suit_effect = new ItemAvatar();
-			if (this.isMainChar) {
-				_suit_effect.isAutoDispose = false;
-			}
-			_suit_effect.isSceneItem = false;
-			_suit_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			_suit_effect.loadAvatarPart(ItemConst.EFFECT_TYPE, url);	// 有问题
-			this.addChild(_suit_effect);
-			_suit_effect.visible = this.bodyVisible;
-		}
-
-		public function removeSuit():void
-		{
-			this.suitURL = null;
-			if (_suit_effect) {
-				if (_suit_effect.parent) {
-					removeChild(_suit_effect);
-				}
-				_suit_effect.dispose();
-			}
-			_suit_effect = null;
-		}
-
-		public function showHaloBuffEffect(_arg_1:String, _arg_2:String=null):void
-		{
-			var _local_3:ItemAvatar;
-			if (this.effectDic == null) {
-				this.effectDic = new Dictionary();
-			}
-			if (((_arg_1) && ((this.effectDic[_arg_1] == null)))) {
-				_local_3 = new ItemAvatar();
-				if (this.isMainChar) {
-					_local_3.isAutoDispose = false;
-				}
-				_local_3.isSceneItem = false;
-				_local_3.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-				_local_3.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
-				if (_arg_2 == null) {
-					this.addChild(_local_3);
-					_local_3.visible = this.bodyVisible;
-				} else {
-					if (_arg_2 == SceneConstant.ITEM_LAYER) {
-						this.addChildAt(_local_3, 0);
-						_local_3.visible = this.bodyVisible;
-					}
-				}
-				this.effectDic[_arg_1] = _local_3;
-			}
-		}
-
-		public function removeHaloBuffEffect(_arg_1:String):void
-		{
-			var _local_2:ItemAvatar;
-			if (((this.effectDic) && (this.effectDic[_arg_1]))) {
-				_local_2 = this.effectDic[_arg_1];
-				_local_2.dispose();
-				if (_local_2.parent) {
-					_local_2.parent.removeChild(_local_2);
-				}
-				delete this.effectDic[_arg_1];
-			}
-		}
-
 		override public function loadAvatarPart(avatarType:String, avatarNum:String):String
 		{
 			var loadKey:String = super.loadAvatarPart(avatarType, avatarNum);
-			if (_halo_effect) {
-				if (this.isOnMonut) {
-					_halo_effect.y = 20;
-				} else {
-					_halo_effect.y = 0;
-				}
-			}
 			return loadKey;
-		}
-
-		public function showHalo(_arg_1:String):void
-		{
-			this.haloURL = _arg_1;
-			if (_halo_effect) {
-				_halo_effect.dispose();
-				if (_halo_effect.parent) {
-					_halo_effect.parent.removeChild(_halo_effect);
-				}
-			}
-			_halo_effect = new ItemAvatar();
-			if (this.isMainChar) {
-				_halo_effect.isAutoDispose = false;
-			}
-			_halo_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-			_halo_effect.isSceneItem = false;
-			_halo_effect.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
-			_halo_effect.visible = this.bodyVisible;
-			shape.addChild(_halo_effect);
 		}
 
 		override public function set shoadw(_arg_1:BitmapData):void
@@ -434,99 +259,9 @@
 			}
 		}
 
-		public function removeHalo():void
-		{
-			this.haloURL = null;
-			if (_halo_effect) {
-				if (_halo_effect.parent) {
-					_halo_effect.parent.removeChild(_halo_effect);
-				}
-				_halo_effect.dispose();
-			}
-			_halo_effect = null;
-		}
-
-		public function removeSongEffect():void
-		{
-			if (_song_effect) {
-				if (_song_effect.parent) {
-					_song_effect.parent.removeChild(_song_effect);
-				}
-				_song_effect.dispose();
-				_song_effect = null;
-			}
-			if (_song_effect2) {
-				_song_effect2.dispose();
-				if (_song_effect2.parent) {
-					_song_effect2.parent.removeChild(_song_effect2);
-				}
-				_song_effect2 = null;
-			}
-		}
-
-		public function showSongEffect(_arg_1:String, _arg_2:String):void
-		{
-			if (_song_effect) {
-				_song_effect.dispose();
-				if (_song_effect.parent) {
-					this.removeChild(_song_effect);
-				}
-			}
-			if (_song_effect2) {
-				_song_effect2.dispose();
-				if (_song_effect2.parent) {
-					_song_effect2.parent.removeChild(_song_effect2);
-				}
-			}
-			if (((_arg_1) && (!((_arg_1 == ""))))) {
-				_song_effect = new ItemAvatar();
-				if (this.isMainChar) {
-					_song_effect.isAutoDispose = false;
-				}
-				_song_effect.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-				_song_effect.isSceneItem = false;
-				_song_effect.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);	// 有问题
-				_song_effect.dir = this.dir;
-				_song_effect.y = this.onMonutHeight;
-				this.addChildAt(_song_effect, 0);
-				_song_effect.visible = this.bodyVisible;
-			}
-			if (((_arg_2) && (!((_arg_2 == ""))))) {
-				_song_effect2 = new ItemAvatar();
-				if (this.isMainChar) {
-					_song_effect2.isAutoDispose = false;
-				}
-				_song_effect2.avatarParts.lockEffectPlaySpeed(true, this.effectSpeed);
-				_song_effect2.isSceneItem = false;
-				_song_effect2.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_2);	// 有问题
-				_song_effect2.dir = this.dir;
-				_song_effect2.y = this.onMonutHeight;
-				this.addChild(_song_effect2);
-				_song_effect2.visible = this.bodyVisible;
-			}
-		}
-
 		override public function set bodyVisible(val:Boolean):void
 		{
 			super.bodyVisible = val;
-			if (_song_effect) {
-				_song_effect.visible = val;
-			}
-			if (_song_effect2) {
-				_song_effect2.visible = val;
-			}
-			if (_halo_effect) {
-				_halo_effect.visible = val;
-			}
-			if (_suit_effect) {
-				_suit_effect.visible = val;
-			}
-			if (_wing_effect_1) {
-				_wing_effect_1.visible = val;
-			}
-			if (_wing_effect_2) {
-				_wing_effect_2.visible = val;
-			}
 			if (this.buffSprite) {
 				this.buffSprite.visible = val;
 			}
@@ -586,41 +321,6 @@
 			}
 			super.onRender(_arg_1, _arg_2, _arg_3, _arg_4, _arg_5, _arg_6, _arg_7, _arg_8, _arg_9);
 			this.updateWord();
-			if (_suit_effect) {
-				if (_suit_effect.parent) {
-					this.addChild(_suit_effect);
-				}
-				if (_suit_effect.y != this.onMonutHeight) {
-					_suit_effect.y = this.onMonutHeight;
-				}
-			}
-			if (_song_effect2) {
-				if (_song_effect2.y != this.onMonutHeight) {
-					_song_effect2.y = this.onMonutHeight;
-				}
-			}
-			if (_song_effect) {
-				if (_song_effect.y != this.onMonutHeight) {
-					_song_effect.y = this.onMonutHeight;
-				}
-			}
-			if (_wing_effect_1) {
-				if (_wing_effect_1.dir != this.dir) {
-					_wing_effect_1.dir = this.dir;
-				}
-				if (_wing_effect_1.y != this.onMonutHeight) {
-					_wing_effect_1.y = this.onMonutHeight;
-				}
-			}
-			if (_wing_effect_2) {
-				if (_wing_effect_2.dir != this.dir) {
-					_wing_effect_2.dir = this.dir;
-				}
-				if (_wing_effect_2.y != this.onMonutHeight) {
-					_wing_effect_2.y = this.onMonutHeight;
-				}
-			}
-			this.wingDepth();
 			if (this.buffSprite) {
 				if (this.buffSprite.y != (-50 + this.onMonutHeight)) {
 					this.buffSprite.y = (-50 + this.onMonutHeight);
@@ -642,103 +342,11 @@
 			}
 		}
 
-		private function wingDepth():void
-		{
-			if (_wing_effect_1) {
-				if (((((((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) && (this.bitmapdata_fid))) && (bitmapdata_fid.parent))) {
-					if ((((((dir == 0)) || ((dir == 1)))) || ((dir == 7)))) {
-						if (((_wing_effect_1) && (_wing_effect_1.stage))) {
-							this.addChild(_wing_effect_1);
-						}
-						if (((_wing_effect_2) && (_wing_effect_2.stage))) {
-							this.addChild(_wing_effect_2);
-						}
-					} else {
-						if (dir == 2) {
-							if (((bitmapdata_midm) && (bitmapdata_midm.stage))) {
-								this.addChild(this.bitmapdata_midm);
-							}
-							if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
-								this.addChild(bitmapdata_mid);
-							}
-							if (((_wing_effect_1) && (_wing_effect_1.stage))) {
-								this.addChild(_wing_effect_1);
-							}
-							if (((_wing_effect_2) && (_wing_effect_2.stage))) {
-								this.addChild(_wing_effect_2);
-							}
-							if (((bitmapdata_fid) && (bitmapdata_fid.stage))) {
-								this.addChild(this.bitmapdata_fid);
-							}
-						} else {
-							if (dir == 3) {
-								if (((_wing_effect_1) && (_wing_effect_1.stage))) {
-									this.addChild(_wing_effect_1);
-								}
-								if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
-									this.addChild(bitmapdata_mid);
-								}
-								if (((bitmapdata_midm) && (bitmapdata_midm.stage))) {
-									this.addChild(this.bitmapdata_midm);
-								}
-								if (((_wing_effect_2) && (_wing_effect_2.stage))) {
-									this.addChild(_wing_effect_2);
-								}
-								if (((bitmapdata_fid) && (bitmapdata_fid.stage))) {
-									this.addChild(this.bitmapdata_fid);
-								}
-							} else {
-								if (dir == 4) {
-									if (((bitmapdata_midm) && (bitmapdata_midm.stage))) {
-										this.addChild(this.bitmapdata_midm);
-									}
-									if (((_wing_effect_1) && (_wing_effect_1.stage))) {
-										this.addChild(_wing_effect_1);
-									}
-									if (((_wing_effect_2) && (_wing_effect_2.stage))) {
-										this.addChild(_wing_effect_2);
-									}
-									if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
-										this.addChild(bitmapdata_mid);
-									}
-									if (((bitmapdata_fid) && (bitmapdata_fid.stage))) {
-										this.addChild(this.bitmapdata_fid);
-									}
-								} else {
-									if ((((dir == 5)) || ((dir == 6)))) {
-										if (((_wing_effect_1) && (_wing_effect_1.stage))) {
-											this.addChild(_wing_effect_1);
-										}
-										if (((bitmapdata_mid) && (bitmapdata_mid.stage))) {
-											this.addChild(this.bitmapdata_mid);
-										}
-										if (((bitmapdata_midm) && (bitmapdata_midm.stage))) {
-											this.addChild(this.bitmapdata_midm);
-										}
-										if (((bitmapdata_fid) && (bitmapdata_fid.stage))) {
-											this.addChild(this.bitmapdata_fid);
-										}
-										if (((_wing_effect_2) && (_wing_effect_2.stage))) {
-											this.addChild(_wing_effect_2);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
 		override public function play(action:String, _arg_2:AvatarRestrict=null, _arg_3:Boolean=false, _arg_4:Function=null, _arg_5:Boolean=true):void
 		{
 			if (this.isBackMoving == false) {
 				clearTimeout(this.jumpTimerIndex);
 				super.play(action, _arg_2, _arg_3, _arg_4, _arg_5);
-				if (_wing_effect_1) {
-					_wing_effect_1.play(action);
-					_wing_effect_2.play(action);
-				}
 			}
 		}
 
@@ -825,11 +433,6 @@
 			if (this.walkEndFunc != null) {
 				this.walkEndFunc = null;
 			}
-			if (val) {
-				this.setSuitVisible(false);
-			} else {
-				this.setSuitVisible(true);
-			}
 			this.stopMove();
 		}
 
@@ -900,29 +503,6 @@
 			this.openShadow = false;
 			this.x = 0;
 			this.y = 0;
-			if (_halo_effect) {
-				if (_halo_effect.parent) {
-					_halo_effect.parent.removeChild(_halo_effect);
-				}
-				_halo_effect.dispose();
-			}
-			if (_wing_effect_1) {
-				if (_wing_effect_1.parent) {
-					_wing_effect_1.parent.removeChild(_wing_effect_1);
-				}
-				_wing_effect_1.dispose();
-			}
-			if (_wing_effect_2) {
-				if (_wing_effect_2.parent) {
-					_wing_effect_2.parent.removeChild(_wing_effect_2);
-				}
-				_wing_effect_2.dispose();
-			}
-			_song_effect = null;
-			_halo_effect = null;
-			_suit_effect = null;
-			_wing_effect_1 = null;
-			_wing_effect_2 = null;
 			this.buffSprite = null;
 			this.cur_point = null;
 			this.curr_rect = null;
@@ -934,7 +514,6 @@
 			this.jumping = false;
 			this.pathArr = [];
 			this.layer = null;
-			_suitVisible = true;
 			this.char_id = null;
 			this.jump_deafult_speed = 335;
 			this.jumpQuene = [];
@@ -1124,17 +703,6 @@
 			SceneEventDispatcher.getInstance().dispatchEvent(ee);
 		}
 
-		public function reLoadHaloBuffEffect():void
-		{
-			var _local_1:String;
-			if (this.effectDic) {
-				for (_local_1 in this.effectDic) {
-					this.removeHaloBuffEffect(_local_1);
-					this.showHaloBuffEffect(_local_1, SceneConstant.ITEM_LAYER);
-				}
-			}
-		}
-
 		protected function surplusDis():Number
 		{
 			var _local_2:Array;
@@ -1262,48 +830,7 @@
 				}
 			}
 			this.effectDic = null;
-			if (_song_effect) {
-				if (_song_effect.parent) {
-					this.removeChild(_song_effect);
-				}
-				_song_effect.dispose();
-			}
-			_song_effect = null;
-			if (_song_effect2) {
-				_song_effect2.dispose();
-				if (_song_effect2.parent) {
-					_song_effect2.parent.removeChild(_song_effect2);
-				}
-			}
-			_song_effect2 = null;
-			if (_halo_effect) {
-				if (_halo_effect.parent) {
-					_halo_effect.parent.removeChild(_halo_effect);
-				}
-				_halo_effect.dispose();
-			}
-			_halo_effect = null;
-			if (_wing_effect_1) {
-				if (_wing_effect_1.parent) {
-					_wing_effect_1.parent.removeChild(_wing_effect_1);
-				}
-				_wing_effect_1.dispose();
-			}
-			_wing_effect_1 = null;
-			if (_wing_effect_2) {
-				if (_wing_effect_2.parent) {
-					_wing_effect_2.parent.removeChild(_wing_effect_2);
-				}
-				_wing_effect_2.dispose();
-			}
-			_wing_effect_2 = null;
-			if (_suit_effect) {
-				if (_suit_effect.parent) {
-					removeChild(_suit_effect);
-				}
-				_suit_effect.dispose();
-			}
-			_suit_effect = null;
+			
 			if (((this.wordShape) && (this.wordShape.parent))) {
 				this.wordShape.graphics.clear();
 				this.removeChild(this.wordShape);
@@ -1324,8 +851,6 @@
 				}
 			}
 			this.buffSprite = null;
-			this.haloURL = null;
-			this.suitURL = null;
 			this.headVisible = true;
 			this.pathArr = [];
 			_point = new Point();
@@ -1356,8 +881,6 @@
 			if (shape) {
 				TweenLite.killTweensOf(shape);
 			}
-			this.suitURL = null;
-			this.haloURL = null;
 			this.isTeleporting = false;
 			this.showList = null;
 			if (this.headArray) {
@@ -1380,46 +903,7 @@
 				}
 			}
 			this.effectDic = null;
-			if (_song_effect) {
-				this.removeChild(_song_effect);
-				_song_effect.dispose();
-			}
-			_song_effect = null;
-			if (_song_effect2) {
-				_song_effect2.dispose();
-				if (_song_effect2.parent) {
-					_song_effect2.parent.removeChild(_song_effect2);
-				}
-			}
-			_song_effect2 = null;
-			if (_halo_effect) {
-				if (_halo_effect.parent) {
-					this.removeChild(_halo_effect);
-				}
-				_halo_effect.dispose();
-			}
-			_halo_effect = null;
-			if (_wing_effect_1) {
-				if (_wing_effect_1.parent) {
-					this.removeChild(_wing_effect_1);
-				}
-				_wing_effect_1.dispose();
-			}
-			_wing_effect_1 = null;
-			if (_wing_effect_2) {
-				if (_wing_effect_2.parent) {
-					this.removeChild(_wing_effect_2);
-				}
-				_wing_effect_2.dispose();
-			}
-			_wing_effect_2 = null;
-			if (_suit_effect) {
-				if (_suit_effect.parent) {
-					removeChild(_suit_effect);
-				}
-				_suit_effect.dispose();
-			}
-			_suit_effect = null;
+			
 			if (((this.wordShape) && (this.wordShape.parent))) {
 				this.removeChild(this.wordShape);
 			}
@@ -1563,7 +1047,6 @@
 			}
 			this.isGroupSongModel = false;
 			this.meditation = false;
-			this.removeSongEffect();
 			if (!this.jumping) {
 				clearTimeout(this.jumpTimerIndex);
 				if (this.avatarParts.state != CharAction.WALK && this.avatarParts.state != CharAction.STAND) {

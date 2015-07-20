@@ -1,7 +1,7 @@
 ﻿package com.engine.core.view.items.avatar
 {
 	import com.engine.core.Engine;
-	import com.engine.core.ItemConst;
+	import com.engine.core.AvatarTypes;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.model.IProto;
 	import com.engine.core.tile.square.Square;
@@ -43,6 +43,10 @@
 		public var sit_speed:int = 1;
 		public var isGroupSongModel:Boolean = false;
 		public var curr_rect:Rectangle;
+		
+		public var hiedBody:Boolean = false;
+		public var hiedWeapon:Boolean = false;
+		public var hiedMount:Boolean = false;
 		
 		protected var bitmapdata_mid:Bitmap;
 		protected var bitmapdata_wid:Bitmap;
@@ -780,7 +784,7 @@
 
 		coder function playEffectFunc(_arg_1:AvatarParam):void
 		{
-			if (_arg_1.avatarType == ItemConst.BODY_TYPE) {
+			if (_arg_1.avatarType == AvatarTypes.BODY_TYPE) {
 				if (((((this.$playEndFunc) && (this.$playState))) && ((_arg_1.action == this.$playState)))) {
 					this.$playEndFunc();
 				}
@@ -800,7 +804,7 @@
 		coder function playEndFunc(_arg_1:Object):void
 		{
 			var _local_2:Object;
-			if (_arg_1.type == ItemConst.BODY_TYPE) {
+			if (_arg_1.type == AvatarTypes.BODY_TYPE) {
 				if (((((!((this.deayState == null))) && (!((_arg_1.link == this.deayState))))) && (!((this.deayState == CharAction.STAND))))) {
 					this.avatarParts.play(this.deayState, this.deayRestrict, true);
 					this.deayState = null;
@@ -812,7 +816,7 @@
 					}
 				}
 			} else {
-				if (_arg_1.type == ItemConst.EFFECT_TYPE) {
+				if (_arg_1.type == AvatarTypes.EFFECT_TYPE) {
 					if (this.effectPlayEndDic) {
 						for each (_local_2 in this.effectPlayEndDic) {
 							if (_arg_1.assets_id == _local_2.key) {
@@ -894,7 +898,7 @@
 			if (this.isDisposed || this.avatarParts == null) {
 				return null;
 			}
-			if (avatarType == ItemConst.MOUNT_TYPE) {
+			if (avatarType == AvatarTypes.MOUNT_TYPE) {
 				if (avatarNum) {
 					this.isOnMonut = true;
 					this.onMonutHeight = _monutHeight;
@@ -910,27 +914,27 @@
 			} else {
 				this.avatarParts.removeAvatarPartByType(avatarType);
 				switch (avatarType) {
-					case ItemConst.BODY_TYPE:
+					case AvatarTypes.BODY_TYPE:
 						if (this.bitmapdata_mid) {
 							this.bitmapdata_mid.bitmapData = null;
 						}
 						break;
-					case ItemConst.WEAPON_TYPE:
+					case AvatarTypes.WEAPON_TYPE:
 						if (this.bitmapdata_wid) {
 							this.bitmapdata_wid.bitmapData = null;
 						}
 						break;
-					case ItemConst.WING_TYPE:
+					case AvatarTypes.WING_TYPE:
 						if (this.bitmapdata_wgid) {
 							this.bitmapdata_wgid.bitmapData = null;
 						}
 						break;
-					case ItemConst.MOUNT_TYPE:
+					case AvatarTypes.MOUNT_TYPE:
 						if (this.bitmapdata_midm) {
 							this.bitmapdata_midm.bitmapData = null;
 						}
 						break;
-					case ItemConst.FLY_TYPE:
+					case AvatarTypes.FLY_TYPE:
 						if (this.bitmapdata_fid) {
 							this.bitmapdata_fid.bitmapData = null;
 						}
@@ -1143,7 +1147,7 @@
 					}
 					return;
 				}
-				if (_arg_5 == ItemConst.BODY_TYPE) {
+				if (_arg_5 == AvatarTypes.BODY_TYPE) {
 					if (this.bitmapdata_mid == null) {
 						this.bitmapdata_mid = new Bitmap();
 					}
@@ -1177,7 +1181,7 @@
 						}
 					}
 				} else {
-					if (_arg_5 == ItemConst.FLY_TYPE) {
+					if (_arg_5 == AvatarTypes.FLY_TYPE) {
 						if (this.bitmapdata_fid == null) {
 							this.bitmapdata_fid = new Bitmap();
 						}
@@ -1200,7 +1204,7 @@
 						}
 						_local_10 = this.bitmapdata_fid;
 					} else {
-						if (_arg_5 == ItemConst.WEAPON_TYPE) {
+						if (_arg_5 == AvatarTypes.WEAPON_TYPE) {
 							if (this.bitmapdata_wid == null) {
 								this.bitmapdata_wid = new Bitmap();
 							}
@@ -1220,7 +1224,7 @@
 							}
 							_local_10 = this.bitmapdata_wid;
 						} else {
-							if (_arg_5 == ItemConst.WING_TYPE) {
+							if (_arg_5 == AvatarTypes.WING_TYPE) {
 								if (this.bitmapdata_wgid == null) {
 									this.bitmapdata_wgid = new Bitmap();
 								}
@@ -1240,7 +1244,7 @@
 								}
 								_local_10 = this.bitmapdata_wgid;
 							} else {
-								if (_arg_5 == ItemConst.MOUNT_TYPE) {
+								if (_arg_5 == AvatarTypes.MOUNT_TYPE) {
 									if (this.bitmapdata_midm == null) {
 										this.bitmapdata_midm = new Bitmap();
 									}
@@ -1277,7 +1281,7 @@
 									}
 									_local_10 = this.bitmapdata_midm;
 								} else {
-									if (_arg_5 == ItemConst.EFFECT_TYPE) {
+									if (_arg_5 == AvatarTypes.EFFECT_TYPE) {
 										if (this.eid_avatarBitmaps == null) {
 											this.eid_avatarBitmaps = new Dictionary();
 										}
@@ -1470,13 +1474,13 @@
 				return;
 			}
 			switch (_arg_1) {
-				case ItemConst.EFFECT_TYPE:
+				case AvatarTypes.EFFECT_TYPE:
 					return;
-				case ItemConst.BODY_TYPE:
+				case AvatarTypes.BODY_TYPE:
 					return;
-				case ItemConst.WEAPON_TYPE:
+				case AvatarTypes.WEAPON_TYPE:
 					return;
-				case ItemConst.MOUNT_TYPE:
+				case AvatarTypes.MOUNT_TYPE:
 					return;
 			}
 		}

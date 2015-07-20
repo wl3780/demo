@@ -2,7 +2,6 @@
 {
 	import com.engine.core.Engine;
 	import com.engine.core.EngineGlobal;
-	import com.engine.core.ItemConst;
 	import com.engine.core.controls.events.WealthEvent;
 	import com.engine.core.controls.wealth.WealthConstant;
 	import com.engine.core.controls.wealth.WealthPool;
@@ -28,8 +27,6 @@
 	public class AvatarAssetManager 
 	{
 
-		public static var shadow:BitmapData;
-		
 		private static var _instance:AvatarAssetManager;
 
 		public var avatarParams:Dictionary;
@@ -161,7 +158,7 @@
 					var size:int = bytes.readInt();
 					var str:String = bytes.readUTFBytes(size);
 					var xml:XML = new XML(str);
-					dict = this.analyzeData(fileName, xml);
+					dict = this.analyzeData(xml);
 					this.elements[fileName] = dict;
 					this.loadAvatarAssets(fileName, CharAction.STAND, evt.vo.data.owner);
 					this.loadAvatarAssets(fileName, CharAction.WALK, evt.vo.data.owner);
@@ -424,46 +421,37 @@
 			return WealthPool.getIntance().has(url);
 		}
 
-		private function analyze(avatarParam:AvatarParam, contentLoaderInfo:LoaderInfo):void
+		private function analyze(param:AvatarParam, contentLoaderInfo:LoaderInfo):void
 		{
-			if (!avatarParam || avatarParam.isDisposed || !contentLoaderInfo) {
+			if (!param || param.isDisposed || !contentLoaderInfo) {
 				return;
 			}
-			var frames:int = avatarParam.frames;
-			var id:String = avatarParam.oid;
-			var l:int = avatarParam.heights.length;
-			var type:String = avatarParam.avatarType;
-			var num:int = 8;
-			if (l >= 5) {
-				num = 8;
-			} else {
-				num = 1;
-			}
+			var frames:int = param.frames;
+			var dirs:int = param.coder::singleDir ? 1 : 8;
 			
-			var clazz:Class;
 			var bmd:BitmapData;
-			var link:String;
-			var kName:String;
-			var index:int;
-			var indexLink:String;
 			var bmd_:BitmapData;
 			var mat:Matrix;
 			var j:int = 0;
 			var i:int = 0;
-			while (i < num) {
-				link = avatarParam.id + Engine.SIGN + avatarParam.bitmapdatas[i];
+			while (i < dirs) {
+				var link:String = param.oid + "." + param.action + "." + i;
+				if (this.bitmapdatas[link] == null) {
+					this.bitmapdatas[link] = [];
+				}
+				
 				if (i < 5) {
 					j = 0;
 					while (j < frames) {
-						kName = avatarParam.bitmapdatas[i] + "." + j;
-						clazz = contentLoaderInfo.applicationDomain.getDefinition(kName) as Class;
+						var kName:String = link + "." + j;
+						var clazz:Class = contentLoaderInfo.applicationDomain.getDefinition(kName) as Class;
 						bmd = new clazz() as BitmapData;
 						this.bitmapdatas[link][j] = bmd;
 						j++;
 					}
 				} else {
-					index = 8 - i;
-					indexLink = avatarParam.id + Engine.SIGN + id + "." + avatarParam.action + "." + index;
+					var index:int = 8 - i;
+					var indexLink:String = param.oid + "." + param.action + "." + index;
 					j = 0;
 					while (j < frames) {
 						bmd_ = this.bitmapdatas[indexLink][j];
@@ -495,158 +483,22 @@
 			}
 		}
 
-		private function analyzeData(fileName:String, xml:XML):Dictionary
+		private function analyzeData(xml:XML):Dictionary
 		{
-			var bmdKey:String;
-			var frameIdx:int;
-			var dirIdx:int;
-			var frameLen:int;
-			var frameW:int;
-			var frameH:int;
-			var flipIdx:int;
-			var flipFrameIdx:int;
-			var flipFrameX:int;
-			var _local_30:String;
-			var _local_31:int;
-			var avatarType:String = fileName.split("_")[0];
-			var dict:Dictionary = new Dictionary();
-			var xmlList:XMLList = xml.children();
-			var len:int = xmlList.length();
-			var idx:int;
 			var avatarId:String = xml.@id;
-			while (idx < len) {
-				var xmlItem:XML = xmlList[idx];
+			var dict:Dictionary = new Dictionary();
+			var actionList:XMLList = xml.children();
+			var actionLen:int = actionList.length();
+			var actionIdx:int;
+			while (actionIdx < actionLen) {
+				var actionItem:XML = actionList[actionIdx];
 				var param:AvatarParam = new AvatarParam();
-				param.avatarType = avatarType;
-				param.action = xmlItem.@id;
-				param.frames = xmlItem.@frames;
-				if (avatarType != ItemConst.EFFECT_TYPE) {
-					param.speed = int(int(xmlItem.@speed) / Engine._Lessen_Frame_);
-				} else {
-					param.speed = xmlItem.@speed;
-				}
-				param.offset_x = xmlItem.@offset_x;
-				param.offset_y = xmlItem.@offset_y;
-				param.replay = xmlItem.@replay;
-				if (param.replay == 0) {
-					param.replay = -1;
-				}
-				param.coder::oid = fileName;
-				param.coder::id = fileName + Engine.SIGN + param.action;
-				
-				var actList:XMLList = xmlItem.children();
-				var actLen:int = actList.length();
-				var actIdx:int = 0;
-				var dirs:int = 8;
-				if (avatarType == ItemConst.EFFECT_TYPE || avatarType == ItemConst.MOUNT_TYPE) {
-					if (actLen >= 5) {
-						dirs = 8;
-					} else {
-						dirs = 1;
-					}
-				}
-				var once:Boolean = false;
-				if (avatarType != ItemConst.EFFECT_TYPE && actLen == 1) {
-					once = true;
-				}
-				actIdx = 0;
-				while (actIdx < dirs) {
-					var actXML:XML;
-					var frameList:XMLList;
-					if (actIdx < 5) {
-						if (once) {
-							actXML = actList[0];
-							dirIdx = actIdx;
-						} else {
-							actXML = actList[actIdx];
-							dirIdx = actIdx;
-						}
-						param.txs[dirIdx] = [];
-						param.tys[dirIdx] = [];
-						param.widths[dirIdx] = [];
-						param.heights[dirIdx] = [];
-						if (!once) {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + dirIdx;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + dirIdx;
-						} else {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + 0;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + 0;
-						}
-						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
-							frameList = actXML.children();
-							if (frameList.length() == 0) {
-								log("saiman", "资源配置文件格式不符合要求");
-								return new Dictionary();
-							}
-							if (this.bitmapdatas[bmdKey] == null) {
-								this.bitmapdatas[bmdKey] = [];
-							}
-							frameLen = frameList.length();
-							if (frameLen > param.frames) {
-								param.frames = frameLen;
-							}
-							frameIdx = 0;
-							while (frameIdx < param.frames) {
-								if (frameIdx < frameLen) {
-									param.txs[dirIdx].push(int(frameList[frameIdx].@tx[0]));
-									param.tys[dirIdx].push(int(frameList[frameIdx].@ty[0]));
-									frameW = int(frameList[frameIdx].@width[0]);
-									if (frameW == 0) {
-										frameW = int(frameList[frameIdx].@w[0]);
-									}
-									frameH = int(frameList[frameIdx].@height[0]);
-									if (frameH == 0) {
-										frameH = int(frameList[frameIdx].@h[0]);
-									}
-									param.widths[dirIdx].push(frameW);
-									param.heights[dirIdx].push(frameH);
-								}
-								frameIdx++;
-							}
-						}
-					} else {	// 反转
-						dirIdx = actIdx;
-						flipIdx = 8 - dirIdx;
-						param.txs[dirIdx] = [];
-						flipFrameIdx = 0;
-						while (flipFrameIdx < param.widths[flipIdx].length) {
-							flipFrameX = param.widths[flipIdx][flipFrameIdx] - param.txs[flipIdx][flipFrameIdx];
-							param.txs[dirIdx].push(flipFrameX);
-							flipFrameIdx++;
-						}
-						param.tys[dirIdx] = param.tys[flipIdx];
-						param.widths[dirIdx] = param.widths[flipIdx];
-						param.heights[dirIdx] = param.heights[flipIdx];
-						if (!once) {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + dirIdx;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + dirIdx;
-						} else {
-							param.bitmapdatas[dirIdx] = avatarId + "." + param.action + "." + 0;
-							bmdKey = param.id + Engine.SIGN + avatarId + "." + param.action + "." + 0;
-						}
-						if (this.bitmapdatas.hasOwnProperty(bmdKey) == false) {
-							_local_30 = param.id + Engine.SIGN + avatarId + "." + param.action + "." + flipIdx;
-							if (this.bitmapdatas[bmdKey] == null) {
-								this.bitmapdatas[bmdKey] = [];
-							}
-							_local_31 = 0;
-							while (_local_31 < this.bitmapdatas[_local_30].length) {
-								if (avatarType == ItemConst.BODY_TYPE) {
-									this.bitmapdatas[bmdKey].push(Engine.shadow_bitmapData);
-								} else {
-									this.bitmapdatas[bmdKey].push(null);
-								}
-								_local_31++;
-							}
-						}
-					}
-					actIdx++;
-				}
-				if (this.avatarParams.hasOwnProperty(param.id) == false) {
+				param.setup(avatarId, actionItem);
+				if (this.avatarParams[param.id] == null) {
 					this.avatarParams[param.id] = param;
 					dict[param.action] = param;
 				}
-				idx++;
+				actionIdx++;
 			}
 			return dict;
 		}

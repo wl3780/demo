@@ -1,6 +1,6 @@
 ﻿package 
 {
-	import com.engine.core.ItemConst;
+	import com.engine.core.AvatarTypes;
 	import com.engine.core.view.items.avatar.ItemAvatar;
 	import com.engine.core.view.role.Char;
 	import com.engine.core.view.scenes.SceneConstant;
@@ -290,7 +290,7 @@
 			var _local_5:ItemAvatar = new ItemAvatar();
 			_local_5.isSkillEffect = true;
 			_local_5.isSceneItem = true;
-			_local_5.loadAvatarPart(ItemConst.EFFECT_TYPE, _arg_1);
+			_local_5.loadAvatarPart(AvatarTypes.EFFECT_TYPE, _arg_1);
 			_local_5.x = _arg_2.x;
 			_local_5.y = _arg_2.y;
 			if (_arg_3) {

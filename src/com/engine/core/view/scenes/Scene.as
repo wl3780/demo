@@ -1,7 +1,7 @@
 ﻿package com.engine.core.view.scenes
 {
 	import com.engine.core.Engine;
-	import com.engine.core.ItemConst;
+	import com.engine.core.AvatarTypes;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.controls.wealth.WealthPool;
 	import com.engine.core.controls.wealth.loader.DisplayLoader;
@@ -302,10 +302,10 @@
 				} else {
 					char.hp_height = 150;
 				}
-				char.loadAvatarPart(ItemConst.BODY_TYPE, modelId);
-				char.loadAvatarPart(ItemConst.WEAPON_TYPE, weaponId);
-				char.loadAvatarPart(ItemConst.FLY_TYPE, wingId);
-				char.loadAvatarPart(ItemConst.MOUNT_TYPE, mountId);
+				char.loadAvatarPart(AvatarTypes.BODY_TYPE, modelId);
+				char.loadAvatarPart(AvatarTypes.WEAPON_TYPE, weaponId);
+				char.loadAvatarPart(AvatarTypes.FLY_TYPE, wingId);
+				char.loadAvatarPart(AvatarTypes.MOUNT_TYPE, mountId);
 				char.avatarParts.bodyRender(true);
 				if (_sceneFlyMode) {
 					this.addItem(char, SceneConstant.FLY_LAYER);
@@ -319,9 +319,7 @@
 		{
 			this.isReady = true;
 			this.changing = false;
-			if (this.mainChar) {
-				this.mainChar.reLoadHaloBuffEffect();
-			}
+			
 			this.$mapLayer.inited = true;
 			if (this.onSceneReadyFunc != null) {
 				this.onSceneReadyFunc();
