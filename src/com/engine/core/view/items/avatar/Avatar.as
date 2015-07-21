@@ -1,7 +1,7 @@
 ﻿package com.engine.core.view.items.avatar
 {
-	import com.engine.core.Engine;
 	import com.engine.core.AvatarTypes;
+	import com.engine.core.Engine;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.model.IProto;
 	import com.engine.core.tile.square.Square;
@@ -879,17 +879,24 @@
 		{
 		}
 
-		public function loadCharActionAssets(state:String):void
+		public function loadCharActionAssets(action:String):void
 		{
-			if (state == null || state == "") {
+			if (this.isDisposed || !action) {
 				return;
 			}
-			if (this.avatarParts.avatarParts == null) {
-				return;
+			var dict:Dictionary;
+			var paramItem:AvatarParam;
+			if (this.avatarParts.avatarParts != null) {
+				dict = this.avatarParts.avatarParts[action];
+				for each (paramItem in dict) {
+					AvatarAssetManager.getInstance().loadAvatarAssets(paramItem.oid, action, this.avatarParts.id);
+				}
 			}
-			var dict:Dictionary = this.avatarParts.avatarParts[state];
-			for each (var paramItem:AvatarParam in dict) {
-				AvatarAssetManager.getInstance().loadAvatarAssets(paramItem.oid, state, this.avatarParts.id);
+			if (this.avatarParts.effectsParts != null) {
+				dict = this.avatarParts.effectsParts[action];
+				for each (paramItem in dict) {
+					AvatarAssetManager.getInstance().loadAvatarAssets(paramItem.oid, action, this.avatarParts.id);
+				}
 			}
 		}
 

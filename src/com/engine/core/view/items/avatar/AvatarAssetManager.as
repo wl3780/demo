@@ -160,8 +160,6 @@
 					var xml:XML = new XML(str);
 					dict = this.analyzeData(xml);
 					this.elements[fileName] = dict;
-					this.loadAvatarAssets(fileName, CharAction.STAND, evt.vo.data.owner);
-					this.loadAvatarAssets(fileName, CharAction.WALK, evt.vo.data.owner);
 				} else {
 					dict = this.elements[fileName];
 				}
@@ -222,17 +220,13 @@
 
 		public function checkCleanAbled(parts:AvatartParts):Boolean
 		{
-			var idx:int;
-			while (idx < this.assetHash.length) {
-				var url:String = this.assetHash[idx];
-				var loader:DisplayLoader = WealthPool.getIntance().take(url) as DisplayLoader;
+			for each (var url:String in this.assetHash) {
 				var arr:Array = url.split("/");
 				var avatarId:String = arr[arr.length-1];
 				avatarId = avatarId.split(".")[0];
 				if (parts.hasAssets(avatarId)) {
 					return false;
 				}
-				idx++;
 			}
 			for each (var param:AvatarParam in this.avatarParams) {
 				if (parts.hasAssets(param.oid)) {
@@ -242,76 +236,60 @@
 			return true;
 		}
 
-		public function cleanItems(avatarList:Vector.<AvatartParts>):void
+		public function cleanItems(partsList:Vector.<AvatartParts>):void
 		{
-			var _local_2:AvatartParts;
-			var _local_3:Boolean;
-			var _local_4:int;
-			var _local_6:int;
-			var _local_7:String;
-			var _local_8:String;
-			var _local_9:String;
-			var _local_10:DisplayLoader;
-			var _local_11:String;
-			var _local_12:Array;
-			var _local_13:AvatarParam;
-			var _local_14:String;
-			var _local_15:Array;
-			var _local_16:int;
-			var _local_17:BitmapData;
-			var idx:int;
-			while (idx < avatarList.length) {
-				_local_2 = avatarList[idx];
-				_local_6 = 0;
-				while (_local_6 < this.assetHash.length) {
-					_local_10 = (WealthPool.getIntance().take(this.assetHash[_local_6]) as DisplayLoader);
-					_local_11 = this.assetHash[_local_6];
-					_local_12 = _local_11.split("/");
-					_local_11 = _local_12[(_local_12.length - 1)];
-					_local_11 = _local_11.split(".")[0];
-					_local_3 = _local_2.hasAssets(_local_11);
-					if (_local_3) {
-						if (_local_10) {
-							_local_10.dispose();
+			var partsIdx:int = 0;
+			while (partsIdx < partsList.length) {
+				var parts:AvatartParts = partsList[partsIdx];
+				var urlIdx:int = this.assetHash.length - 1;
+				var needClean:Boolean;
+				while (urlIdx >= 0) {
+					var url:String = this.assetHash[urlIdx];
+					var arr:Array = url.split("/");
+					url = arr[arr.length-1];
+					url = url.split(".")[0];
+					needClean = parts.hasAssets(url);
+					if (needClean) {
+						var loader:DisplayLoader = WealthPool.getIntance().take(url) as DisplayLoader;
+						if (loader) {
+							loader.dispose();
 						}
-						_local_10 = null;
-						WealthPool.getIntance().remove(this.assetHash[_local_6]);
-						this.assetHash.splice(_local_6, 1);
-						_local_6--;
+						WealthPool.getIntance().remove(url);
+						this.assetHash.splice(urlIdx, 1);
 					}
-					_local_6++;
+					urlIdx--;
 				}
-				for (_local_7 in this.avatarParams) {
-					_local_13 = this.avatarParams[_local_7];
-					_local_3 = _local_2.hasAssets(_local_13.oid);
-					if (_local_3) {
+				for (var _local_7:String in this.avatarParams) {
+					var _local_13:AvatarParam = this.avatarParams[_local_7];
+					needClean = parts.hasAssets(_local_13.oid);
+					if (needClean) {
 						_local_13.dispose();
 						delete this.avatarParams[_local_7];
 					}
 				}
-				for (_local_8 in this.bitmapdatas) {
-					_local_14 = _local_8.split(Engine.SIGN)[0];
-					_local_3 = _local_2.hasAssets(_local_14);
-					if (_local_3) {
-						_local_15 = this.bitmapdatas[_local_8];
-						_local_16 = 0;
+				for (var _local_8:String in this.bitmapdatas) {
+					var _local_14:String = _local_8.split(Engine.SIGN)[0];
+					needClean = parts.hasAssets(_local_14);
+					if (needClean) {
+						var _local_15:Array = this.bitmapdatas[_local_8];
+						var _local_16:int = 0;
 						while (_local_16 < _local_15.length) {
-							_local_17 = _local_15[_local_16];
-							if (((_local_17) && (!((_local_17 == Engine.shadow_bitmapData))))) {
-								_local_17.dispose();
+							var bmd:BitmapData = _local_15[_local_16];
+							if (bmd && bmd != Engine.shadow_bitmapData) {
+								bmd.dispose();
 							}
 							_local_16++;
 						}
 						delete this.bitmapdatas[_local_8];
 					}
 				}
-				for (_local_9 in this.elements) {
-					_local_3 = _local_2.hasAssets(_local_9);
-					if (_local_3) {
+				for (var _local_9:String in this.elements) {
+					needClean = parts.hasAssets(_local_9);
+					if (needClean) {
 						delete this.elements[_local_9];
 					}
 				}
-				idx++;
+				partsIdx++;
 			}
 		}
 
@@ -440,7 +418,7 @@
 					this.bitmapdatas[link] = [];
 				}
 				
-				if (i < 5) {
+				if (param.bitmapFlips[i] == false) {
 					j = 0;
 					while (j < frames) {
 						var kName:String = link + "." + j;

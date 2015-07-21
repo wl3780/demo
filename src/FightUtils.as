@@ -72,7 +72,7 @@
 				var _local_1:Point = array.shift();
 				_local_1.x = (_local_1.x + (((Math.random() * 1) >> 0) * arr[((Math.random() * 2) >> 0)]));
 				_local_1.y = (_local_1.y + (((Math.random() * 1) >> 0) * arr[((Math.random() * 2) >> 0)]));
-				var _local_2:ItemAvatar = getEffect(effect_id, _local_1, null, SceneConstant.BOTTOM_LAYER);
+				var _local_2:ItemAvatar = FightUtils.getEffect(effect_id, _local_1, null, SceneConstant.BOTTOM_LAYER);
 			}
 			array = LinearUtils.lineAttck(startPoint, endPoint, interval);
 			arr = [1, -1];
@@ -285,21 +285,21 @@
 			}
 		}
 
-		public static function getEffect(_arg_1:String, _arg_2:Point, _arg_3:Point=null, _arg_4:String=null):ItemAvatar
+		public static function getEffect(effect_id:String, _arg_2:Point, _arg_3:Point=null, _arg_4:String=null):ItemAvatar
 		{
-			var _local_5:ItemAvatar = new ItemAvatar();
-			_local_5.isSkillEffect = true;
-			_local_5.isSceneItem = true;
-			_local_5.loadAvatarPart(AvatarTypes.EFFECT_TYPE, _arg_1);
-			_local_5.x = _arg_2.x;
-			_local_5.y = _arg_2.y;
+			var avatar:ItemAvatar = new ItemAvatar();
+			avatar.isSkillEffect = true;
+			avatar.isSceneItem = true;
+			avatar.loadAvatarPart(AvatarTypes.EFFECT_TYPE, effect_id);
+			avatar.x = _arg_2.x;
+			avatar.y = _arg_2.y;
 			if (_arg_3) {
-				_local_5.setRotation(_arg_3.x, _arg_3.y);
+				avatar.setRotation(_arg_3.x, _arg_3.y);
 			}
 			if (_arg_4 != null) {
-				GameScene.scene.addItem(_local_5, _arg_4);
+				GameScene.scene.addItem(avatar, _arg_4);
 			}
-			return (_local_5);
+			return avatar;
 		}
 
 	}

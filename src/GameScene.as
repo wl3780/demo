@@ -61,7 +61,7 @@
 				var area:Rectangle = new Rectangle(this.mouseX - 100, this.mouseY - 100, 200, 200);
 				var arr:Array = this.find(area, false, 100);
 				this.selectAvatar = HitTest.getChildUnderPoint(this, this.mouseDownPoint, arr) as Avatar;
-				if (selectAvatar) {
+				if (this.selectAvatar) {
 					var keys:Array = [Keyboard.NUMBER_2, Keyboard.NUMBER_3];
 					var keyEvent:KeyboardEvent = new KeyboardEvent(KeyboardEvent.KEY_DOWN);
 					keyEvent.keyCode = keys[(Math.random() * keys.length) >> 0];
@@ -115,32 +115,32 @@
 					GameScene.scene.updateCharAvatarPart(mainChar, _avatarArray[this._avatarIndex]);
 					break;
 				case Keyboard.NUMBER_2:
-					if (this.mainChar && this.selectAvatar) {
-						passEffect = "300000009";
-						mainChar.stopMove();
-						mainChar.faceTo(selectAvatar);
-						mainChar.play(CharAction.ATTACK, null, false, function ():void
-						{
-							if (selectAvatar) {
-								FightUtils.lineAttack(passEffect, new Point(mainChar.x, mainChar.y), new Point(selectAvatar.x, selectAvatar.y), 150, 60);
-							}
-						});
-					}
+					passEffect = "300000009";
+					mainChar.stopMove();
+					mainChar.faceTo(selectAvatar as Avatar);
+					mainChar.play(CharAction.ATTACK, null, false, function ():void
+					{
+						if (selectAvatar) {
+							FightUtils.lineAttack(passEffect, new Point(mainChar.x, mainChar.y), new Point(selectAvatar.x, selectAvatar.y), 150, 60);
+						} else {
+							FightUtils.lineAttack(passEffect, new Point(mainChar.x, mainChar.y), new Point(mouseX, mouseY), 150, 60);
+						}
+					});
 					break;
 				case Keyboard.NUMBER_3:
-					if (this.mainChar && this.selectAvatar) {
-						passEffect = "201000002";
-						mainChar.stopMove();
-						mainChar.faceTo(selectAvatar);
-						mainChar.play(CharAction.SKILL1, null, false, function ():void
-						{
-							if (selectAvatar) {
-								var p1:Point = new Point(mainChar.x, mainChar.y);
-								var p2:Point = new Point(selectAvatar.x, selectAvatar.y);
-								FightUtils.fanAttack(passEffect, p1, p2, 90, 5, 1);
-							}
-						});
-					}
+					passEffect = "201000002";
+					mainChar.stopMove();
+					mainChar.faceTo(selectAvatar as Avatar);
+					mainChar.play(CharAction.SKILL1, null, false, function ():void
+					{
+						var p1:Point = new Point(mainChar.x, mainChar.y);
+						var p2:Point = new Point(mouseX, mouseY);
+						if (selectAvatar) {
+							p2.x = selectAvatar.x;
+							p2.y = selectAvatar.y;
+						}
+						FightUtils.fanAttack(passEffect, p1, p2, 90, 5, 1);
+					});
 					break;
 				default:
 					break;

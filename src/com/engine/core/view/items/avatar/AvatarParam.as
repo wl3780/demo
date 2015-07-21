@@ -87,6 +87,7 @@
 					this.widths[dirIdx] = this.widths[0];
 					this.heights[dirIdx] = this.heights[0];
 					this.bitmapFlips[dirIdx] = false;
+					dirIdx++;
 				}
 			} else {
 				while (dirIdx < 8) {	// 8方向
@@ -163,6 +164,7 @@
 				ret.tys[idx] = tmp;
 				idx++;
 			}
+			ret.coder::singleDir = this.coder::singleDir;
 			return ret;
 		}
 
@@ -177,14 +179,13 @@
 
 		public function getBitmapData(dir:int, frame:int):BitmapData
 		{
-			try {
-				var key:String = this.oid + "." + this.action + "." + dir;
-				if (this.coder::singleDir) {
-					key = this.oid + "." + this.action + "." + 0;
-				}
-				var manager:AvatarAssetManager = AvatarAssetManager.getInstance();
+			var key:String = this.oid + "." + this.action + "." + dir;
+			if (this.coder::singleDir) {
+				key = this.oid + "." + this.action + "." + 0;
+			}
+			var manager:AvatarAssetManager = AvatarAssetManager.getInstance();
+			if (manager.bitmapdatas[key] != null) {
 				return manager.bitmapdatas[key][frame] as BitmapData;
-			} catch(e:Error) {
 			}
 			return null;
 		}

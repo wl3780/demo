@@ -1,7 +1,7 @@
 ﻿package com.engine.core.view.scenes
 {
-	import com.engine.core.Engine;
 	import com.engine.core.AvatarTypes;
+	import com.engine.core.Engine;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.controls.wealth.WealthPool;
 	import com.engine.core.controls.wealth.loader.DisplayLoader;
@@ -92,7 +92,7 @@
 		private var _sceneFlyMode:Boolean;
 		
 		private var _container:DisplayObjectContainer;
-		private var _selectAvatar:*;
+		private var _selectAvatar:Avatar;
 		private var _cleanTime:int;
 		private var _depthTime:int = 0;
 
@@ -211,11 +211,11 @@
 //			MonsterDebugger.enabled = !MonsterDebugger.enabled;
 		}
 
-		public function get selectAvatar():*
+		public function get selectAvatar():Avatar
 		{
 			return _selectAvatar;
 		}
-		public function set selectAvatar(target:*):void
+		public function set selectAvatar(target:Avatar):void
 		{
 			_selectAvatar = target;
 		}
