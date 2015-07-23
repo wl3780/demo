@@ -7,11 +7,11 @@
 	import com.engine.core.view.items.HeadShowShape;
 	import com.engine.core.view.items.InstancePool;
 	import com.engine.core.view.items.Item;
-	import com.engine.core.view.items.avatar.Avatar;
-	import com.engine.core.view.items.avatar.AvatarRestrict;
-	import com.engine.core.view.items.avatar.CharAction;
-	import com.engine.core.view.items.avatar.ItemAvatar;
-	import com.engine.core.view.items.avatar.ShoawdBitmap;
+	import com.engine.core.view.avatar.Avatar;
+	import com.engine.core.view.avatar.AvatarRestrict;
+	import com.engine.core.view.avatar.ActionConst;
+	import com.engine.core.view.avatar.ItemAvatar;
+	import com.engine.core.view.avatar.ShoawdBitmap;
 	import com.engine.core.view.scenes.Scene;
 	import com.engine.core.view.scenes.SceneConstant;
 	import com.engine.core.view.scenes.SceneEvent;
@@ -313,7 +313,7 @@
 			if (this.isDisposed) {
 				return;
 			}
-			if (((((avatarParts) && (!((avatarParts.state == CharAction.STAND))))) && ((((((((this.type == SceneConstant.CAR)) || ((this.type == SceneConstant.MONSTER)))) || ((this.type == SceneConstant.PET)))) || ((this.type == SceneConstant.SUMMON_MONSTER)))))) {
+			if (((((avatarParts) && (!((avatarParts.state == ActionConst.STAND))))) && ((((((((this.type == SceneConstant.CAR)) || ((this.type == SceneConstant.MONSTER)))) || ((this.type == SceneConstant.PET)))) || ((this.type == SceneConstant.SUMMON_MONSTER)))))) {
 				avatarParts.acce = (_speed / 120);
 				if (avatarParts.acce < 1) {
 					avatarParts.acce = 1;
@@ -452,7 +452,7 @@
 				if (this.meditation) {
 					this.doMeditation(true);
 				} else {
-					if (((!(this.jumping)) && ((avatarParts.state == CharAction.WALK)))) {
+					if (((!(this.jumping)) && ((avatarParts.state == ActionConst.WALK)))) {
 					}
 				}
 				if (this == Scene.scene.mainChar) {
@@ -536,7 +536,7 @@
 				this.runing = false;
 				return;
 			}
-			if (((((((((this.pathArr) && ((this.pathArr.length >= 0)))) && (((jumping) || (runing))))) && (!(this.isDeath)))) && ((((avatarParts.state == CharAction.WALK)) || ((avatarParts.state == CharAction.SKILL2)))))) {
+			if (((((((((this.pathArr) && ((this.pathArr.length >= 0)))) && (((jumping) || (runing))))) && (!(this.isDeath)))) && ((((avatarParts.state == ActionConst.WALK)) || ((avatarParts.state == ActionConst.SKILL2)))))) {
 				_local_1 = getTimer();
 				if (this == Scene.scene.mainChar) {
 					Engine.moveTime = ((_local_1 - this.time) / 100);
@@ -646,11 +646,11 @@
 			this.meditation = _arg_1;
 			this.isGroupSongModel = _arg_2;
 			if (_arg_1) {
-				this.play(CharAction.MEDITATION);
+				this.play(ActionConst.MEDITATION);
 			} else {
 				if (((!(this.runing)) && (!(this.jumping)))) {
-					if (this.avatarParts.state == CharAction.MEDITATION) {
-						this.play(CharAction.STAND);
+					if (this.avatarParts.state == ActionConst.MEDITATION) {
+						this.play(ActionConst.STAND);
 					}
 				}
 			}
@@ -664,7 +664,7 @@
 			this.totalTime = 0;
 			this.runing = false;
 			if (((!(this.walkendStandOutSide)) && (this.runing))) {
-				this.play(CharAction.STAND);
+				this.play(ActionConst.STAND);
 				ee.walkEndType = 1;
 			}
 			if (this.jumping) {
@@ -684,10 +684,10 @@
 				if (t < 500) {
 					this.jumpTimerIndex = setTimeout(function ():void
 					{
-						play(CharAction.STAND);
+						play(ActionConst.STAND);
 					}, (500-t));
 				} else {
-					this.play(CharAction.STAND);
+					this.play(ActionConst.STAND);
 				}
 			}
 			if (this.meditation) {
@@ -965,7 +965,7 @@
 				this.jumpStartTime = getTimer();
 				clearTimeout(this.jumpTimerIndex);
 				this.avatarParts.currentFrame;
-				this.play(CharAction.SKILL2, null, true);
+				this.play(ActionConst.SKILL2, null, true);
 				this.jump_lock = _arg_2;
 				if (((_arg_2) && (avatarParts))) {
 					avatarParts.isPalyStandDeay = false;
@@ -986,7 +986,7 @@
 					"ease":Linear.easeNone
 				});
 			} else {
-				if (avatarParts.state == CharAction.SKILL2) {
+				if (avatarParts.state == ActionConst.SKILL2) {
 					this.play("stand");
 				}
 			}
@@ -1049,15 +1049,15 @@
 			this.meditation = false;
 			if (!this.jumping) {
 				clearTimeout(this.jumpTimerIndex);
-				if (this.avatarParts.state != CharAction.WALK && this.avatarParts.state != CharAction.STAND) {
-					this.play(CharAction.STAND);
+				if (this.avatarParts.state != ActionConst.WALK && this.avatarParts.state != ActionConst.STAND) {
+					this.play(ActionConst.STAND);
 				}
 				this.pathArr = paths.slice();
 				if (this.pathArr.length > 0) {
 					if (this.needTime(paths) > 10000) {
 					}
 					if (avatarParts) {
-						this.state = CharAction.WALK;
+						this.state = ActionConst.WALK;
 					}
 					this.cur_point = null;
 					runing = true;
@@ -1071,13 +1071,13 @@
 					}
 					this.cur_point = this.point;
 				} else {
-					if (this.avatarParts.state == CharAction.WALK) {
-						this.play(CharAction.STAND);
+					if (this.avatarParts.state == ActionConst.WALK) {
+						this.play(ActionConst.STAND);
 					}
 				}
 			} else {
-				if (this.avatarParts.state == CharAction.WALK) {
-					this.play(CharAction.STAND);
+				if (this.avatarParts.state == ActionConst.WALK) {
+					this.play(ActionConst.STAND);
 				}
 			}
 		}

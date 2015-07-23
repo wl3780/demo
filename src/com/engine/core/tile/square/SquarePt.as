@@ -57,8 +57,8 @@
 
 		public function get pixelsPoint():Point
 		{
-			var px:Number = Number(Number(this.x * TileConst.TILE_SIZE + size).toFixed(1));
-			var py:Number = Number(Number(this.y * TileConst.TILE_SIZE + size).toFixed(1));
+			var px:Number = (this.x * TileConst.TILE_SIZE + size) >> 0;
+			var py:Number = (this.y * TileConst.TILE_SIZE + size) >> 0;
 			return new Point(px, py);
 		}
 

@@ -9,13 +9,13 @@
 
 		private static var _instance:SquareGroup;
 
-		private var $hash:Hash;
+		private var _hash:Hash;
 
 		public function SquareGroup()
 		{
 			if (_instance == null) {
 				_instance = this;
-				this.$hash = new Hash();
+				_hash = new Hash();
 			}
 		}
 
@@ -30,13 +30,13 @@
 
 		public function get hash():Hash
 		{
-			return this.$hash;
+			return _hash;
 		}
 
 		public function dispose():void
 		{
-			this.$hash.dispose();
-			this.$hash = null;
+			_hash.dispose();
+			_hash = null;
 			_instance = null;
 		}
 
@@ -55,8 +55,8 @@
 
 		public function reset(source:Dictionary):void
 		{
-			var tmpHash:Hash = this.$hash;
-			this.$hash = new Hash();
+			var tmpHash:Hash = _hash;
+			_hash = new Hash();
 			if (source) {
 				for each (var item:Square in source) {
 					this.put(item);
@@ -73,7 +73,7 @@
 		public function remove(key:String):Square
 		{
 			if (this.hash.has(key)) {
-				return this.$hash.remove(key) as Square;
+				return _hash.remove(key) as Square;
 			}
 			return null;
 		}
@@ -88,13 +88,13 @@
 
 		public function take(key:String):Square
 		{
-			return this.$hash.take(key) as Square;
+			return _hash.take(key) as Square;
 		}
 
 		public function passAbled(sqIndex:SquarePt):Boolean
 		{
 			if (sqIndex) {
-				var sq:Square = this.$hash.take(sqIndex.key) as Square;
+				var sq:Square = _hash.take(sqIndex.key) as Square;
 				if (sq) {
 					if (sq.type == 3 || sq.type == 4) {	// 3/4是什么？
 						if (sq.type > 0) {

@@ -1,7 +1,7 @@
 ﻿package 
 {
 	import com.engine.core.Engine;
-	import com.engine.core.view.items.avatar.Avatar;
+	import com.engine.core.view.avatar.Avatar;
 	import com.engine.core.view.role.Char;
 	
 	import core.HeartbeatFactory;

@@ -1,7 +1,7 @@
 ﻿package 
 {
 	import com.engine.core.AvatarTypes;
-	import com.engine.core.view.items.avatar.ItemAvatar;
+	import com.engine.core.view.avatar.ItemAvatar;
 	import com.engine.core.view.role.Char;
 	import com.engine.core.view.scenes.SceneConstant;
 	import com.engine.utils.gome.LinearUtils;

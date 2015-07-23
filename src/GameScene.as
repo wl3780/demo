@@ -1,8 +1,8 @@
 ﻿package 
 {
 	import com.engine.core.Engine;
-	import com.engine.core.view.items.avatar.Avatar;
-	import com.engine.core.view.items.avatar.CharAction;
+	import com.engine.core.view.avatar.Avatar;
+	import com.engine.core.view.avatar.ActionConst;
 	import com.engine.core.view.scenes.Scene;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.HitTest;
@@ -56,7 +56,7 @@
 			this.mouseDownPoint = new Point(this.mouseX, this.mouseY);
 			if (_shiftKey) {
 				this.mainChar.stopMove();
-				this.mainChar.play(CharAction.SKILL1);
+				this.mainChar.play(ActionConst.SKILL1);
 			} else {
 				var area:Rectangle = new Rectangle(this.mouseX - 100, this.mouseY - 100, 200, 200);
 				var arr:Array = this.find(area, false, 100);
@@ -118,7 +118,7 @@
 					passEffect = "300000009";
 					mainChar.stopMove();
 					mainChar.faceTo(selectAvatar as Avatar);
-					mainChar.play(CharAction.ATTACK, null, false, function ():void
+					mainChar.play(ActionConst.ATTACK, null, false, function ():void
 					{
 						if (selectAvatar) {
 							FightUtils.lineAttack(passEffect, new Point(mainChar.x, mainChar.y), new Point(selectAvatar.x, selectAvatar.y), 150, 60);
@@ -131,7 +131,7 @@
 					passEffect = "201000002";
 					mainChar.stopMove();
 					mainChar.faceTo(selectAvatar as Avatar);
-					mainChar.play(CharAction.SKILL1, null, false, function ():void
+					mainChar.play(ActionConst.SKILL1, null, false, function ():void
 					{
 						var p1:Point = new Point(mainChar.x, mainChar.y);
 						var p2:Point = new Point(mouseX, mouseY);

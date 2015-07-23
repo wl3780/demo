@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.items
 {
-	import com.engine.core.view.items.avatar.IAvatar;
+	import com.engine.core.view.avatar.IAvatar;
 	import com.engine.namespaces.coder;
 	
 	import flash.utils.Dictionary;

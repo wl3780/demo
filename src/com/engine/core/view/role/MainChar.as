@@ -1,7 +1,7 @@
 ﻿package com.engine.core.view.role
 {
 	import com.engine.core.tile.square.SquarePt;
-	import com.engine.core.view.items.avatar.CharAction;
+	import com.engine.core.view.avatar.ActionConst;
 	
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -169,7 +169,7 @@
 		{
 			if (this.firstTime == false) {
 				this.firstTime = true;return;	// 测试代码
-				var actions:Array = [CharAction.WALK, CharAction.ATTACK, CharAction.HIT, CharAction.SKILL2, CharAction.QUNGONG, CharAction.SKILL1];
+				var actions:Array = [ActionConst.WALK, ActionConst.ATTACK, ActionConst.HIT, ActionConst.SKILL2, ActionConst.QUNGONG, ActionConst.SKILL1];
 				var idx:int = 0;
 				while (idx < actions.length) {
 					this.loadCharActionAssets(actions[idx]);

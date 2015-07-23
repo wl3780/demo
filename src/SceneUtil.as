@@ -4,7 +4,7 @@
 	import com.engine.core.tile.square.Square;
 	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.tile.square.SquarePt;
-	import com.engine.core.view.items.avatar.Avatar;
+	import com.engine.core.view.avatar.Avatar;
 	import com.engine.core.view.role.Char;
 	import com.engine.utils.Bezier;
 	import com.engine.utils.gome.SquareUitls;

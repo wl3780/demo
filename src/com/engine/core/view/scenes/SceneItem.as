@@ -4,9 +4,9 @@
 	import com.engine.core.tile.TileGroup;
 	import com.engine.core.tile.square.SquarePt;
 	import com.engine.core.view.items.NoderItem;
-	import com.engine.core.view.items.avatar.AvatartParts;
-	import com.engine.core.view.items.avatar.IAvatar;
-	import com.engine.core.view.items.avatar.ItemAvatar;
+	import com.engine.core.view.avatar.AvatartParts;
+	import com.engine.core.view.avatar.IAvatar;
+	import com.engine.core.view.avatar.ItemAvatar;
 	import com.engine.utils.gome.SquareUitls;
 	
 	import flash.display.Bitmap;

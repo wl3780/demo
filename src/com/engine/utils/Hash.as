@@ -116,7 +116,7 @@
 		public function reset():void
 		{
 			this.dispose();
-			_id = Engine.getInstance().coder::nextInstanceIndex().toString(16);
+			_id = Engine.getSoleId();
 		}
 		
 		public function get className():String

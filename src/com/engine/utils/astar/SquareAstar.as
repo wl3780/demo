@@ -12,41 +12,51 @@
 		private static const COST_STRAIGHT:int = 10;
 		private static const COST_DIAGONAL:int = 14;
 		
+		/**上*/
 		private static const DIR_TC:String = "tc";
+		/**左*/
 		private static const DIR_CT:String = "ct";
+		/**右*/
 		private static const DIR_CR:String = "cr";
+		/**下*/
 		private static const DIR_BC:String = "bc";
 
 		public var mode:int = 1;
 		
 		private var nonce:SquareAstarData;
-		private var source:Dictionary;
 		private var startPoint:SquarePt;
 		private var endPoint:SquarePt;
 		private var colsePath:Dictionary;
 		private var colseArray:Array;
 		private var openPath:Dictionary;
 		private var openArray:Array;
-		private var pathArray:Array;
 		private var closeLength:int;
 		private var G:int;
 		private var isFinish:Boolean;
 		
+		/**左上*/
 		private var canTL:Boolean;
+		/**右上*/
 		private var canTR:Boolean;
+		/**左下*/
 		private var canBL:Boolean;
+		/**右下*/
 		private var canBR:Boolean;
+		/**上*/
 		private var canTC:Boolean;
+		/**左*/
 		private var canCT:Boolean;
+		/**右*/
 		private var canCR:Boolean;
+		/**下*/
 		private var canBC:Boolean;
 
 		public function getPath(maps:Dictionary, tp_start:SquarePt, tp_end:SquarePt, _arg_4:Boolean=true, _arg_5:int=10000):Array
 		{
-			if (maps[tp_start.key]) {
-				var sq_start:Square = maps[tp_start.key] as Square;
-				var sq_end:Square = maps[tp_end.key] as Square;
-				if (sq_start && sq_end) {
+			var sq_start:Square = maps[tp_start.key] as Square;
+			var sq_end:Square = maps[tp_end.key] as Square;
+			if (sq_start) {
+				if (sq_end) {
 					if (sq_start.type == 2 && sq_end.type == 2) {
 						this.mode = 2;
 					} else {
@@ -56,15 +66,14 @@
 					this.mode = 1;
 				}
 			}
-			if (!maps[tp_start.key] || (this.mode==1 && maps[tp_start.key].type == 2)) {
+			if (!sq_start || (this.mode==1 && sq_start.type == 2)) {
 				return [];
 			}
 			
 			var startTime:Number = getTimer();
-			this.reSet();
+			this.reset();
 			this.startPoint = this.cycleCheck(maps, tp_start, 0);	// 递归寻找可行点
 			this.endPoint = this.cycleCheck(maps, tp_end, 0);	// 递归寻找可行点
-			this.source = maps;
 			this.nonce = new SquareAstarData(0, 0, this.startPoint);
 			this.nonce.parent = this.nonce;
 			this.colsePath[this.nonce.key] = this.nonce;
@@ -72,7 +81,7 @@
 				this.getScale9Grid(maps, this.nonce, this.endPoint, _arg_5);
 			}
 			var paths:Array = this.cleanArray();
-			log("saiman", "*****************寻路时间", (getTimer() - startTime), "路径长: ", paths.length, "*******************", "\n\n");
+			log("saiman", "*****************寻路时间：", (getTimer() - startTime), "路径长: ", paths.length, "*******************", "\n\n");
 			return paths;
 		}
 
@@ -83,17 +92,11 @@
 
 		private function cycleCheck(maps:Dictionary, tp_source:SquarePt, round:int):SquarePt
 		{
-			var type:int;
-			if (this.mode == 1) {
-				type = 2;
-			} else {
-				type = 1;
-			}
+			var type:int = this.mode == 1 ? 2 : 1;
 			if (maps[tp_source.key] == null || maps[tp_source.key].type == 0 || maps[tp_source.key].type == type) {
 				var tx:int = tp_source.x;
 				var ty:int = tp_source.y;
-				var sq_source:Square = new Square();
-				sq_source.setIndex(tp_source);
+				
 				var i:int = tx - (round+1);
 				while (i <= tx + (round+1)) {
 					var j:int = ty - (round+1);
@@ -120,166 +123,128 @@
 
 		private function getDis(pa:SquarePt, pb:SquarePt):int
 		{
-			var _local_3:int = (pb.x - pa.x);
-			if ((_local_3 < 0)) {
-				_local_3 = -(_local_3);
+			var dx:int = pb.x - pa.x;
+			if (dx < 0) {
+				dx = -dx;
 			}
-			var _local_4:int = (pb.y - pa.y);
-			if ((_local_4 < 0)) {
-				_local_4 = -(_local_4);
+			var dy:int = pb.y - pa.y;
+			if (dy < 0) {
+				dy = -dy;
 			}
-			return ((_local_3 + _local_4));
+			return dx + dy;
 		}
 
-		private function pass(_arg_1:Square):Boolean
+		private function pass(sq:Square):Boolean
 		{
-			var _local_3:int;
-			var _local_2:int = _arg_1.type;
-			if (_local_2 == 0) {
-				return (false);
+			var type:int = sq.type;
+			if (type == 0) {
+				return false;
 			}
-			if ((this.mode == 1)) {
-				_local_3 = 1;
+			var targetType:int;
+			if (this.mode == 1) {
+				targetType = 1;
 			} else {
-				_local_3 = 2;
+				targetType = 2;
 			}
-			if (_local_2 == _local_3) {
-				return (true);
+			if (type == targetType) {
+				return true;
 			}
-			return (false);
+			return false;
 		}
-
-		private function stratght(_arg_1:Square, _arg_2:SquarePt, _arg_3:String):void
+		
+		/**
+		 * 直线
+		 */
+		private function stratght(sq_curr:Square, pt_end:SquarePt, dir:String):void
 		{
-			var _local_4:String;
-			var _local_5:SquarePt;
-			var _local_6:int;
-			var _local_7:int;
-			var _local_8:int;
-			var _local_9:int;
-			var _local_10:int;
-			var _local_11:int;
-			var _local_12:int;
-			var _local_13:SquareAstarData;
-			var _local_14:SquareAstarData;
-			var _local_15:SquareAstarData;
-			if (_arg_1 != null) {
-				if (this.pass(_arg_1)) {
-					_local_4 = _arg_1.key;
-					_local_5 = _arg_1.index;
-					_local_6 = _local_5.x;
-					_local_7 = _local_5.y;
-					_local_8 = (_arg_2.x - _local_6);
-					if ((_local_8 < 0)) {
-						_local_8 = -(_local_8);
+			if (sq_curr != null) {
+				if (this.pass(sq_curr)) {
+					var key:String = sq_curr.key;
+					var pt_curr:SquarePt = sq_curr.index;
+					var hValue:int = this.getDis(pt_curr, pt_end) * COST_STRAIGHT;
+					var gValue:int = COST_STRAIGHT + this.G;
+					var fValue:int = gValue + hValue;
+					var sa_curr:SquareAstarData = new SquareAstarData(gValue, fValue, pt_curr);
+					if (sa_curr.parent == null) {
+						sa_curr.parent = this.nonce;
 					}
-					_local_9 = (_arg_2.y - _local_7);
-					if ((_local_9 < 0)) {
-						_local_9 = -(_local_9);
-					}
-					_local_10 = ((_local_8 + _local_9) * 10);
-					_local_11 = (COST_STRAIGHT + this.G);
-					_local_12 = (_local_11 + _local_10);
-					_local_13 = new SquareAstarData(_local_11, _local_12, _local_5);
-					if ((_local_13.parent == null)) {
-						_local_13.parent = this.nonce;
-					}
-					_local_14 = this.openPath[_local_4];
-					_local_15 = this.colsePath[_local_4];
-					if ((((_local_14 == null)) && ((_local_15 == null)))) {
-						this.openPath[_local_4] = _local_13;
-						this.openArray.push(_local_13);
+					var sa_open:SquareAstarData = this.openPath[key];
+					var sa_close:SquareAstarData = this.colsePath[key];
+					if (sa_open == null && sa_close == null) {
+						this.openPath[key] = sa_curr;
+						this.openArray.push(sa_curr);
 					} else {
-						if (_local_14 != null) {
-							if ((_local_13.F < _local_14.F)) {
-								this.openPath[_local_4] = _local_13;
+						if (sa_open != null) {
+							if (sa_curr.F < sa_open.F) {
+								this.openPath[key] = sa_curr;
 							}
 						}
 					}
 				} else {
-					if (_arg_3 == DIR_TC) {
+					if (dir == DIR_TC) {
 						this.canTC = false;
 						this.canTL = false;
 						this.canTR = false;
-					} else {
-						if (_arg_3 == DIR_CT) {
-							this.canCT = false;
-							this.canBL = false;
-							this.canTL = false;
-						} else {
-							if (_arg_3 == DIR_CR) {
-								this.canCR = false;
-								this.canTR = false;
-								this.canBR = false;
-							} else {
-								if (_arg_3 == DIR_BC) {
-									this.canBC = false;
-									this.canBR = false;
-									this.canBL = false;
-								}
-							}
-						}
+					} else if (dir == DIR_CT) {
+						this.canCT = false;
+						this.canBL = false;
+						this.canTL = false;
+					} else if (dir == DIR_CR) {
+						this.canCR = false;
+						this.canTR = false;
+						this.canBR = false;
+					} else if (dir == DIR_BC) {
+						this.canBC = false;
+						this.canBR = false;
+						this.canBL = false;
 					}
 				}
 			} else {
-				if (_arg_3 == DIR_TC) {
+				if (dir == DIR_TC) {
 					this.canTC = false;
 					this.canTL = false;
 					this.canTR = false;
-				} else {
-					if (_arg_3 == DIR_CT) {
-						this.canCT = false;
-					} else {
-						if (_arg_3 == DIR_CR) {
-							this.canCR = false;
-						} else {
-							if (_arg_3 == DIR_BC) {
-								this.canBC = false;
-							}
-						}
-					}
+				} else if (dir == DIR_CT) {
+					this.canCT = false;
+					this.canBL = false;
+					this.canTL = false;
+				} else if (dir == DIR_CR) {
+					this.canCR = false;
+					this.canTR = false;
+					this.canBR = false;
+				} else if (dir == DIR_BC) {
+					this.canBC = false;
+					this.canBR = false;
+					this.canBL = false;
 				}
 			}
 		}
 
-		private function diagonal(_arg_1:Square, _arg_2:SquarePt, _arg_3:Boolean):void
+		/**
+		 * 对角线
+		 */		
+		private function diagonal(sq_curr:Square, pt_end:SquarePt, isExist:Boolean):void
 		{
-			var _local_4:String;
-			var _local_5:SquarePt;
-			var _local_6:int;
-			var _local_7:int;
-			var _local_8:int;
-			var _local_9:int;
-			var _local_10:SquareAstarData;
-			var _local_11:SquareAstarData;
-			var _local_12:SquareAstarData;
-			if (((_arg_3) && (!((_arg_1 == null))))) {
-				if (this.pass(_arg_1)) {
-					_local_4 = _arg_1.key;
-					_local_5 = _arg_1.index;
-					_local_6 = (_arg_2.x - _local_5.x);
-					if ((_local_6 < 0)) {
-						_local_6 = -(_local_6);
+			if (isExist && sq_curr != null) {
+				if (this.pass(sq_curr)) {
+					var key:String = sq_curr.key;
+					var pt_curr:SquarePt = sq_curr.index;
+					var hValue:int = this.getDis(pt_curr, pt_end) * COST_STRAIGHT;
+					var gValue:int = COST_DIAGONAL + this.G;
+					var fValue:int = gValue + hValue;
+					var sa_curr:SquareAstarData = new SquareAstarData(gValue, fValue, pt_curr);
+					if (sa_curr.parent == null) {
+						sa_curr.parent = this.nonce;
 					}
-					_local_7 = (this.endPoint.y - _local_5.y);
-					if ((_local_7 < 0)) {
-						_local_7 = -(_local_7);
-					}
-					_local_8 = ((_local_6 + _local_7) * 10);
-					_local_9 = (COST_DIAGONAL + this.G);
-					_local_10 = new SquareAstarData(_local_9, (_local_9 + _local_8), _local_5);
-					if ((_local_10.parent == null)) {
-						_local_10.parent = this.nonce;
-					}
-					_local_11 = this.openPath[_local_4];
-					_local_12 = this.colsePath[_local_4];
-					if ((((_local_11 == null)) && ((_local_12 == null)))) {
-						this.openPath[_local_4] = _local_10;
-						this.openArray.push(_local_10);
+					var sa_open:SquareAstarData = this.openPath[key];
+					var sa_close:SquareAstarData = this.colsePath[key];
+					if (sa_open == null && sa_close == null) {
+						this.openPath[key] = sa_curr;
+						this.openArray.push(sa_curr);
 					} else {
-						if (_local_11 != null) {
-							if ((_local_10.F < _local_11.F)) {
-								this.openPath[_local_4] = _local_10;
+						if (sa_open != null) {
+							if (sa_curr.F < sa_open.F) {
+								this.openPath[key] = sa_curr;
 							}
 						}
 					}
@@ -287,7 +252,7 @@
 			}
 		}
 
-		private function getScale9Grid(_arg_1:Dictionary, _arg_2:SquareAstarData, _arg_3:SquarePt, _arg_4:int):void
+		private function getScale9Grid(maps:Dictionary, sa_curr:SquareAstarData, pt_end:SquarePt, maxSize:int):void
 		{
 			this.canBL = true;
 			this.canBR = true;
@@ -297,74 +262,74 @@
 			this.canCR = true;
 			this.canCT = true;
 			this.canBC = true;
-			var _local_5:SquarePt = _arg_2.pt;
-			var _local_6:int = _local_5.x;
-			var _local_7:int = _local_5.y;
-			var _local_8:int = (_local_6 + 1);
-			var _local_9:int = (_local_7 + 1);
-			var _local_10:int = (_local_6 - 1);
-			var _local_11:int = (_local_7 - 1);
-			var _local_12:Square = _arg_1[((_local_10 + "|") + _local_11)];
-			var _local_13:Square = _arg_1[((_local_8 + "|") + _local_11)];
-			var _local_14:Square = _arg_1[((_local_10 + "|") + _local_9)];
-			var _local_15:Square = _arg_1[((_local_8 + "|") + _local_9)];
-			var _local_16:Square = _arg_1[((_local_6 + "|") + _local_11)];
-			var _local_17:Square = _arg_1[((_local_10 + "|") + _local_7)];
-			var _local_18:Square = _arg_1[((_local_8 + "|") + _local_7)];
-			var _local_19:Square = _arg_1[((_local_6 + "|") + _local_9)];
-			if (_local_16) {
-				this.stratght(_local_16, _arg_3, DIR_TC);
+			var pt_curr:SquarePt = sa_curr.pt;
+			var ox:int = pt_curr.x;
+			var oy:int = pt_curr.y;
+			var rx:int = ox + 1;
+			var by:int = oy + 1;
+			var lx:int = ox - 1;
+			var ty:int = oy - 1;
+			var sq_tl:Square = maps[lx + "|" + ty];	// 左上
+			var sq_tr:Square = maps[rx + "|" + ty];	// 右上
+			var sq_bl:Square = maps[lx + "|" + by];	// 左下
+			var sq_br:Square = maps[rx + "|" + by];	// 右下
+			var sq_tt:Square = maps[ox + "|" + ty];	// 上
+			var sq_ll:Square = maps[lx + "|" + oy];	// 左
+			var sq_rr:Square = maps[rx + "|" + oy];	// 右
+			var sq_bb:Square = maps[ox + "|" + by];	// 下
+			if (sq_tt) {
+				this.stratght(sq_tt, pt_end, DIR_TC);
 			}
-			if (_local_17) {
-				this.stratght(_local_17, _arg_3, DIR_CT);
+			if (sq_ll) {
+				this.stratght(sq_ll, pt_end, DIR_CT);
 			}
-			if (_local_18) {
-				this.stratght(_local_18, _arg_3, DIR_CR);
+			if (sq_rr) {
+				this.stratght(sq_rr, pt_end, DIR_CR);
 			}
-			if (_local_19) {
-				this.stratght(_local_19, _arg_3, DIR_BC);
+			if (sq_bb) {
+				this.stratght(sq_bb, pt_end, DIR_BC);
 			}
-			if (_local_12) {
-				this.diagonal(_local_12, _arg_3, this.canTL);
+			if (sq_tl) {
+				this.diagonal(sq_tl, pt_end, this.canTL);
 			}
-			if (_local_13) {
-				this.diagonal(_local_13, _arg_3, this.canTR);
+			if (sq_tr) {
+				this.diagonal(sq_tr, pt_end, this.canTR);
 			}
-			if (_local_14) {
-				this.diagonal(_local_14, _arg_3, this.canBL);
+			if (sq_bl) {
+				this.diagonal(sq_bl, pt_end, this.canBL);
 			}
-			if (_local_15) {
-				this.diagonal(_local_15, _arg_3, this.canBR);
+			if (sq_br) {
+				this.diagonal(sq_br, pt_end, this.canBR);
 			}
-			var _local_20:int = this.openArray.length;
-			if ((((_local_20 == 0)) || ((((((((((((((((_local_16 == null)) && ((_local_17 == null)))) && ((_local_18 == null)))) && ((_local_19 == null)))) && ((_local_12 == null)))) && ((_local_13 == null)))) && ((_local_14 == null)))) && ((_local_15 == null)))))) {
+			var len:int = this.openArray.length;
+			if (len == 0) {
 				this.isFinish = false;
 				return;
 			}
-			var _local_21:int;
-			var _local_22:int;
-			while (_local_22 < _local_20) {
-				if (_local_22 == 0) {
-					_arg_2 = this.openArray[_local_22];
+			var tIdx:int;
+			var idx:int;
+			while (idx < len) {
+				if (idx == 0) {
+					sa_curr = this.openArray[idx];
 				} else {
-					if (this.openArray[_local_22].F < _arg_2.F) {
-						_arg_2 = this.openArray[_local_22];
-						_local_21 = _local_22;
+					if (this.openArray[idx].F < sa_curr.F) {
+						sa_curr = this.openArray[idx];
+						tIdx = idx;
 					}
 				}
-				_local_22++;
+				idx++;
 			}
-			this.nonce = _arg_2;
-			this.openArray.splice(_local_21, 1);
-			var _local_23:String = this.nonce.key;
-			if (this.colsePath[_local_23] == null) {
-				this.colsePath[_local_23] = this.nonce;
+			this.nonce = sa_curr;
+			this.openArray.splice(tIdx, 1);
+			var key:String = this.nonce.key;
+			if (this.colsePath[key] == null) {
+				this.colsePath[key] = this.nonce;
 				this.closeLength++;
-				if (this.closeLength > _arg_4) {
+				if (this.closeLength > maxSize) {
 					this.isFinish = false;
 				}
 			}
-			if (this.nonce.key == _arg_3.key) {
+			if (this.nonce.key == pt_end.key) {
 				this.isFinish = false;
 			}
 			this.G = this.nonce.G;
@@ -372,73 +337,46 @@
 
 		private function cleanArray():Array
 		{
-			var _local_3:Number;
-			var _local_4:SquarePt;
-			var _local_5:int;
-			var _local_6:int;
-			var _local_7:int;
-			var _local_8:SquareAstarData;
-			var _local_9:Boolean;
-			var _local_10:int;
-			this.pathArray = new Array();
-			var _local_1:String = this.endPoint.key;
-			if (this.colsePath[_local_1] == null) {
-				_local_3 = -1;
-				for each (_local_8 in this.colsePath) {
-					_local_4 = _local_8.pt;
-					_local_5 = (this.endPoint.x - _local_4.x);
-					if ((_local_5 < 0)) {
-						_local_5 = -(_local_5);
-					}
-					_local_6 = (this.endPoint.y - _local_4.y);
-					if ((_local_6 < 0)) {
-						_local_6 = -(_local_6);
-					}
-					_local_7 = (_local_5 + _local_6);
-					if (_local_3 == -1) {
-						_local_3 = _local_7;
-						_local_1 = _local_4.key;
-					} else {
-						if (_local_7 < _local_3) {
-							_local_3 = _local_7;
-							_local_1 = _local_4.key;
-						}
+			var pathArray:Array = [];
+			var key:String = this.endPoint.key;
+			if (this.colsePath[key] == null) {	// 寻找距离终点最近的点
+				var pt_item:SquarePt;
+				var hMin:int = int.MAX_VALUE;
+				var hVal:int;
+				for each (var item:SquareAstarData in this.colsePath) {
+					pt_item = item.pt;
+					hVal = this.getDis(pt_item, this.endPoint);
+					if (hVal < hMin) {
+						hMin = hVal;
+						key = pt_item.key;
 					}
 				}
 			}
-			var _local_2:SquareAstarData = this.colsePath[_local_1];
-			if (_local_2 != null) {
-				this.pathArray.unshift(_local_2.pt.pixelsPoint);
-				this.pathArray.unshift(_local_2.parent.pt.pixelsPoint);
-				_local_9 = true;
-				_local_10 = 0;
-				while (_local_9) {
-					_local_1 = this.colsePath[_local_1].parent.key;
-					if ((((_local_1 == this.startPoint.key)) || ((_local_10 > 10000)))) {
-						_local_9 = false;
+			var sa_end:SquareAstarData = this.colsePath[key];
+			if (sa_end != null) {
+				pathArray.unshift(sa_end.pt.pixelsPoint);
+				pathArray.unshift(sa_end.parent.pt.pixelsPoint);
+				var idx:int = 0;
+				while (true) {
+					key = this.colsePath[key].parent.key;
+					if (key == this.startPoint.key || idx > 10000) {
 						break;
 					}
-					this.pathArray.unshift(this.colsePath[_local_1].parent.pt.pixelsPoint);
-					_local_10++;
+					pathArray.unshift(this.colsePath[key].parent.pt.pixelsPoint);
+					idx++;
 				}
 			}
-			return (this.pathArray);
+			return pathArray;
 		}
 
-		private function reSet():void
+		private function reset():void
 		{
-			this.pathArray = [];
-			this.source = new Dictionary();
 			this.colsePath = new Dictionary();
 			this.colseArray = [];
 			this.openPath = new Dictionary();
 			this.openArray = [];
 			this.G = 0;
 			this.nonce = null;
-			this.canTL = true;
-			this.canTR = true;
-			this.canBL = true;
-			this.canBR = true;
 			this.isFinish = true;
 			this.closeLength = 0;
 		}

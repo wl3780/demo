@@ -67,6 +67,11 @@
 			INSTANCE_INDEX++;
 			return INSTANCE_INDEX;
 		}
+		
+		public static function getSoleId():String
+		{
+			return Engine.coder::nextInstanceIndex().toString(16);
+		}
 
 		public static function getInstance():Engine
 		{
