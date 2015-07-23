@@ -49,7 +49,7 @@
 				return;
 			}
 			
-			var pt_from:Point = new Point(mainChar.x, mainChar.y);
+			var pt_from:Point = mainChar.point;
 			var tp_start:SquarePt = SquareUitls.pixelsToSquare(pt_from);
 			var tp_end:SquarePt = SquareUitls.pixelsToSquare(pt_target);
 			this.walkPathFragments = [];
@@ -99,7 +99,7 @@
 				var pt_end:Point = array[i+1];
 				var dis:int = Point.distance(pt_start, pt_end);
 				var length:int = Math.ceil(dis / size);
-				var num:Number = size / dis;
+				var num:Number = dis ? size / dis : 0;
 				j = 0;
 				while (j <= length) {
 					var pr:Number = num * j;

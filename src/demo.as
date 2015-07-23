@@ -1,11 +1,17 @@
 ﻿package 
 {
 	import com.engine.core.Engine;
+	import com.engine.core.model.map.SquareMapData;
+	import com.engine.core.tile.TileConst;
+	import com.engine.core.tile.square.Square;
+	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.view.avatar.Avatar;
 	import com.engine.core.view.role.Char;
 	
 	import core.HeartbeatFactory;
 	
+	import flash.display.Graphics;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -166,8 +172,33 @@
 		// 显示/隐藏影子
 		protected function clickFunc3(evt:MouseEvent):void
 		{
-			this.openShadow = !this.openShadow;
-			this.scene.mainChar.openShadow = this.openShadow;
+//			this.openShadow = !this.openShadow;
+//			this.scene.mainChar.openShadow = this.openShadow;
+			var shape:Shape = new Shape();
+			GameScene.scene.addChildAt(shape, 0);
+			var pen:Graphics = shape.graphics;
+			pen.lineStyle(1, 0x0);
+			var mapData:SquareMapData = GameScene.scene.mapData;
+			var cols:int = mapData.pixel_width / TileConst.TILE_SIZE;
+			var rows:int = mapData.pixel_height / TileConst.TILE_SIZE;
+			for (var i:int=0; i<rows; i++) {
+				pen.moveTo(0, i*TileConst.TILE_SIZE);
+				pen.lineTo(cols*TileConst.TILE_SIZE, i*TileConst.TILE_SIZE);
+				for (var j:int=0; j<cols; j++) {
+					if (i == 0) {
+						pen.moveTo(j*TileConst.TILE_SIZE, 0);
+						pen.lineTo(j*TileConst.TILE_SIZE, rows*TileConst.TILE_SIZE);
+					}
+					
+					var key:String = j + "|" + i;
+					var sq:Square = SquareGroup.getInstance().take(key);
+					if (sq) {
+						pen.beginFill(sq.color, 0.2);
+						pen.drawRect(j*TileConst.TILE_SIZE, i*TileConst.TILE_SIZE, TileConst.TILE_SIZE, TileConst.TILE_SIZE);
+					}
+				}
+			}
+			shape.cacheAsBitmap = true;
 		}
 
 		// 10机器人

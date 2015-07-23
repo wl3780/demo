@@ -12,15 +12,6 @@
 		private static const COST_STRAIGHT:int = 10;
 		private static const COST_DIAGONAL:int = 14;
 		
-		/**上*/
-		private static const DIR_TC:String = "tc";
-		/**左*/
-		private static const DIR_CT:String = "ct";
-		/**右*/
-		private static const DIR_CR:String = "cr";
-		/**下*/
-		private static const DIR_BC:String = "bc";
-
 		public var mode:int = 1;
 		
 		private var nonce:SquareAstarData;
@@ -34,24 +25,7 @@
 		private var G:int;
 		private var isFinish:Boolean;
 		
-		/**左上*/
-		private var canTL:Boolean;
-		/**右上*/
-		private var canTR:Boolean;
-		/**左下*/
-		private var canBL:Boolean;
-		/**右下*/
-		private var canBR:Boolean;
-		/**上*/
-		private var canTC:Boolean;
-		/**左*/
-		private var canCT:Boolean;
-		/**右*/
-		private var canCR:Boolean;
-		/**下*/
-		private var canBC:Boolean;
-
-		public function getPath(maps:Dictionary, tp_start:SquarePt, tp_end:SquarePt, _arg_4:Boolean=true, _arg_5:int=10000):Array
+		public function getPath(maps:Dictionary, tp_start:SquarePt, tp_end:SquarePt, _arg_4:Boolean=true, size:int=10000):Array
 		{
 			var sq_start:Square = maps[tp_start.key] as Square;
 			var sq_end:Square = maps[tp_end.key] as Square;
@@ -78,7 +52,7 @@
 			this.nonce.parent = this.nonce;
 			this.colsePath[this.nonce.key] = this.nonce;
 			while (this.isFinish) {
-				this.getScale9Grid(maps, this.nonce, this.endPoint, _arg_5);
+				this.getScale9Grid(maps, this.nonce, this.endPoint, size);
 			}
 			var paths:Array = this.cleanArray();
 			log("saiman", "*****************寻路时间：", (getTimer() - startTime), "路径长: ", paths.length, "*******************", "\n\n");
@@ -155,7 +129,7 @@
 		/**
 		 * 直线
 		 */
-		private function stratght(sq_curr:Square, pt_end:SquarePt, dir:String):void
+		private function stratght(sq_curr:Square, pt_end:SquarePt):void
 		{
 			if (sq_curr != null) {
 				if (this.pass(sq_curr)) {
@@ -180,42 +154,6 @@
 							}
 						}
 					}
-				} else {
-					if (dir == DIR_TC) {
-						this.canTC = false;
-						this.canTL = false;
-						this.canTR = false;
-					} else if (dir == DIR_CT) {
-						this.canCT = false;
-						this.canBL = false;
-						this.canTL = false;
-					} else if (dir == DIR_CR) {
-						this.canCR = false;
-						this.canTR = false;
-						this.canBR = false;
-					} else if (dir == DIR_BC) {
-						this.canBC = false;
-						this.canBR = false;
-						this.canBL = false;
-					}
-				}
-			} else {
-				if (dir == DIR_TC) {
-					this.canTC = false;
-					this.canTL = false;
-					this.canTR = false;
-				} else if (dir == DIR_CT) {
-					this.canCT = false;
-					this.canBL = false;
-					this.canTL = false;
-				} else if (dir == DIR_CR) {
-					this.canCR = false;
-					this.canTR = false;
-					this.canBR = false;
-				} else if (dir == DIR_BC) {
-					this.canBC = false;
-					this.canBR = false;
-					this.canBL = false;
 				}
 			}
 		}
@@ -223,9 +161,9 @@
 		/**
 		 * 对角线
 		 */		
-		private function diagonal(sq_curr:Square, pt_end:SquarePt, isExist:Boolean):void
+		private function diagonal(sq_curr:Square, pt_end:SquarePt):void
 		{
-			if (isExist && sq_curr != null) {
+			if (sq_curr != null) {
 				if (this.pass(sq_curr)) {
 					var key:String = sq_curr.key;
 					var pt_curr:SquarePt = sq_curr.index;
@@ -254,14 +192,6 @@
 
 		private function getScale9Grid(maps:Dictionary, sa_curr:SquareAstarData, pt_end:SquarePt, maxSize:int):void
 		{
-			this.canBL = true;
-			this.canBR = true;
-			this.canTL = true;
-			this.canTR = true;
-			this.canCT = true;
-			this.canCR = true;
-			this.canCT = true;
-			this.canBC = true;
 			var pt_curr:SquarePt = sa_curr.pt;
 			var ox:int = pt_curr.x;
 			var oy:int = pt_curr.y;
@@ -278,31 +208,31 @@
 			var sq_rr:Square = maps[rx + "|" + oy];	// 右
 			var sq_bb:Square = maps[ox + "|" + by];	// 下
 			if (sq_tt) {
-				this.stratght(sq_tt, pt_end, DIR_TC);
+				this.stratght(sq_tt, pt_end);
 			}
 			if (sq_ll) {
-				this.stratght(sq_ll, pt_end, DIR_CT);
+				this.stratght(sq_ll, pt_end);
 			}
 			if (sq_rr) {
-				this.stratght(sq_rr, pt_end, DIR_CR);
+				this.stratght(sq_rr, pt_end);
 			}
 			if (sq_bb) {
-				this.stratght(sq_bb, pt_end, DIR_BC);
+				this.stratght(sq_bb, pt_end);
 			}
 			if (sq_tl) {
-				this.diagonal(sq_tl, pt_end, this.canTL);
+				this.diagonal(sq_tl, pt_end);
 			}
 			if (sq_tr) {
-				this.diagonal(sq_tr, pt_end, this.canTR);
+				this.diagonal(sq_tr, pt_end);
 			}
 			if (sq_bl) {
-				this.diagonal(sq_bl, pt_end, this.canBL);
+				this.diagonal(sq_bl, pt_end);
 			}
 			if (sq_br) {
-				this.diagonal(sq_br, pt_end, this.canBR);
+				this.diagonal(sq_br, pt_end);
 			}
 			var len:int = this.openArray.length;
-			if (len == 0) {
+			if (len == 0) {// || (!sq_tt && !sq_ll && !sq_rr && !sq_bb && !sq_tl && !sq_tr && !sq_bl && !sq_br)) {
 				this.isFinish = false;
 				return;
 			}

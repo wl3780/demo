@@ -30,11 +30,10 @@
 			sq.isAlpha = Boolean(int(info.slice(4, 5)));
 			sq.setIndex(new SquarePt(px, py));
 			
-			var color:uint;
 			if (sq.type > 0) {
-				color = 0xFF00;
+				sq.color = 0xFF00;
 			} else {
-				color = 0xFF0000;
+				sq.color = 0xFF0000;
 			}
 			return sq;
 		}

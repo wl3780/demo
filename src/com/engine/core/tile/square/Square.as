@@ -15,6 +15,7 @@
 		private static var squareHash:Vector.<Square> = new Vector.<Square>();
 
 		public var type:int;
+		public var color:uint;
 		public var isSell:Boolean;
 		public var isSafe:Boolean;
 		public var isAlpha:Boolean;
