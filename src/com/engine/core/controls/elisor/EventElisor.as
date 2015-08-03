@@ -1,153 +1,124 @@
 ﻿package com.engine.core.controls.elisor
 {
-	import com.engine.core.Engine;
-	import com.engine.core.controls.IOrder;
 	import com.engine.core.model.Proto;
-	import com.engine.namespaces.coder;
+	import com.engine.interfaces.system.IOrder;
+	import com.engine.utils.Hash;
 	
-	import flash.utils.Dictionary;
-
-	public class EventElisor extends Proto 
+	internal final class EventElisor extends Proto
 	{
-
 		private static var _instance:EventElisor;
-
-		private var _hash:Dictionary;
-		private var _len:int;
-
-		coder static function getInstance():EventElisor
+		
+		private var _orderHash:Hash;
+		private var _length:int;
+		
+		public function EventElisor()
 		{
-			if (_instance == null) {
-				_instance = new EventElisor();
-				_instance.initialize();
-			}
-			return _instance;
+			super();
+			_orderHash = new Hash();
 		}
-
-		public function initialize():void
+		
+		internal static function getInstance():EventElisor
 		{
-			_hash = new Dictionary();
+			return _instance ||= new EventElisor();
 		}
-
-		public function get len():int
+		
+		public function get length():int
 		{
-			return _len;
+			return _length;
 		}
-
-		public function addOrder(order:EventOrder, replace:Boolean=false):Boolean
+		
+		public function addOrder(order:EventOrder):Boolean
 		{
-			if (order == null) {
+			if (!order || !order.orderMode || !order.oid) {
 				return false;
 			}
-			if (order.type == null || order.oid == null) {
-				return false;
+			
+			var subHash:Hash = _orderHash.take(order.oid) as Hash;
+			if (!subHash) {
+				subHash = new Hash();
+				_orderHash.put(order.oid, subHash);
 			}
-			if (_hash[order.oid] == null) {
-				_hash[order.oid] = new Dictionary();
+			if (!subHash.has(order.orderMode)) {
+				_length ++;
 			}
-			if (_hash[order.oid][order.type] == null) {
-				_hash[order.oid][order.type] = order;
-				_len++;
-			} else {
-				if (replace && _hash[order.oid][order.type]) {
-					delete _hash[order.oid][order.type];
-					_hash[order.oid][order.type] = order;
-				}
-			}
+			subHash.put(order.orderMode, order, true);
 			return true;
 		}
-
-		public function removeOrder(orderId:String):EventOrder
+		
+		public function removeEventOrder(oid:String, listenerType:String):void
 		{
-			var arr:Array = orderId.split(Engine.SIGN);
-			if (arr.length != 2) {
-				return null;
+			if (!listenerType || !oid) {
+				return;
 			}
-			var oid:String = arr[0];
-			var type:String = arr[1];
-			if (_hash[oid] == null) {
-				return null;
+			
+			var subHash:Hash = _orderHash.take(oid) as Hash;
+			if (subHash) {
+				var order:EventOrder = subHash.remove(listenerType) as EventOrder;
+				if (order) {
+					_length --;
+					order.dispose();
+				}
 			}
-			var ret:EventOrder = _hash[oid][type] as EventOrder;
-			delete _hash[oid][type];
-			return ret;
 		}
-
-		public function hasOrder(orderId:String):Boolean
+		
+		public function hasEventOrder(oid:String, listenerType:String):Boolean
 		{
-			var arr:Array = orderId.split(Engine.SIGN);
-			if (arr.length != 2) {
+			if (!listenerType || !oid) {
 				return false;
 			}
-			var oid:String = arr[0];
-			var type:String = arr[1];
-			if (_hash[oid] == null) {
-				return false;
-			}
-			return _hash[oid][type] != null;
-		}
-
-		public function takeOrder(orderId:String):EventOrder
-		{
-			var arr:Array = orderId.split(Engine.SIGN);
-			if (arr.length != 2) {
-				return null;
-			}
-			var oid:String = arr[0];
-			var type:String = arr[1];
-			if (_hash[oid] == null) {
-				return null;
-			}
-			return _hash[oid][type] as EventOrder;
-		}
-
-		public function hasGroup(oid:String):Boolean
-		{
-			if (_hash[oid] != null) {
-				return true;
+			
+			var subHash:Hash = _orderHash.take(oid) as Hash;
+			if (subHash) {
+				return subHash.has(listenerType);
 			}
 			return false;
 		}
-
-		public function takeGroupOrder(oid:String):Vector.<IOrder>
+		
+		public function takeEventOrder(oid:String, listenerType:String):EventOrder
 		{
-			var list:Vector.<IOrder> = new Vector.<IOrder>();
-			if (_hash[oid] == null) {
-				return list;
+			if (!listenerType || !oid) {
+				return null;
 			}
 			
-			var dict:Dictionary = _hash[oid];
-			for each (var item:EventOrder in dict) {
-				list.push(item);
+			var subHash:Hash = _orderHash.take(oid) as Hash;
+			if (subHash) {
+				return subHash.take(listenerType) as EventOrder;
 			}
-			return list;
+			return null;
 		}
-
-		public function disposeGroupOrders(oid:String):Vector.<IOrder>
+		
+		public function hasGroup(oid:String):Boolean
 		{
-			var list:Vector.<IOrder> = new Vector.<IOrder>();
-			if (_hash[oid] == null) {
-				return list;
+			var subHash:Hash = _orderHash[oid];
+			if (subHash) {
+				return subHash.length > 0;
 			}
-			var dict:Dictionary = _hash[oid];
-			delete _hash[oid];
-			for each (var item:EventOrder in dict) {
-				list.push(item);
-			}
-			return list;
+			return false;
 		}
-
-		override public function dispose():void
+		
+		public function takeGroupOrder(oid:String):Vector.<IOrder>
 		{
-			if (_hash) {
-				for (var key:String in _hash) {
-					delete _hash[key];
+			var result:Vector.<IOrder> = new Vector.<IOrder>();
+			var subHash:Hash = _orderHash.take(oid) as Hash;
+			if (subHash) {
+				for each (var order:EventOrder in subHash) {
+					result.push(order);
 				}
-				_hash = null;
 			}
-			_instance = null;
-			super.dispose();
+			return result;
 		}
-
+		
+		public function disposeGroupOrders(oid:String):void
+		{
+			var suhHash:Hash = _orderHash.remove(oid) as Hash;
+			if (suhHash) {
+				for each (var order:EventOrder in suhHash) {
+					order.dispose();
+					_length --;
+				}
+				suhHash.dispose();
+			}
+		}
+		
 	}
 }

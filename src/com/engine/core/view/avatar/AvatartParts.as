@@ -1,7 +1,8 @@
 ﻿package com.engine.core.view.avatar
 {
-	import com.engine.core.Engine;
 	import com.engine.core.AvatarTypes;
+	import com.engine.core.DirConst;
+	import com.engine.core.Engine;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
 	
@@ -30,6 +31,7 @@
 		public var isPalyStandDeay:Boolean = true;
 		public var isOnMonut:Boolean;
 		public var lockEffectState:Boolean = true;
+		public var stop:Boolean = false;
 		
 		public var setupReady:Function;
 		public var onRender:Function;
@@ -39,20 +41,19 @@
 		public var loadErorFunc:Function;
 		public var onRendStart:Function;
 		public var playEffectFunc:Function;
+		public var state:String = ActionConst.STAND;
+		public var dir:int = DirConst.BOTTOM;
 		
 		protected var _effectRestrict:Dictionary;
 		
 		private var assetsIndex:int;
 		private var counter:int;
-		private var _stop:Boolean = false;
 		private var _effectRestricts:Dictionary;
-		private var _state:String = ActionConst.STAND;
 		private var oldState:String = ActionConst.STAND
 		private var _currRestrict:AvatarRestrict;
 		private var _currentFrame:int = 0;
 		private var _fly_currentFrame:int = 0;
 		private var _totalFrames:int = 4;
-		private var _dir:int = 4;
 		private var _speed:int = 0;
 		private var wid_id:String;
 		private var mid_id:String;
@@ -69,15 +70,6 @@
 			super();
 			_currRestrict = new AvatarRestrict();
 			_effectRestrict = new Dictionary();
-		}
-
-		public function get stop():Boolean
-		{
-			return _stop;
-		}
-		public function set stop(val:Boolean):void
-		{
-			_stop = val;
 		}
 
 		public function addEffectRestrict(effID:String, effRestrict:AvatarRestrict):void
@@ -133,17 +125,6 @@
 			_currRestrict = val;
 		}
 
-		public function get state():String
-		{
-			return _state;
-		}
-		public function set state(val:String):void
-		{
-			if (_state != val) {
-				_state = val;
-			}
-		}
-
 		public function get currentFrame():int
 		{
 			return _currentFrame;
@@ -176,7 +157,7 @@
 
 		public function bodyRender(now:Boolean=false):void
 		{
-			if (this.isDisposed || _stop || this.avatarParts == null) {
+			if (this.isDisposed || this.stop || this.avatarParts == null) {
 				return;
 			}
 			
@@ -290,9 +271,9 @@
 						
 						if (param.replay > 0 || param.replay == -1) {
 							if (this.isFlyMode && playType == AvatarTypes.MOUNT_TYPE) {
-								this.onRender(this.id, _dir, bmd, rect, param.avatarType, param.id, param.txs[_dir][_fly_currentFrame], param.tys[_dir][_fly_currentFrame]);
+								this.onRender(this.id, this.dir, bmd, rect, param.avatarType, param.id, param.txs[this.dir][_fly_currentFrame], param.tys[this.dir][_fly_currentFrame]);
 							} else {
-								this.onRender(this.id, _dir, bmd, rect, param.avatarType, param.id, param.txs[_dir][_currentFrame], param.tys[_dir][_currentFrame]);
+								this.onRender(this.id, this.dir, bmd, rect, param.avatarType, param.id, param.txs[this.dir][_currentFrame], param.tys[this.dir][_currentFrame]);
 							}
 							if (param.replay > 0 && _currentFrame >= param.frames) {
 								param.replay--;
@@ -560,15 +541,6 @@
 			}
 		}
 
-		public function get dir():int
-		{
-			return _dir;
-		}
-		public function set dir(val:int):void
-		{
-			_dir = val;
-		}
-
 		public function hasAssets(itemType:String):Boolean
 		{
 			var dict:Dictionary;
@@ -617,7 +589,7 @@
 			this.loadErorFunc = null;
 			this.playEffectFunc = null;
 			this.type = null;
-			_state = "stand";
+			this.state = ActionConst.STAND;
 			var dict:Dictionary;
 			for each (dict in this.effectsParts) {
 				for each (var _local_2:AvatarParam in dict) {

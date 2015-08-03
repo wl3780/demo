@@ -103,7 +103,7 @@
 			super._EngineKeyDownFunc_(evt);
 			var passEffect:String;
 			if (this.selectAvatar == null || this.selectAvatar.parent == null) {
-				var arr:Array = avatarHash.coder::values();
+				var arr:Array = stageIntersectsHash.coder::values();
 				this.selectAvatar = arr[arr.length - 2];
 			}
 			switch (evt.keyCode) {

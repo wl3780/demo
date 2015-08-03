@@ -8,19 +8,19 @@
 	public class SquareUitls 
 	{
 
-		public static function xyToSquare(_arg_1:Number, _arg_2:Number):SquarePt
+		public static function xyToSquare(x:Number, y:Number):SquarePt
 		{
-			return (new SquarePt(int((_arg_1 / TileConst.TILE_SIZE)), int((_arg_2 / TileConst.TILE_SIZE))));
+			return new SquarePt(int(x / TileConst.TILE_WIDTH), int(y / TileConst.TILE_HEIGHT));
 		}
 
-		public static function pixelsToSquare(_arg_1:Point):SquarePt
+		public static function pixelsToSquare(p:Point):SquarePt
 		{
-			return (new SquarePt(int((_arg_1.x / TileConst.TILE_SIZE)), int((_arg_1.y / TileConst.TILE_SIZE))));
+			return new SquarePt(int(p.x / TileConst.TILE_WIDTH), int(p.y / TileConst.TILE_HEIGHT));
 		}
 
-		public static function squareTopixels(_arg_1:SquarePt):Point
+		public static function squareTopixels(pt:SquarePt):Point
 		{
-			return (_arg_1.pixelsPoint);
+			return pt.pixelsPoint;
 		}
 
 	}

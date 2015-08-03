@@ -5,7 +5,7 @@
 
 package com.engine.utils
 {
-    import com.engine.core.view.BaseSprite;
+    import com.engine.core.view.DisplaySprite;
     import flash.display.Shape;
     import flash.utils.Dictionary;
     import core.HeartbeatFactory;
@@ -13,7 +13,7 @@ package com.engine.utils
     import flash.events.Event;
     import flash.display.Graphics;
 
-    public class ShapeCD extends BaseSprite 
+    public class ShapeCD extends DisplaySprite 
     {
 
         private static var isReady:Boolean;

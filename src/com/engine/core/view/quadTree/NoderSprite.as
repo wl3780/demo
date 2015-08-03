@@ -1,10 +1,11 @@
 ﻿package com.engine.core.view.quadTree
 {
 	import com.engine.core.Engine;
-	import com.engine.core.view.BaseSprite;
+	import com.engine.core.view.DisplaySprite;
+	import com.engine.interfaces.display.INoderDisplay;
 	import com.engine.namespaces.coder;
 
-	public class NoderSprite extends BaseSprite implements INoderSpite 
+	public class NoderSprite extends DisplaySprite implements INoderDisplay
 	{
 
 		coder var _tid:String;

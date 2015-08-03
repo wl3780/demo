@@ -1,8 +1,11 @@
 ﻿package com.engine.core.controls.elisor
 {
-	import com.engine.core.controls.IOrder;
 	import com.engine.core.model.Proto;
-	import com.engine.namespaces.coder;
+	import com.engine.interfaces.IProto;
+	import com.engine.interfaces.system.IOrderDispatcher;
+	
+	import flash.display.DisplayObject;
+	import flash.display.Stage;
 
 	public class Elisor extends Proto 
 	{
@@ -12,143 +15,114 @@
 		private var _EventElisor:EventElisor;
 		private var _FrameElisor:FrameElisor;
 
+		public function Elisor()
+		{
+			super();
+			_EventElisor = EventElisor.getInstance();
+			_FrameElisor = FrameElisor.getInstance();
+		}
+
 		public static function getInstance():Elisor
 		{
 			if (_instance == null) {
 				_instance = new Elisor();
-				_instance.initialize();
 			}
 			return _instance;
 		}
 
-
-		public function initialize():void
+		public function setup(stage:Stage):void
 		{
-			_EventElisor = EventElisor.coder::getInstance();
-			_FrameElisor = FrameElisor.coder::getInstance();
+			_FrameElisor.setup(stage);
 		}
-
-		public function createEventOrder(oid:String, type:String, listener:Function):EventOrder
+		
+		// ---------------------------------------------
+		public function addFrameOrder(target:IProto, handler:Function, delay:int=0, isOnStageHandler:Boolean=false):void
 		{
-			var order:EventOrder = new EventOrder();
-			order.register(oid, type, listener);
-			return order;
-		}
-
-		public function createFrameOrder(oid:String, delay:int, action:Function, args:Array=null, callback:Function=null, between:int=-1):FrameOrder
-		{
-			if (action == null) {
-				throw new Error("action 不能为 null");
-				return;
+			var order:FrameOrder = FrameOrder.createFrameOrder();
+			order.value = delay;
+			if (delay == 0) {
+				order.setup(OrderMode.ENTER_FRAME_ORDER, target.id, handler);
+			} else {
+				if (isOnStageHandler) {
+					order.display = target as DisplayObject;
+				}
+				order.setup(OrderMode.DELAY_FRAME_ORDER, target.id, handler);
 			}
-			var order:FrameOrder = new FrameOrder();
-			order.setUp(oid, delay, between);
-			order.register(action, args, callback);
-			return order;
+			_FrameElisor.addFrameOrder(order);
 		}
-
-		public function setTimeOut(oid:String, between:int, func:Function, args:Array):FrameOrder
+		
+		public function hasFrameOrder(handler:Function):Boolean
 		{
-			var order:FrameOrder = new FrameOrder();
-			order.setUp(oid, 20, between);
-			order.setTimeOut(func, args);
-			return order;
+			return _FrameElisor.hasFrameOrder(handler);
 		}
-
-		public function addOrder(order:IOrder, _arg_2:Boolean=false):Boolean
+		
+		public function setInterval(target:IProto, handler:Function, delay:int, ... args):void
 		{
-			switch (order.type) {
-				case OrderMode.EVENT_ORDER:
-					return _EventElisor.addOrder(order as EventOrder);
-				case OrderMode.FRAME_ORDER:
-					return _FrameElisor.addOrder(order as FrameOrder);
-			}
-			return false;
+			var order:FrameOrder = FrameOrder.createFrameOrder();
+			order.value = delay;
+			order.setup(OrderMode.INTERVAL_FRAME_ORDER, target.id, handler);
+			order.proto = args;
+			_FrameElisor.addFrameOrder(order);
 		}
-
-		public function removeOrder(id:String, _arg_2:String):IOrder
+		
+		public function setTimeOut(target:IProto, handler:Function, delay:int, ... args):String
 		{
-			switch (id) {
-				case OrderMode.EVENT_ORDER:
-					return _EventElisor.removeOrder(id);
-				case OrderMode.FRAME_ORDER:
-					return _FrameElisor.removeOrder(id);
-			}
-			return null;
+			var order:FrameOrder = FrameOrder.createFrameOrder();
+			order.value = delay;
+			order.setup(OrderMode.DELAY_FRAME_ORDER, target.id, handler);
+			order.proto = args;
+			_FrameElisor.addFrameOrder(order);
+			return order.id;
 		}
-
-		public function hasOrder(id:String, _arg_2:String):Boolean
+		
+		public function removeFrameOrder(handler:Function):void
 		{
-			switch (id) {
-				case OrderMode.EVENT_ORDER:
-					return _EventElisor.hasOrder(id);
-				case OrderMode.FRAME_ORDER:
-					return _FrameElisor.hasOrder(id);
-			}
-			return false;
+			_FrameElisor.removeFrameOrder(handler);
 		}
-
-		public function takeOrder(id:String, _arg_2:String):IOrder
+		
+		public function stopFrameOrder(handler:Function):void
 		{
-			switch (id) {
-				case OrderMode.EVENT_ORDER:
-					return _EventElisor.takeOrder(id);
-				case OrderMode.FRAME_ORDER:
-					return _FrameElisor.takeOrder(id);
-			}
-			return null;
+			_FrameElisor.stopFrameOrder(handler);
 		}
-
-		public function hasGroup(oid:String, orderMode:String=OrderMode.TOTAL):Boolean
+		
+		public function stopTargetFrameOrder(target:IProto):void
 		{
-			switch (orderMode) {
-				case OrderMode.TOTAL:
-					return _EventElisor.hasGroup(oid) || _FrameElisor.hasGroup(oid);
-				case OrderMode.EVENT_ORDER:
-					return _EventElisor.hasGroup(oid);
-				case OrderMode.FRAME_ORDER:
-					return _FrameElisor.hasGroup(oid);
-			}
-			return false;
+			_FrameElisor.stopFrameGroup(target.id);
 		}
-
-		public function takeGroupOrders(oid:String, orderMode:String=OrderMode.TOTAL):Vector.<IOrder>
+		
+		public function removeTotalFrameOrder(target:IProto):void
 		{
-			switch (orderMode) {
-				case OrderMode.TOTAL:
-					var list:Vector.<IOrder> = _EventElisor.takeGroupOrder(oid);
-					list.concat(_FrameElisor.takeGroupOrder(oid));
-					return list;
-				case OrderMode.EVENT_ORDER:
-					return _EventElisor.takeGroupOrder(oid);
-				case OrderMode.FRAME_ORDER:
-					return _FrameElisor.takeGroupOrder(oid);
-			}
-			return null;
+			_FrameElisor.removeFrameGroup(target.id);
 		}
-
-		public function disposeGroupOrders(oid:String, orderMode:String=OrderMode.TOTAL):Vector.<IOrder>
+		
+		// ---------------------------------------------
+		public function hasEventOrder(oid:String, listenerType:String):Boolean
 		{
-			switch (orderMode) {
-				case OrderMode.TOTAL:
-					var list:Vector.<IOrder> = _EventElisor.disposeGroupOrders(oid);
-					return list.concat(_FrameElisor.disposeGroupOrders(oid));
-				case OrderMode.EVENT_ORDER:
-					return _EventElisor.disposeGroupOrders(oid);
-				case OrderMode.FRAME_ORDER:
-					return _FrameElisor.disposeGroupOrders(oid);
-			}
-			return null;
+			return _EventElisor.hasEventOrder(oid, listenerType);
 		}
-
-		override public function dispose():void
+		
+		public function addEventOrder(tar:IOrderDispatcher, type:String, listener:Function):void
 		{
-			_EventElisor.dispose();
-			_EventElisor = null;
-			_FrameElisor.dispose();
-			_FrameElisor = null;
-			super.dispose();
-			_instance = null;
+			var order:EventOrder = EventOrder.createEventOrder();
+			order.register(tar.id, type, listener);
+			_EventElisor.addOrder(order);
+		}
+		
+		public function removeEventOrder(oid:String, listenerType:String):void
+		{
+			_EventElisor.removeEventOrder(oid, listenerType);
+		}
+		
+		public function removeTotalEventOrder(target:IProto):void
+		{
+			_EventElisor.disposeGroupOrders(target.id);
+		}
+		
+		// ---------------------------------------------
+		public function removeTotalOrder(target:IProto):void
+		{
+			this.removeTotalEventOrder(target);
+			this.removeTotalFrameOrder(target);
 		}
 
 	}

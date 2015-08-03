@@ -114,45 +114,45 @@
 
 		public function get top_left():Point
 		{
-			var px:Number = TileConst.TILE_SIZE * this.x;
-			var py:Number = TileConst.TILE_SIZE * this.y;
+			var px:Number = TileConst.TILE_WIDTH * this.x;
+			var py:Number = TileConst.TILE_HEIGHT * this.y;
 			return new Point(px, py);
 		}
 
 		public function get top_right():Point
 		{
-			var px:Number = TileConst.TILE_SIZE * (this.x + 1);
-			var py:Number = TileConst.TILE_SIZE * this.y;
+			var px:Number = TileConst.TILE_WIDTH * (this.x + 1);
+			var py:Number = TileConst.TILE_HEIGHT * this.y;
 			return new Point(px, py);
 		}
 
 		public function get bottom_left():Point
 		{
-			var px:Number = TileConst.TILE_SIZE * this.x;
-			var py:Number = TileConst.TILE_SIZE * (this.y + 1);
+			var px:Number = TileConst.TILE_WIDTH * this.x;
+			var py:Number = TileConst.TILE_HEIGHT * (this.y + 1);
 			return new Point(px, py);
 		}
 
 		public function get bottom_right():Point
 		{
-			var px:Number = TileConst.TILE_SIZE * (this.x + 1);
-			var py:Number = TileConst.TILE_SIZE * (this.y + 1);
+			var px:Number = TileConst.TILE_WIDTH * (this.x + 1);
+			var py:Number = TileConst.TILE_HEIGHT * (this.y + 1);
 			return new Point(px, py);
 		}
 
 		public function get midVertex():Point
 		{
-			var midX:Number = (TileConst.TILE_SIZE * this.x) - (TileConst.TILE_SIZE / 2);
-			var midY:Number = (TileConst.TILE_SIZE * this.y) - (TileConst.TILE_SIZE / 2);
+			var midX:Number = (TileConst.TILE_WIDTH * this.x) - TileConst.WH;
+			var midY:Number = (TileConst.TILE_HEIGHT * this.y) - TileConst.HH;
 			return new Point(midX, midY);
 		}
 
 		public function getBounds():Rectangle
 		{
-			var px:Number = this.x * TileConst.TILE_SIZE;
-			var py:Number = this.y * TileConst.TILE_SIZE;
-			var pw:Number = TileConst.TILE_SIZE;
-			var ph:Number = TileConst.TILE_SIZE;
+			var px:Number = this.x * TileConst.TILE_WIDTH;
+			var py:Number = this.y * TileConst.TILE_HEIGHT;
+			var pw:Number = TileConst.TILE_WIDTH;
+			var ph:Number = TileConst.TILE_HEIGHT;
 			return new Rectangle(px, py, pw, ph);
 		}
 

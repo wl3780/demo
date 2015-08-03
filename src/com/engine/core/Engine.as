@@ -6,7 +6,6 @@
 	
 	import core.HeartbeatFactory;
 	
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
@@ -19,7 +18,8 @@
 		public static const SM_FILE:String = ".sm";
 		public static const SIGN:String = "@";
 		public static const LINE:String = "_";
-		public static const IMAGE_SZIE:int = 300;
+		public static const WEALTH_ALONE_SIGN:String = "【WQA】";
+		public static const WEALTH_GROUP_SIGN:String = "【WQG】";
 		
 		public static const SWF_Files:Vector.<String> = new <String>["swf","tmp"];
 		public static const IMG_Files:Vector.<String> = new <String>["png","jpg","jpeg","gif","jxr",""];
@@ -39,12 +39,9 @@
 		public static var _Lessen_Frame_:int = 1;
 		public static var stopMove:Boolean = true;
 		
-		public static var shadowBitmap:Bitmap;
 		public static var mini_bitmapData:BitmapData;
-		public static var chat_bitmapData:BitmapData;
-		public static var shadow_bitmapData:BitmapData;
 		public static var char_shadow:BitmapData;
-		public static var char_big_shadow:BitmapData;
+		public static var char_shadow_arr:Vector.<BitmapData> = new Vector.<BitmapData>();
 		
 		public static var isCheat:Boolean = false;
 		public static var sceneClickAbled:Boolean = true;
@@ -54,10 +51,10 @@
 		
 		public static var fps:int;
 		public static var mainCharId:String = "haha";
+		public static var enabled:Boolean = true;
 		
 		private static var coreTarget:DisplayObjectContainer;
 		private static var INSTANCE_INDEX:int = 0;
-		private static var _instance:Engine;
 
 		coder static function nextInstanceIndex():int
 		{
@@ -71,14 +68,6 @@
 		public static function getSoleId():String
 		{
 			return Engine.coder::nextInstanceIndex().toString(16);
-		}
-
-		public static function getInstance():Engine
-		{
-			if (_instance == null) {
-				_instance = new Engine();
-			}
-			return _instance;
 		}
 
 		public static function setup(target:DisplayObjectContainer, path:String, lang:String="zh_CN", ver:String="v1.0"):void

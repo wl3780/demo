@@ -1,8 +1,8 @@
 ﻿package com.engine.core.view.items
 {
-	import com.engine.core.view.BaseSprite;
+	import com.engine.core.view.DisplaySprite;
 
-	public class Item extends BaseSprite implements IItem 
+	public class Item extends DisplaySprite
 	{
 
 		private var _layer:String;
@@ -48,15 +48,6 @@
 		public function set isSceneItem(val:Boolean):void
 		{
 			_isSceneItem = val;
-		}
-
-		public function get type():String
-		{
-			return _type;
-		}
-		public function set type(val:String):void
-		{
-			_type = val;
 		}
 
 	}

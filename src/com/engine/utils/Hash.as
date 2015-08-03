@@ -1,7 +1,7 @@
 ﻿package com.engine.utils
 {
 	import com.engine.core.Engine;
-	import com.engine.core.model.IProto;
+	import com.engine.interfaces.IProto;
 	import com.engine.namespaces.coder;
 	
 	import flash.utils.Dictionary;
@@ -17,7 +17,7 @@
 		public function Hash()
 		{
 			super(false);
-			_id = Engine.coder::nextInstanceIndex().toString(16);
+			_id = Engine.getSoleId();
 		}
 		
 		public function take(key:Object):Object
@@ -93,7 +93,7 @@
 			_proto = value;
 		}
 		
-		public function clone():IProto
+		public function clone():Object
 		{
 			var newOne:Hash = new Hash();
 			for (var key:String in this) {
@@ -126,9 +126,8 @@
 		
 		public function toString():String
 		{
-			return super.toString();
+			return "[" + this.className + Engine.SIGN + this.id + "]";
 		}
-
 		
 		coder function values():Array
 		{

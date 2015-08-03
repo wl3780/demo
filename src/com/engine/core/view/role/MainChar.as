@@ -35,7 +35,7 @@
 		override public function setup():void
 		{
 			super.setup();
-			_ap.isAutoDispose = false;
+			this.avatarParts.isAutoDispose = false;
 		}
 
 		override public function stopMove():void

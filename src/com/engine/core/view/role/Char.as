@@ -3,17 +3,19 @@
 	import com.engine.core.Engine;
 	import com.engine.core.tile.Pt;
 	import com.engine.core.tile.TileConst;
+	import com.engine.core.tile.square.Square;
+	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.view.BitmapScale9Grid;
+	import com.engine.core.view.avatar.ActionConst;
+	import com.engine.core.view.avatar.Avatar;
+	import com.engine.core.view.avatar.AvatarRestrict;
+	import com.engine.core.view.avatar.ItemAvatar;
+	import com.engine.core.view.avatar.ShoawdBitmap;
 	import com.engine.core.view.items.HeadShowShape;
 	import com.engine.core.view.items.InstancePool;
 	import com.engine.core.view.items.Item;
-	import com.engine.core.view.avatar.Avatar;
-	import com.engine.core.view.avatar.AvatarRestrict;
-	import com.engine.core.view.avatar.ActionConst;
-	import com.engine.core.view.avatar.ItemAvatar;
-	import com.engine.core.view.avatar.ShoawdBitmap;
 	import com.engine.core.view.scenes.Scene;
-	import com.engine.core.view.scenes.SceneConstant;
+	import com.engine.core.view.scenes.SceneConst;
 	import com.engine.core.view.scenes.SceneEvent;
 	import com.engine.core.view.scenes.SceneEventDispatcher;
 	import com.engine.namespaces.coder;
@@ -86,7 +88,7 @@
 		public function Char()
 		{
 			super();
-			this.type = SceneConstant.CHAR;
+			this.type = SceneConst.CHAR;
 			this.jumpQuene = [];
 		}
 
@@ -134,6 +136,14 @@
 		public function set speed(val:Number):void
 		{
 			_speed = val;
+		}
+		
+		public function loop():void
+		{
+		}
+		
+		public function loopMove():void
+		{
 		}
 
 		public function sayWord(_arg_1:String):void
@@ -219,15 +229,15 @@
 
 		override public function get transform():Transform
 		{
-			if (this.bitmapdata_mid) {
-				return this.bitmapdata_mid.transform;
+			if (this.bmp_mid) {
+				return this.bmp_mid.transform;
 			}
 			return null;
 		}
 		override public function set transform(val:Transform):void
 		{
-			if (this.bitmapdata_mid) {
-				this.bitmapdata_mid.transform = val;
+			if (this.bmp_mid) {
+				this.bmp_mid.transform = val;
 			}
 		}
 
@@ -313,7 +323,7 @@
 			if (this.isDisposed) {
 				return;
 			}
-			if (((((avatarParts) && (!((avatarParts.state == ActionConst.STAND))))) && ((((((((this.type == SceneConstant.CAR)) || ((this.type == SceneConstant.MONSTER)))) || ((this.type == SceneConstant.PET)))) || ((this.type == SceneConstant.SUMMON_MONSTER)))))) {
+			if (((((avatarParts) && (!((avatarParts.state == ActionConst.STAND))))) && ((((((((this.type == SceneConst.CAR)) || ((this.type == SceneConst.MONSTER)))) || ((this.type == SceneConst.PET)))) || ((this.type == SceneConst.SUMMON_MONSTER)))))) {
 				avatarParts.acce = (_speed / 120);
 				if (avatarParts.acce < 1) {
 					avatarParts.acce = 1;
@@ -329,11 +339,11 @@
 			if (this.effectDic) {
 				for each (_local_12 in this.effectDic) {
 					if (_local_12.parent) {
-						if (this.bitmapdata_midm) {
+						if (this.bmp_midm) {
 							_local_10 = this.getChildIndex(_local_12);
-							_local_11 = this.getChildIndex(bitmapdata_midm);
+							_local_11 = this.getChildIndex(bmp_midm);
 							if (_local_10 < _local_11) {
-								this.swapChildren(_local_12, bitmapdata_midm);
+								this.swapChildren(_local_12, bmp_midm);
 							}
 						}
 						_local_12.y = this.onMonutHeight;
@@ -358,6 +368,22 @@
 			}
 			if (this.shadowShape) {
 				this.shadowShape.alpha = val;
+			}
+		}
+		
+		public function updateAlpha():void
+		{
+			var tile:Square = SquareGroup.getInstance().take(this.key) as Square;
+			if (tile) {
+				if (tile.isAlpha) {
+					if (this.alpha != 0.5) {
+						this.alpha = 0.5;
+					}
+				} else {
+					if (this.alpha != 1) {
+						this.alpha = 1;
+					}
+				}
 			}
 		}
 
@@ -519,7 +545,7 @@
 			this.jumpQuene = [];
 			super.reset();
 			if (this.isMainChar) {
-				_ap.isAutoDispose = false;
+				this.avatarParts.isAutoDispose = false;
 			}
 		}
 
@@ -624,12 +650,12 @@
 			if (this.popsinger == 4) {
 				if ((Engine.delayTime - this.jumpTimeNum) > 120) {
 					_local_1 = new Rectangle();
-					if (((bitmapdata_mid) && (bitmapdata_mid.bitmapData))) {
-						_local_1 = _local_1.union(bitmapdata_mid.bitmapData.rect);
+					if (((bmp_mid) && (bmp_mid.bitmapData))) {
+						_local_1 = _local_1.union(bmp_mid.bitmapData.rect);
 					}
 					if (_local_1.isEmpty() == false) {
 						_local_2 = new BitmapData(_local_1.width, _local_1.height, true, 0);
-						_local_2.copyPixels(bitmapdata_mid.bitmapData, bitmapdata_mid.bitmapData.rect, new Point());
+						_local_2.copyPixels(bmp_mid.bitmapData, bmp_mid.bitmapData.rect, new Point());
 						_local_3 = new ShoawdBitmap(_local_2);
 						_local_3.alpha = 0.9;
 						_local_3.x = (this.x - (_local_2.width / 2));
@@ -1037,10 +1063,10 @@
 				return;
 			}
 			if (paths.length == 1) {
-				var ttx:int = paths[0].x / TileConst.TILE_SIZE;
-				var tty:int = paths[0].y / TileConst.TILE_SIZE;
-				var ftx:int = this.x / TileConst.TILE_SIZE;
-				var fty:int = this.y / TileConst.TILE_SIZE;
+				var ttx:int = paths[0].x / TileConst.TILE_WIDTH;
+				var tty:int = paths[0].y / TileConst.TILE_HEIGHT;
+				var ftx:int = this.x / TileConst.TILE_WIDTH;
+				var fty:int = this.y / TileConst.TILE_HEIGHT;
 				if (ttx == ftx && tty == fty) {
 					return;
 				}

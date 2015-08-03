@@ -48,31 +48,31 @@
 			var rectHW:int = rectW / 2;
 			var rectHH:int = rectH / 2;
 			
-			$id = (rectX + rectHW) + Engine.SIGN + (rectY + rectHH);
-			$oid = oid;
+			_id_ = (rectX + rectHW) + Engine.SIGN + (rectY + rectHH);
+			_oid_ = oid;
 			_tree = NodeTreePool.getInstance().take(tid) as NodeTree;
-			_tree.addNode($id, this);
+			_tree.addNode(_id_, this);
 			var restDepth:int = depth - 1;
 			if (restDepth > 0) {
 				if (_nodeA == null) {
 					_nodeA = new Node();
 					nextRect = new Rectangle(rectX, rectY, rectHW, rectHH);
-					_nodeA.setUp(tid, $id, nextRect, restDepth);
+					_nodeA.setUp(tid, _id_, nextRect, restDepth);
 				}
 				if (_nodeB == null) {
 					_nodeB = new Node();
 					nextRect = new Rectangle(rectX, (rectY + rectHH), rectHW, rectHH);
-					_nodeB.setUp(tid, $id, nextRect, restDepth);
+					_nodeB.setUp(tid, _id_, nextRect, restDepth);
 				}
 				if (_nodeC == null) {
 					_nodeC = new Node();
 					nextRect = new Rectangle((rectX + rectHW), rectY, rectHW, rectHH);
-					_nodeC.setUp(tid, $id, nextRect, restDepth);
+					_nodeC.setUp(tid, _id_, nextRect, restDepth);
 				}
 				if (_nodeD == null) {
 					_nodeD = new Node();
 					nextRect = new Rectangle((rectX + rectHW), (rectY + rectHH), rectHW, rectHH);
-					_nodeD.setUp(tid, $id, nextRect, restDepth);
+					_nodeD.setUp(tid, _id_, nextRect, restDepth);
 				}
 				this.project();
 			}

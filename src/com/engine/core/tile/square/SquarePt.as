@@ -8,8 +8,6 @@
 	public class SquarePt 
 	{
 
-		private static var size:Number = TileConst.TILE_SIZE / 2;
-
 		private var _x:int;
 		private var _y:int;
 
@@ -22,10 +20,10 @@
 
 		public static function pixelsDistance(ptA:SquarePt, ptB:SquarePt):Number
 		{
-			var ax:Number = ptA.x * TileConst.TILE_SIZE + size;
-			var bx:Number = ptB.x * TileConst.TILE_SIZE + size;
-			var ay:Number = ptA.y * TileConst.TILE_SIZE + size;
-			var by:Number = ptB.y * TileConst.TILE_SIZE + size;
+			var ax:Number = ptA.x * TileConst.TILE_WIDTH + TileConst.WH;
+			var bx:Number = ptB.x * TileConst.TILE_WIDTH + TileConst.WH;
+			var ay:Number = ptA.y * TileConst.TILE_WIDTH + TileConst.HH;
+			var by:Number = ptB.y * TileConst.TILE_WIDTH + TileConst.HH;
 			return Point.distance(new Point(ax, ay), new Point(bx, by));
 		}
 
@@ -57,8 +55,8 @@
 
 		public function get pixelsPoint():Point
 		{
-			var px:Number = (this.x * TileConst.TILE_SIZE + size) >> 0;
-			var py:Number = (this.y * TileConst.TILE_SIZE + size) >> 0;
+			var px:Number = (this.x * TileConst.TILE_WIDTH + TileConst.WH) >> 0;
+			var py:Number = (this.y * TileConst.TILE_HEIGHT + TileConst.HH) >> 0;
 			return new Point(px, py);
 		}
 

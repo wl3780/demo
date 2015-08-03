@@ -7,10 +7,10 @@
 	import com.engine.utils.Hash;
 	
 	import flash.utils.ByteArray;
-
+	
 	public class SquareMapData extends Proto 
 	{
-
+		
 		public var map_id:int;
 		public var pixel_x:int;
 		public var pixel_y:int;
@@ -19,7 +19,7 @@
 		public var width:int;
 		public var height:int;
 		public var items:Array;
-
+		
 		public function prasePro(px:int, py:int, num:int):Square
 		{
 			var sq:Square = Square.createSquare();
@@ -37,30 +37,24 @@
 			}
 			return sq;
 		}
-
-		public function praseLayerpro(itemID:int, px:int, py:int, bytes:ByteArray):ItemData
+		
+		public function praseLayerpro(item_id:String, px:int, py:int, dir:int):ItemData
 		{
 			var data:ItemData = new ItemData();
 			data.x = px;
 			data.y = py;
-			data.item_id = itemID;
-			data.layer = bytes.readShort();
-			data.depth = bytes.readShort();
+			data.item_id = item_id;
+			data.dir = dir;
 			return data;
 		}
-
+		
 		public function uncode(bytes:ByteArray, source:Hash=null):void
 		{
-			if (bytes == null) {
-				return;
-			}
-			this.items = [];
 			bytes.position = 0;
 			try {
 				bytes.uncompress();
 			} catch(e:Error) {
 			}
-			bytes.position = 0;
 			this.map_id = bytes.readShort();
 			this.pixel_x = bytes.readShort();
 			this.pixel_y = bytes.readShort();
@@ -85,21 +79,24 @@
 				idx++;
 			}
 			
+			this.items = [];
 			var itemData:ItemData;
-			var itemID:int;
+			var item_id:String;
 			var itemX:int;
 			var itemY:int;
+			var dir:int;
 			count = bytes.readShort();
 			idx = 0;
 			while (idx < count) {
-				itemID = bytes.readInt();
+				item_id = bytes.readUTF();
 				itemX = bytes.readInt();
 				itemY = bytes.readInt();
-				itemData = this.praseLayerpro(itemID, itemX, itemY, bytes);
+				dir = bytes.readByte();
+				itemData = this.praseLayerpro(item_id, itemX, itemY, dir);
 				this.items.push(itemData);
 				idx++;
 			}
 		}
-
+		
 	}
 }

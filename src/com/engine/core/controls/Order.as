@@ -1,42 +1,29 @@
 ﻿package com.engine.core.controls
 {
 	import com.engine.core.model.Proto;
+	import com.engine.interfaces.system.IOrder;
+	import com.engine.namespaces.coder;
 	
 	import flash.net.registerClassAlias;
 
-	public class Order extends Proto implements IOrder 
+	public class Order extends Proto implements IOrder
 	{
 
-		protected var $type:String;
+		protected var _orderMode_:String;
 
 		public function Order()
 		{
-			registerClassAlias("saiman.save.Order", Order);
+			super();
+			registerClassAlias("engine.save.Order", Order);
 		}
 
-		public function set type(val:String):void
+		public function get orderMode():String
 		{
-			this.$type = val;
+			return _orderMode_;
 		}
-		public function get type():String
+		coder function set orderMode(val:String):void
 		{
-			return this.$type;
-		}
-
-		public function execute():void
-		{
-			throw new Error("抽象方法，该方法需要子类实现");
-		}
-
-		public function callback(args:Array=null):void
-		{
-			throw new Error("抽象方法，该方法需要子类实现");
-		}
-
-		override public function dispose():void
-		{
-			this.$type = null;
-			super.dispose();
+			_orderMode_ = val;
 		}
 
 	}

@@ -1,11 +1,27 @@
 ﻿package com.engine.utils
 {
-	import flash.geom.Matrix;
+	import com.engine.interfaces.display.IDisplay;
+	
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
+	import flash.geom.Matrix;
 
 	public class DisplayObjectUtil 
 	{
+		
+		public static function removeDisplayObject(target:DisplayObjectContainer):void
+		{
+			var child:DisplayObject = null;
+			while (target.numChildren) {
+				child = target.removeChildAt(target.numChildren - 1);
+				if ((child is DisplayObjectContainer) && (child as DisplayObjectContainer).numChildren) {
+					removeDisplayObject(child as DisplayObjectContainer);
+				} else if (child is IDisplay) {
+					IDisplay(child).dispose();
+				}
+			}
+		}
 
 		public static function drawTransformBitmap(_arg_1:DisplayObject, _arg_2:Number, _arg_3:Number, _arg_4:Boolean=false):BitmapData
 		{
@@ -49,7 +65,6 @@
 			return (_local_6);
 		}
 
-		
 		public static function liangdu(num:Number):Array
 		{
 			return [

@@ -2,159 +2,60 @@
 {
 	import com.engine.core.Engine;
 	import com.engine.core.controls.Order;
-	import com.engine.namespaces.coder;
 	
+	import flash.display.DisplayObject;
 	import flash.net.registerClassAlias;
-
-	public class FrameOrder extends Order 
+	
+	public final class FrameOrder extends Order
 	{
-
-		private var _applyFunc:Function;
-		private var _arguments:Array;
-		private var _callbackFunc:Function;
-		private var _timeOutFunc:Function;
-		private var _timeOutargs:Array;
-		private var _stop:Boolean;
-		private var _startTime:Number;
-		private var _between:int;
-		private var _delay:int;
-
+		private static var _orderQueue:Vector.<FrameOrder> = new Vector.<FrameOrder>();
+		
+		public var stop:Boolean;
+		public var value:int;
+		public var display:DisplayObject;
+		
+		protected var _applyHandler_:Function;
+		
 		public function FrameOrder()
 		{
-			registerClassAlias("saiman.save.FrameOrder", FrameOrder);
-			this.$type = OrderMode.FRAME_ORDER;
-			this.$id = Engine.coder::nextInstanceIndex().toString(16);
-			_stop = true;
+			super();
+			registerClassAlias("engine.save.FrameOrder", FrameOrder);
 		}
-
-		public function get delay():int
+		
+		public static function createFrameOrder():FrameOrder
 		{
-			return _delay;
+			var order:FrameOrder = _orderQueue.length ? _orderQueue.pop() : new FrameOrder();
+			return order;
 		}
-
-		coder function set delay(val:int):void
+		
+		public function get isOnStageHandler():Boolean
 		{
-			_delay = val;
-		}
-
-		public function set delay(val:int):void
-		{
-			if (_delay != val) {
-				if (FrameElisor.coder::getInstance().chageDeay(this.$id, val) == false) {
-					_delay = val;
-				}
+			if (this.display) {
+				return true;
 			}
+			return false;
 		}
-
-		public function setUp(oid:String, delay:int, between:int=-1):void
+		
+		public function setup(orderMode:String, oid:String, applyHandler:Function):void
 		{
-			if (oid == null){
-				this.$oid = Engine.coder::nextInstanceIndex().toString(16);
-			} else {
-				this.$oid = oid;
-			}
-			_delay = delay;
-			_between = between;
+			_orderMode_ = orderMode;
+			_oid_ = oid;
+			_id_ = oid + Engine.SIGN + orderMode;
+			_applyHandler_ = applyHandler;
 		}
-
-		public function setTimeOut(func:Function, args:Array):void
+		
+		public function get applyHandler():Function
 		{
-			_timeOutFunc = func;
-			_timeOutargs = args;
+			return _applyHandler_;
 		}
-
-		public function register(applyFunc:Function, args:Array, callbackFunc:Function=null):void
-		{
-			if (applyFunc != null) {
-				_applyFunc = applyFunc;
-			}
-			if (args == null) {
-				args = [];
-			}
-			_arguments = args;
-			if (callbackFunc != null) {
-				_callbackFunc = callbackFunc;
-			}
-		}
-
-		public function start():void
-		{
-			_startTime = Engine.delayTime;
-			_stop = false;
-		}
-
-		public function set stop(val:Boolean):void
-		{
-			if (_stop != val) {
-				_stop = val;
-				var quene:DeayQuene = FrameElisor.coder::getInstance().takeQuene(_delay+"");
-				if (val) {
-					quene.stopOrder(this.$id);
-				} else {
-					quene.startOrder(this.$id);
-				}
-			}
-		}
-
-		public function get stop():Boolean
-		{
-			return _stop;
-		}
-
-		override public function execute():void
-		{
-			if (_stop == false) {
-				if (_applyFunc != null) {
-					var applyRet:* = _applyFunc.apply(null, _arguments);
-					this.callback([applyRet]);
-				}
-				if (_between != -1) {
-					var delayTime:int = Engine.delayTime;
-					if ((delayTime - (_startTime + _between)) >= 0) {
-						_stop = true;
-						if (_timeOutargs == null) {
-							_timeOutargs = [];
-						}
-						if (_timeOutFunc != null) {
-							_timeOutFunc.apply(null, _timeOutargs);
-						}
-						this.dispose();
-						return;
-					}
-				}
-			}
-		}
-
-		override public function callback(args:Array=null):void
-		{
-			try {
-				if (_callbackFunc == null) {
-					return;
-				}
-				_callbackFunc.apply(null, args);
-			} catch(e:Error) {
-				this.dispose();
-				throw new Error("【异常】：" + e.message);
-			}
-		}
-
+		
 		override public function dispose():void
 		{
-			if (FrameElisor.coder::getInstance().hasOrder(this.id)) {
-				FrameElisor.coder::getInstance().removeOrder(this.id);
-			}
-			_stop = false;
-			_applyFunc = null;
-			_callbackFunc = null;
-			_arguments = null;
-			_timeOutFunc = null;
-			_timeOutargs = null;
-			_startTime = 0;
-			_delay = 0;
-			_startTime = 0;
-			_between = 0;
-			super.dispose();
+			this.display = null;
+			this.value = 0;
+			this.stop = false;
+			_orderQueue.push(this);
 		}
-
+		
 	}
 }

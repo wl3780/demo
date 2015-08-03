@@ -1,16 +1,17 @@
 ﻿package com.engine.core.view.avatar
 {
 	import com.engine.core.AvatarTypes;
+	import com.engine.core.DirConst;
 	import com.engine.core.Engine;
 	import com.engine.core.RecoverUtils;
-	import com.engine.core.model.IProto;
 	import com.engine.core.tile.square.Square;
 	import com.engine.core.tile.square.SquareGroup;
 	import com.engine.core.tile.square.SquarePt;
+	import com.engine.core.view.DisplaySprite;
 	import com.engine.core.view.items.InstancePool;
-	import com.engine.core.view.items.NoderItem;
 	import com.engine.core.view.scenes.Scene;
-	import com.engine.core.view.scenes.SceneConstant;
+	import com.engine.core.view.scenes.SceneConst;
+	import com.engine.interfaces.display.IAvatar;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.HitTest;
 	import com.engine.utils.gome.SquareUitls;
@@ -29,7 +30,7 @@
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 
-	public class Avatar extends NoderItem implements IAvatar 
+	public class Avatar extends DisplaySprite implements IAvatar
 	{
 
 		public static var stageRect:Rectangle = new Rectangle();
@@ -43,20 +44,19 @@
 		public var sit_speed:int = 1;
 		public var isGroupSongModel:Boolean = false;
 		public var curr_rect:Rectangle;
+		public var avatarParts:AvatartParts;
 		
 		public var hiedBody:Boolean = false;
 		public var hiedWeapon:Boolean = false;
 		public var hiedMount:Boolean = false;
 		
-		protected var bitmapdata_mid:Bitmap;
-		protected var bitmapdata_wid:Bitmap;
-		protected var bitmapdata_midm:Bitmap;
-		protected var bitmapdata_fid:Bitmap;
-		protected var bitmapdata_wgid:Bitmap;
+		protected var bmp_mid:Bitmap;
+		protected var bmp_wid:Bitmap;
+		protected var bmp_wgid:Bitmap;
+		protected var bmp_midm:Bitmap;
+		protected var bmp_fid:Bitmap;
 		
 		protected var eid_avatarBitmaps:Dictionary;
-		protected var _ap:AvatartParts;
-		protected var $isDisposed:Boolean = false;
 		protected var _pt:SquarePt;
 		protected var _point:Point;
 		protected var shape:ShoadwShape;
@@ -124,7 +124,7 @@
 
 		coder function get bodyBitmap():Bitmap
 		{
-			return this.bitmapdata_mid;
+			return this.bmp_mid;
 		}
 
 		public function set hp_height(val:Number):void
@@ -182,11 +182,11 @@
 			}
 		}
 
-		public function set isAutoDispose(_arg_1:Boolean):void
+		public function set isAutoDispose(val:Boolean):void
 		{
-			_isAutoDispose = _arg_1;
-			if (_ap) {
-				_ap.isAutoDispose = _arg_1;
+			_isAutoDispose = val;
+			if (this.avatarParts) {
+				this.avatarParts.isAutoDispose = val;
 			}
 		}
 
@@ -284,17 +284,17 @@
 		override public function set type(val:String):void
 		{
 			super.type = val;
-			if (this.type == SceneConstant.CHAR 
-				|| this.type == SceneConstant.MONSTER 
-				|| this.type == SceneConstant.NPC 
-				|| this.type == SceneConstant.SPECIAL_NPC) {
+			if (this.type == SceneConst.CHAR 
+				|| this.type == SceneConst.MONSTER 
+				|| this.type == SceneConst.NPC 
+				|| this.type == SceneConst.SPECIAL_NPC) {
 				this.isShowbodyShoadw = true;
 			} else {
 				this.isShowbodyShoadw = false;
 			}
 			this.deayTime = getTimer();
-			if (_ap) {
-				_ap.type = val;
+			if (this.avatarParts) {
+				this.avatarParts.type = val;
 			}
 		}
 
@@ -400,20 +400,20 @@
 
 		override public function set blendMode(val:String):void
 		{
-			if (this.bitmapdata_mid) {
-				this.bitmapdata_mid.blendMode = val;
+			if (this.bmp_mid) {
+				this.bmp_mid.blendMode = val;
 			}
-			if (this.bitmapdata_fid) {
-				this.bitmapdata_fid.blendMode = val;
+			if (this.bmp_fid) {
+				this.bmp_fid.blendMode = val;
 			}
-			if (this.bitmapdata_midm) {
-				this.bitmapdata_midm.blendMode = val;
+			if (this.bmp_midm) {
+				this.bmp_midm.blendMode = val;
 			}
-			if (this.bitmapdata_wid) {
-				this.bitmapdata_wid.blendMode = val;
+			if (this.bmp_wid) {
+				this.bmp_wid.blendMode = val;
 			}
-			if (this.bitmapdata_wgid) {
-				this.bitmapdata_wgid.blendMode = val;
+			if (this.bmp_wgid) {
+				this.bmp_wgid.blendMode = val;
 			}
 		}
 
@@ -482,15 +482,6 @@
 			return false;
 		}
 
-		public function get isDisposed():Boolean
-		{
-			return this.$isDisposed
-		}
-		public function set isDisposed(val:Boolean):void
-		{
-			this.$isDisposed = val;
-		}
-
 		override public function get visible():Boolean
 		{
 			return _visible;
@@ -498,18 +489,18 @@
 
 		override public function get filters():Array
 		{
-			if (this.bitmapdata_mid) {
-				return this.bitmapdata_mid.filters;
+			if (this.bmp_mid) {
+				return this.bmp_mid.filters;
 			}
 			return [];
 		}
 		override public function set filters(val:Array):void
 		{
-			if (this.bitmapdata_mid && this.bitmapdata_mid.stage) {
-				this.bitmapdata_mid.filters = val;
+			if (this.bmp_mid && this.bmp_mid.stage) {
+				this.bmp_mid.filters = val;
 			}
-			if (this.bitmapdata_fid && this.bitmapdata_fid.stage) {
-				this.bitmapdata_fid.filters = val;
+			if (this.bmp_fid && this.bmp_fid.stage) {
+				this.bmp_fid.filters = val;
 			}
 			if (this.headShape && this.headShape.stage) {
 				this.headShape.filters = val;
@@ -633,20 +624,21 @@
 
 		public function reset():void
 		{
-			if (_ap) {
-				_ap.dispose();
+			if (this.avatarParts) {
+				this.avatarParts.dispose();
 			}
-			_ap = new AvatartParts();
-			_ap.type = SceneConstant.AVATAR;
-			_ap.onRender = this.onRender;
-			_ap.onRendStart = coder::onRendStart;
-			_ap.playEndFunc = coder::playEndFunc;
-			_ap.playEffectFunc = coder::playEffectFunc;
-			_ap.setupReady = coder::setupReady;
-			_ap.disposeEffectsFunc = this.disposeEffects;
+			this.avatarParts = new AvatartParts();
+			this.avatarParts.type = SceneConst.AVATAR;
+			this.avatarParts.onRender = this.onRender;
+			this.avatarParts.onRendStart = coder::onRendStart;
+			this.avatarParts.playEndFunc = coder::playEndFunc;
+			this.avatarParts.playEffectFunc = coder::playEffectFunc;
+			this.avatarParts.setupReady = coder::setupReady;
+			this.avatarParts.disposeEffectsFunc = this.disposeEffects;
+			this.avatarParts.coder::oid = this.id;
+			
 			this.bodyVisible = true;
 			_isAutoDispose = true;
-			_ap.coder::oid = this.id;
 			this.$playEndFunc = null;
 			this.$playState = null;
 			this.$proto = null;
@@ -658,13 +650,13 @@
 			this.deayState = null;
 			this.isDeath = false;
 			this.isDisposed = false;
-			if (((_headShape) && (_headShape.parent))) {
-				_headShape.parent.removeChild(_headShape);
-			}
 			if (_headShape) {
 				_headShape.dispose();
+				if (_headShape.parent) {
+					_headShape.parent.removeChild(_headShape);
+				}
+				_headShape = null;
 			}
-			_headShape = null;
 			this.effectPlayEndDic = null;
 			this.eid_avatarBitmaps = null;
 			this.dir = 0;
@@ -678,7 +670,7 @@
 			if (this.cacheAsBitmap) {
 				this.cacheAsBitmap = false;
 			}
-			this.dir = 4;
+			this.dir = DirConst.BOTTOM;
 			this.eid_avatarBitmaps = new Dictionary();
 			this.jumping = false;
 			this.runing = false;
@@ -690,66 +682,43 @@
 			this.sit_vy = 1;
 			this.height_old = 110;
 			this.hpHeight = 110;
-			if (this.bitmapdata_mid) {
+			if (this.bmp_mid) {
 				this.transform.colorTransform = new ColorTransform();
+				this.bmp_mid.bitmapData = null;
+				if (this.bmp_mid.parent) {
+					this.bmp_mid.parent.removeChild(this.bmp_mid);
+				}
 			}
-			if (this.bitmapdata_mid) {
-				this.bitmapdata_mid.bitmapData = null;
+			if (this.bmp_midm) {
+				this.bmp_midm.bitmapData = null;
+				if (this.bmp_midm.parent) {
+					this.bmp_midm.parent.removeChild(this.bmp_midm);
+				}
 			}
-			if (this.bitmapdata_midm) {
-				this.bitmapdata_midm.bitmapData = null;
+			if (this.bmp_wid) {
+				this.bmp_wid.bitmapData = null;
+				(this.bmp_wid.parent) {
+					this.bmp_wid.parent.removeChild(this.bmp_wid);
+				}
 			}
-			if (this.bitmapdata_wid) {
-				this.bitmapdata_wid.bitmapData = null;
+			if (this.bmp_fid) {
+				this.bmp_fid.bitmapData = null;
+				(this.bmp_fid.parent) {
+					this.bmp_fid.parent.removeChild(this.bmp_fid);
+				}
 			}
-			if (this.bitmapdata_fid) {
-				this.bitmapdata_fid.bitmapData = null;
+			if (this.bmp_wgid) {
+				this.bmp_wgid.bitmapData = null;
+				if (this.bmp_wgid.parent) {
+					this.bmp_wgid.parent.removeChild(this.bmp_wgid);
+				}
 			}
-			if (((this.bitmapdata_wid) && (this.bitmapdata_wid.parent))) {
-				this.bitmapdata_wid.parent.removeChild(this.bitmapdata_wid);
-			}
-			if (((this.bitmapdata_mid) && (this.bitmapdata_mid.parent))) {
-				this.bitmapdata_mid.parent.removeChild(this.bitmapdata_mid);
-			}
-			if (((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) {
-				this.bitmapdata_midm.parent.removeChild(this.bitmapdata_midm);
-			}
-			if (((this.bitmapdata_fid) && (this.bitmapdata_fid.parent))) {
-				this.bitmapdata_fid.parent.removeChild(this.bitmapdata_fid);
-			}
-			if (((this.bitmapdata_wgid) && (this.bitmapdata_wgid.parent))) {
-				this.bitmapdata_wgid.parent.removeChild(this.bitmapdata_wgid);
-			}
-			if (this.bitmapdata_mid) {
-				this.bitmapdata_mid.blendMode = BlendMode.NORMAL;
-			}
-			if (this.bitmapdata_fid) {
-				this.bitmapdata_fid.blendMode = BlendMode.NORMAL;
-			}
-			if (this.bitmapdata_midm) {
-				this.bitmapdata_midm.blendMode = BlendMode.NORMAL;
-			}
-			if (this.bitmapdata_wid) {
-				this.bitmapdata_wid.blendMode = BlendMode.NORMAL;
-			}
-			if (this.bitmapdata_wgid) {
-				this.bitmapdata_wgid.blendMode = BlendMode.NORMAL;
-			}
-		}
-
-		public function get avatarParts():AvatartParts
-		{
-			return _ap;
-		}
-		public function set avatarParts(val:AvatartParts):void
-		{
-			_ap = val;
 		}
 
 		public function setup():void
 		{
 			this.avatarParts = new AvatartParts();
-			this.avatarParts.type = SceneConstant.AVATAR;
+			this.avatarParts.type = SceneConst.AVATAR;
 			this.avatarParts.setupReady = coder::setupReady;
 			this.avatarParts.onRender = this.onRender;
 			this.avatarParts.onRendStart = coder::onRendStart;
@@ -762,11 +731,11 @@
 			var idx:int = this.numChildren - 1;
 			while (idx >= 0) {
 				var child:DisplayObject = this.getChildAt(idx);
-				if (child != this.bitmapdata_wgid 
-					&& child != this.bitmapdata_fid 
-					&& child != this.bitmapdata_wid 
-					&& child != this.bitmapdata_mid 
-					&& child != this.bitmapdata_midm 
+				if (child != this.bmp_wgid 
+					&& child != this.bmp_fid 
+					&& child != this.bmp_wid 
+					&& child != this.bmp_mid 
+					&& child != this.bmp_midm 
 					&& child != _headShape) {
 					this.removeChildAt(idx);
 				}
@@ -922,28 +891,28 @@
 				this.avatarParts.removeAvatarPartByType(avatarType);
 				switch (avatarType) {
 					case AvatarTypes.BODY_TYPE:
-						if (this.bitmapdata_mid) {
-							this.bitmapdata_mid.bitmapData = null;
+						if (this.bmp_mid) {
+							this.bmp_mid.bitmapData = null;
 						}
 						break;
 					case AvatarTypes.WEAPON_TYPE:
-						if (this.bitmapdata_wid) {
-							this.bitmapdata_wid.bitmapData = null;
+						if (this.bmp_wid) {
+							this.bmp_wid.bitmapData = null;
 						}
 						break;
 					case AvatarTypes.WING_TYPE:
-						if (this.bitmapdata_wgid) {
-							this.bitmapdata_wgid.bitmapData = null;
+						if (this.bmp_wgid) {
+							this.bmp_wgid.bitmapData = null;
 						}
 						break;
 					case AvatarTypes.MOUNT_TYPE:
-						if (this.bitmapdata_midm) {
-							this.bitmapdata_midm.bitmapData = null;
+						if (this.bmp_midm) {
+							this.bmp_midm.bitmapData = null;
 						}
 						break;
 					case AvatarTypes.FLY_TYPE:
-						if (this.bitmapdata_fid) {
-							this.bitmapdata_fid.bitmapData = null;
+						if (this.bmp_fid) {
+							this.bmp_fid.bitmapData = null;
 						}
 						break;
 				}
@@ -1101,12 +1070,12 @@
 			if (!_isFlyMode) {
 				return;
 			}
-			if (((((this.jumping) && (this.bitmapdata_midm))) && (this.bitmapdata_midm.bitmapData))) {
+			if (((((this.jumping) && (this.bmp_midm))) && (this.bmp_midm.bitmapData))) {
 				_local_1 = new Point(this.shape.x, this.shape.y);
 				_local_1 = Scene.scene.localToGlobal(_local_1);
 				_local_1 = this.globalToLocal(_local_1);
-				this.bitmapdata_midm.x = (_local_1.x + this.fly_vx);
-				this.bitmapdata_midm.y = (_local_1.y + this.fly_vy);
+				this.bmp_midm.x = (_local_1.x + this.fly_vx);
+				this.bmp_midm.y = (_local_1.y + this.fly_vy);
 			}
 		}
 
@@ -1125,7 +1094,7 @@
 				return;
 			}
 			if (((this.isShowbodyShoadw) && (((getTimer() - this.deayTime) > 500)))) {
-				if (((!(this.bitmapdata_mid)) || (!(this.bitmapdata_mid.bitmapData)))) {
+				if (((!(this.bmp_mid)) || (!(this.bmp_mid.bitmapData)))) {
 					this.showBodyShoadw(true);
 				} else {
 					this.showBodyShoadw(false);
@@ -1137,43 +1106,43 @@
 			}
 			if (((!(this.isDisposed)) && (this.stage))) {
 				if (_bodyVisible == false) {
-					if (((this.bitmapdata_fid) && (!((this.bitmapdata_fid.bitmapData == null))))) {
-						this.bitmapdata_fid.bitmapData = null;
+					if (((this.bmp_fid) && (!((this.bmp_fid.bitmapData == null))))) {
+						this.bmp_fid.bitmapData = null;
 					}
-					if (((this.bitmapdata_midm) && (!((this.bitmapdata_midm.bitmapData == null))))) {
-						this.bitmapdata_midm.bitmapData = null;
+					if (((this.bmp_midm) && (!((this.bmp_midm.bitmapData == null))))) {
+						this.bmp_midm.bitmapData = null;
 					}
-					if (((this.bitmapdata_mid) && (!((this.bitmapdata_mid.bitmapData == null))))) {
-						this.bitmapdata_mid.bitmapData = null;
+					if (((this.bmp_mid) && (!((this.bmp_mid.bitmapData == null))))) {
+						this.bmp_mid.bitmapData = null;
 					}
-					if (((this.bitmapdata_wid) && (!((this.bitmapdata_wid.bitmapData == null))))) {
-						this.bitmapdata_wid.bitmapData = null;
+					if (((this.bmp_wid) && (!((this.bmp_wid.bitmapData == null))))) {
+						this.bmp_wid.bitmapData = null;
 					}
-					if (((this.bitmapdata_wgid) && (!((this.bitmapdata_wgid.bitmapData == null))))) {
-						this.bitmapdata_wgid.bitmapData = null;
+					if (((this.bmp_wgid) && (!((this.bmp_wgid.bitmapData == null))))) {
+						this.bmp_wgid.bitmapData = null;
 					}
 					return;
 				}
 				if (_arg_5 == AvatarTypes.BODY_TYPE) {
-					if (this.bitmapdata_mid == null) {
-						this.bitmapdata_mid = new Bitmap();
+					if (this.bmp_mid == null) {
+						this.bmp_mid = new Bitmap();
 					}
-					if (!this.bitmapdata_mid.parent) {
-						if (this.bitmapdata_midm) {
-							this.addChild(this.bitmapdata_midm);
+					if (!this.bmp_mid.parent) {
+						if (this.bmp_midm) {
+							this.addChild(this.bmp_midm);
 						}
-						if (this.bitmapdata_mid) {
-							this.addChild(this.bitmapdata_mid);
+						if (this.bmp_mid) {
+							this.addChild(this.bmp_mid);
 						}
-						if (this.bitmapdata_wid) {
-							this.addChild(this.bitmapdata_wid);
+						if (this.bmp_wid) {
+							this.addChild(this.bmp_wid);
 						}
-						if (this.bitmapdata_wgid) {
-							this.addChild(this.bitmapdata_wgid);
+						if (this.bmp_wgid) {
+							this.addChild(this.bmp_wgid);
 						}
 					}
-					_local_10 = this.bitmapdata_mid;
-					if ((((this.avatarParts.state == ActionConst.MEDITATION)) || (((this.bitmapdata_midm) && (this.bitmapdata_midm.bitmapData))))) {
+					_local_10 = this.bmp_mid;
+					if ((((this.avatarParts.state == ActionConst.MEDITATION)) || (((this.bmp_midm) && (this.bmp_midm.bitmapData))))) {
 						_local_11 = 4;
 						if (this.avatarParts.state == ActionConst.MEDITATION) {
 							_local_14 = 10;
@@ -1189,104 +1158,104 @@
 					}
 				} else {
 					if (_arg_5 == AvatarTypes.FLY_TYPE) {
-						if (this.bitmapdata_fid == null) {
-							this.bitmapdata_fid = new Bitmap();
+						if (this.bmp_fid == null) {
+							this.bmp_fid = new Bitmap();
 						}
-						if (!this.bitmapdata_fid.parent) {
-							if (this.bitmapdata_midm) {
-								this.addChild(this.bitmapdata_midm);
+						if (!this.bmp_fid.parent) {
+							if (this.bmp_midm) {
+								this.addChild(this.bmp_midm);
 							}
-							if (this.bitmapdata_fid) {
-								this.addChild(this.bitmapdata_fid);
+							if (this.bmp_fid) {
+								this.addChild(this.bmp_fid);
 							}
-							if (this.bitmapdata_mid) {
-								this.addChild(this.bitmapdata_mid);
+							if (this.bmp_mid) {
+								this.addChild(this.bmp_mid);
 							}
-							if (this.bitmapdata_wid) {
-								this.addChild(this.bitmapdata_wid);
+							if (this.bmp_wid) {
+								this.addChild(this.bmp_wid);
 							}
-							if (this.bitmapdata_wgid) {
-								this.addChild(this.bitmapdata_wgid);
+							if (this.bmp_wgid) {
+								this.addChild(this.bmp_wgid);
 							}
 						}
-						_local_10 = this.bitmapdata_fid;
+						_local_10 = this.bmp_fid;
 					} else {
 						if (_arg_5 == AvatarTypes.WEAPON_TYPE) {
-							if (this.bitmapdata_wid == null) {
-								this.bitmapdata_wid = new Bitmap();
+							if (this.bmp_wid == null) {
+								this.bmp_wid = new Bitmap();
 							}
-							if (!this.bitmapdata_wid.parent) {
-								if (this.bitmapdata_midm) {
-									this.addChild(this.bitmapdata_midm);
+							if (!this.bmp_wid.parent) {
+								if (this.bmp_midm) {
+									this.addChild(this.bmp_midm);
 								}
-								if (this.bitmapdata_mid) {
-									this.addChild(this.bitmapdata_mid);
+								if (this.bmp_mid) {
+									this.addChild(this.bmp_mid);
 								}
-								if (this.bitmapdata_wid) {
-									this.addChild(this.bitmapdata_wid);
+								if (this.bmp_wid) {
+									this.addChild(this.bmp_wid);
 								}
-								if (this.bitmapdata_wgid) {
-									this.addChild(this.bitmapdata_wgid);
+								if (this.bmp_wgid) {
+									this.addChild(this.bmp_wgid);
 								}
 							}
-							_local_10 = this.bitmapdata_wid;
+							_local_10 = this.bmp_wid;
 						} else {
 							if (_arg_5 == AvatarTypes.WING_TYPE) {
-								if (this.bitmapdata_wgid == null) {
-									this.bitmapdata_wgid = new Bitmap();
+								if (this.bmp_wgid == null) {
+									this.bmp_wgid = new Bitmap();
 								}
-								if (!this.bitmapdata_wgid.parent) {
-									if (this.bitmapdata_midm) {
-										this.addChild(this.bitmapdata_midm);
+								if (!this.bmp_wgid.parent) {
+									if (this.bmp_midm) {
+										this.addChild(this.bmp_midm);
 									}
-									if (this.bitmapdata_mid) {
-										this.addChild(this.bitmapdata_mid);
+									if (this.bmp_mid) {
+										this.addChild(this.bmp_mid);
 									}
-									if (this.bitmapdata_wid) {
-										this.addChild(this.bitmapdata_wid);
+									if (this.bmp_wid) {
+										this.addChild(this.bmp_wid);
 									}
-									if (this.bitmapdata_wgid) {
-										this.addChild(this.bitmapdata_wgid);
+									if (this.bmp_wgid) {
+										this.addChild(this.bmp_wgid);
 									}
 								}
-								_local_10 = this.bitmapdata_wgid;
+								_local_10 = this.bmp_wgid;
 							} else {
 								if (_arg_5 == AvatarTypes.MOUNT_TYPE) {
-									if (this.bitmapdata_midm == null) {
-										this.bitmapdata_midm = new Bitmap();
+									if (this.bmp_midm == null) {
+										this.bmp_midm = new Bitmap();
 									}
-									if (!this.bitmapdata_midm.parent) {
-										if (this.bitmapdata_midm) {
-											this.addChild(this.bitmapdata_midm);
+									if (!this.bmp_midm.parent) {
+										if (this.bmp_midm) {
+											this.addChild(this.bmp_midm);
 										}
-										if (this.bitmapdata_mid) {
-											this.addChild(this.bitmapdata_mid);
+										if (this.bmp_mid) {
+											this.addChild(this.bmp_mid);
 										}
-										if (this.bitmapdata_wid) {
-											this.addChild(this.bitmapdata_wid);
+										if (this.bmp_wid) {
+											this.addChild(this.bmp_wid);
 										}
-										if (this.bitmapdata_wgid) {
-											this.addChild(this.bitmapdata_wgid);
+										if (this.bmp_wgid) {
+											this.addChild(this.bmp_wgid);
 										}
 									} else {
-										if (((((this.bitmapdata_midm) && (this.bitmapdata_mid))) && (this.bitmapdata_mid.parent))) {
-											if (this.getChildIndex(this.bitmapdata_midm) > this.getChildIndex(this.bitmapdata_mid)) {
-												if (this.bitmapdata_midm) {
-													this.addChild(this.bitmapdata_midm);
+										if (((((this.bmp_midm) && (this.bmp_mid))) && (this.bmp_mid.parent))) {
+											if (this.getChildIndex(this.bmp_midm) > this.getChildIndex(this.bmp_mid)) {
+												if (this.bmp_midm) {
+													this.addChild(this.bmp_midm);
 												}
-												if (this.bitmapdata_mid) {
-													this.addChild(this.bitmapdata_mid);
+												if (this.bmp_mid) {
+													this.addChild(this.bmp_mid);
 												}
-												if (this.bitmapdata_wid) {
-													this.addChild(this.bitmapdata_wid);
+												if (this.bmp_wid) {
+													this.addChild(this.bmp_wid);
 												}
-												if (this.bitmapdata_wgid) {
-													this.addChild(this.bitmapdata_wgid);
+												if (this.bmp_wgid) {
+													this.addChild(this.bmp_wgid);
 												}
 											}
 										}
 									}
-									_local_10 = this.bitmapdata_midm;
+									_local_10 = this.bmp_midm;
 								} else {
 									if (_arg_5 == AvatarTypes.EFFECT_TYPE) {
 										if (this.eid_avatarBitmaps == null) {
@@ -1308,17 +1277,17 @@
 				if (_local_10) {
 					_local_12 = -(_arg_7);
 					_local_13 = 0;
-					if ((((this.avatarParts.state == ActionConst.MEDITATION)) || (((this.bitmapdata_midm) && (this.bitmapdata_midm.bitmapData))))) {
+					if ((((this.avatarParts.state == ActionConst.MEDITATION)) || (((this.bmp_midm) && (this.bmp_midm.bitmapData))))) {
 						_local_14 = 0;
 						if (this.avatarParts.state == ActionConst.MEDITATION) {
-							if (((((this.bitmapdata_wid) && (this.bitmapdata_wid.stage))) && (this.bitmapdata_wid.visible))) {
-								this.bitmapdata_wid.visible = false;
+							if (((((this.bmp_wid) && (this.bmp_wid.stage))) && (this.bmp_wid.visible))) {
+								this.bmp_wid.visible = false;
 							}
 							_local_14 = 10;
 						}
 						_local_13 = (((-(_arg_8) + this.sit_vy) - _local_14) + this.onMonutHeight);
 					} else {
-						if (((this.bitmapdata_midm) && (!(this.bitmapdata_midm.bitmapData)))) {
+						if (((this.bmp_midm) && (!(this.bmp_midm.bitmapData)))) {
 							if (this.sit_vy != 0) {
 								this.sit_vy = 0;
 							}
@@ -1327,41 +1296,41 @@
 							}
 						}
 						_local_13 = (-(_arg_8) + this.onMonutHeight);
-						if (((((this.bitmapdata_wid) && (this.bitmapdata_wid.stage))) && (!(this.bitmapdata_wid.visible)))) {
-							this.bitmapdata_wid.visible = true;
+						if (((((this.bmp_wid) && (this.bmp_wid.stage))) && (!(this.bmp_wid.visible)))) {
+							this.bmp_wid.visible = true;
 						}
 					}
-					if (((((((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) && (this.bitmapdata_fid))) && (this.bitmapdata_fid.parent))) {
+					if (((((((this.bmp_midm) && (this.bmp_midm.parent))) && (this.bmp_fid))) && (this.bmp_fid.parent))) {
 						if (this.dir == 0) {
-							if (((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) {
-								this.addChildAt(this.bitmapdata_midm, 0);
+							if (((this.bmp_midm) && (this.bmp_midm.parent))) {
+								this.addChildAt(this.bmp_midm, 0);
 							}
-							if (((this.bitmapdata_fid) && (this.bitmapdata_fid.parent))) {
-								this.addChildAt(this.bitmapdata_fid, 1);
+							if (((this.bmp_fid) && (this.bmp_fid.parent))) {
+								this.addChildAt(this.bmp_fid, 1);
 							}
-							if (((this.bitmapdata_mid) && (this.bitmapdata_mid.parent))) {
-								this.addChildAt(this.bitmapdata_mid, 2);
+							if (((this.bmp_mid) && (this.bmp_mid.parent))) {
+								this.addChildAt(this.bmp_mid, 2);
 							}
 						} else {
 							if (this.dir == 4) {
-								if (((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) {
-									this.addChildAt(this.bitmapdata_midm, 0);
+								if (((this.bmp_midm) && (this.bmp_midm.parent))) {
+									this.addChildAt(this.bmp_midm, 0);
 								}
-								if (((this.bitmapdata_fid) && (this.bitmapdata_midm.parent))) {
-									this.addChildAt(this.bitmapdata_fid, 1);
+								if (((this.bmp_fid) && (this.bmp_midm.parent))) {
+									this.addChildAt(this.bmp_fid, 1);
 								}
-								if (((this.bitmapdata_mid) && (this.bitmapdata_mid.parent))) {
-									this.addChildAt(this.bitmapdata_mid, 2);
+								if (((this.bmp_mid) && (this.bmp_mid.parent))) {
+									this.addChildAt(this.bmp_mid, 2);
 								}
 							} else {
-								if (((this.bitmapdata_mid) && (this.bitmapdata_mid.parent))) {
-									this.addChildAt(this.bitmapdata_mid, 0);
+								if (((this.bmp_mid) && (this.bmp_mid.parent))) {
+									this.addChildAt(this.bmp_mid, 0);
 								}
-								if (((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) {
-									this.addChildAt(this.bitmapdata_midm, 1);
+								if (((this.bmp_midm) && (this.bmp_midm.parent))) {
+									this.addChildAt(this.bmp_midm, 1);
 								}
-								if (((this.bitmapdata_fid) && (this.bitmapdata_fid.parent))) {
-									this.addChildAt(this.bitmapdata_fid, 2);
+								if (((this.bmp_fid) && (this.bmp_fid.parent))) {
+									this.addChildAt(this.bmp_fid, 2);
 								}
 							}
 						}
@@ -1375,7 +1344,7 @@
 								_local_10.bitmapData = _arg_3;
 							}
 							_local_15 = true;
-							if ((((((_local_10 == this.bitmapdata_midm)) && (this.bitmapdata_midm.parent))) && (_isFlyMode))) {
+							if ((((((_local_10 == this.bmp_midm)) && (this.bmp_midm.parent))) && (_isFlyMode))) {
 								this.fly_vx = _local_12;
 								this.fly_vy = _local_13;
 								if (this.jumping) {
@@ -1406,7 +1375,7 @@
 								ShoadwAvatar.create(_local_10.bitmapData, _local_12, _local_13, x, y);
 							}
 						}
-						if (((((((!((this.bitmapdata_mid == null))) || (!((this.bitmapdata_wid == null))))) || (!((this.bitmapdata_midm == null))))) || (this.bitmapdata_fid))) {
+						if (((((((!((this.bmp_mid == null))) || (!((this.bmp_wid == null))))) || (!((this.bmp_midm == null))))) || (this.bmp_fid))) {
 							this.showBodyShoadw(false);
 						}
 					} else {
@@ -1526,39 +1495,39 @@
 			this.onMonutHeight = 0;
 			_point = null;
 			_pt = null;
-			if (_ap) {
-				_ap.dispose();
+			if (avatarParts) {
+				avatarParts.dispose();
 			}
-			_ap = null;
-			if (this.bitmapdata_wid) {
-				this.bitmapdata_wid.bitmapData = null;
+			avatarParts = null;
+			if (this.bmp_wid) {
+				this.bmp_wid.bitmapData = null;
 			}
-			if (this.bitmapdata_mid) {
-				this.bitmapdata_mid.bitmapData = null;
+			if (this.bmp_mid) {
+				this.bmp_mid.bitmapData = null;
 			}
-			if (this.bitmapdata_midm) {
-				this.bitmapdata_midm.bitmapData = null;
+			if (this.bmp_midm) {
+				this.bmp_midm.bitmapData = null;
 			}
-			if (this.bitmapdata_fid) {
-				this.bitmapdata_fid.bitmapData = null;
+			if (this.bmp_fid) {
+				this.bmp_fid.bitmapData = null;
 			}
-			if (this.bitmapdata_wgid) {
-				this.bitmapdata_wgid.bitmapData = null;
+			if (this.bmp_wgid) {
+				this.bmp_wgid.bitmapData = null;
 			}
-			if (((this.bitmapdata_wid) && (this.bitmapdata_wid.parent))) {
-				this.bitmapdata_wid.parent.removeChild(this.bitmapdata_wid);
+			if (((this.bmp_wid) && (this.bmp_wid.parent))) {
+				this.bmp_wid.parent.removeChild(this.bmp_wid);
 			}
-			if (((this.bitmapdata_mid) && (this.bitmapdata_mid.parent))) {
-				this.bitmapdata_mid.parent.removeChild(this.bitmapdata_mid);
+			if (((this.bmp_mid) && (this.bmp_mid.parent))) {
+				this.bmp_mid.parent.removeChild(this.bmp_mid);
 			}
-			if (((this.bitmapdata_midm) && (this.bitmapdata_midm.parent))) {
-				this.bitmapdata_midm.parent.removeChild(this.bitmapdata_midm);
+			if (((this.bmp_midm) && (this.bmp_midm.parent))) {
+				this.bmp_midm.parent.removeChild(this.bmp_midm);
 			}
-			if (((this.bitmapdata_fid) && (this.bitmapdata_fid.parent))) {
-				this.bitmapdata_fid.parent.removeChild(this.bitmapdata_fid);
+			if (((this.bmp_fid) && (this.bmp_fid.parent))) {
+				this.bmp_fid.parent.removeChild(this.bmp_fid);
 			}
-			if (((this.bitmapdata_wgid) && (this.bitmapdata_wgid.parent))) {
-				this.bitmapdata_wgid.parent.removeChild(this.bitmapdata_wgid);
+			if (((this.bmp_wgid) && (this.bmp_wgid.parent))) {
+				this.bmp_wgid.parent.removeChild(this.bmp_wgid);
 			}
 			for each (_local_1 in this.eid_avatarBitmaps) {
 				if (this.contains(_local_1)) {
@@ -1591,7 +1560,6 @@
 
 		override public function dispose():void
 		{
-			var _local_1:Bitmap;
 			this.showBodyShoadw(false);
 			this.effectPlayEndDic = null;
 			if (_headShape) {
@@ -1611,52 +1579,49 @@
 			_point = null;
 			_pt = null;
 			_name = "";
-			if (_ap) {
-				_ap.dispose();
+			if (this.avatarParts) {
+				this.avatarParts.dispose();
 			}
-			_ap = null;
-			if (this.bitmapdata_wid) {
-				this.bitmapdata_wid.bitmapData = null;
+			this.avatarParts = null;
+			if (this.bmp_mid) {
+				this.bmp_mid.bitmapData = null;
 			}
-			if (this.bitmapdata_mid) {
-				this.bitmapdata_mid.bitmapData = null;
+			if (this.bmp_wid) {
+				this.bmp_wid.bitmapData = null;
 			}
-			if (this.bitmapdata_midm) {
-				this.bitmapdata_midm.bitmapData = null;
+			if (this.bmp_wgid) {
+				this.bmp_wgid.bitmapData = null;
 			}
-			if (this.bitmapdata_fid) {
-				this.bitmapdata_fid.bitmapData = null;
+			if (this.bmp_midm) {
+				this.bmp_midm.bitmapData = null;
 			}
-			if (this.bitmapdata_wgid) {
-				this.bitmapdata_wgid.bitmapData = null;
+			if (this.bmp_fid) {
+				this.bmp_fid.bitmapData = null;
 			}
-			this.bitmapdata_wid = null;
-			this.bitmapdata_mid = null;
-			this.bitmapdata_midm = null;
-			this.bitmapdata_fid = null;
-			this.bitmapdata_wgid = null;
-			for each (_local_1 in this.eid_avatarBitmaps) {
+			this.bmp_wid = null;
+			this.bmp_mid = null;
+			this.bmp_midm = null;
+			this.bmp_fid = null;
+			this.bmp_wgid = null;
+			for each (var _local_1:Bitmap in this.eid_avatarBitmaps) {
 				if (this.contains(_local_1)) {
 					this.removeChild(_local_1);
 				}
 				if (_local_1) {
 					_local_1.bitmapData = null;
 				}
-				_local_1 = null;
 			}
 			this.eid_avatarBitmaps = null;
 			if (this.shape) {
 				this.shape.dispose();
 			}
 			this.shape = null;
-			while (this.numChildren) {
-				this.removeChildAt(0);
-			}
+			this.removeChildren();
 			super.dispose();
 			InstancePool.coder::getInstance().remove(this);
 			this.isDisposed = true;
 			if (Scene.scene) {
-				Scene.scene.remove(this);
+				Scene.scene.removeItem(this);
 			}
 		}
 

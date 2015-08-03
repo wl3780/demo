@@ -10,16 +10,6 @@
 
 		public static const CORRECT_VALUE:Number = (Math.cos((-(Math.PI) / 6)) * Math.SQRT2);
 
-		public static function angleToradian(_arg_1:Number):Number
-		{
-			return ((((_arg_1 * 180) / Math.PI) * _arg_1));
-		}
-
-		public static function radianToangle(_arg_1:Number):Number
-		{
-			return ((((_arg_1 * Math.PI) / 180) * _arg_1));
-		}
-
 		public static function isoToFlat(_arg_1:Pt):Point
 		{
 			var _local_2:Number = (_arg_1.x - _arg_1.z);
@@ -91,13 +81,13 @@
 		public static function getIsoIndexMidVertex(_arg_1:Pt):Point
 		{
 			var _local_2:Point = indexToFlat(_arg_1);
-			return (new Point(_local_2.x, (_local_2.y + (TileConst.TILE_SIZE / 2))));
+			return new Point(_local_2.x, (_local_2.y + TileConst.HH));
 		}
 
 		public static function getMidPoint(_arg_1:Point):Point
 		{
 			var _local_2:Pt = getIndex(_arg_1);
-			return (getIsoIndexMidVertex(_local_2));
+			return getIsoIndexMidVertex(_local_2);
 		}
 
 	}

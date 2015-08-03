@@ -3,9 +3,9 @@
 	import com.engine.core.Engine;
 	import com.engine.core.EngineGlobal;
 	import com.engine.core.controls.events.WealthEvent;
-	import com.engine.core.controls.wealth.WealthConstant;
+	import com.engine.core.controls.wealth.WealthConst;
 	import com.engine.core.controls.wealth.WealthPool;
-	import com.engine.core.controls.wealth.WealthQuene;
+	import com.engine.core.controls.wealth.WealthQueueGroup;
 	import com.engine.core.controls.wealth.loader.BingLoader;
 	import com.engine.core.controls.wealth.loader.DisplayLoader;
 	import com.engine.core.model.wealth.WealthGroupVo;
@@ -34,7 +34,7 @@
 		public var elements:Dictionary;
 		public var assetHash:Array;
 		
-		private var _quene:WealthQuene;
+		private var _quene:WealthQueueGroup;
 		private var _loaderQuene:Array;
 		private var _assetsQuene:Array;
 		private var _bmdQuene:Array;
@@ -65,14 +65,14 @@
 			_loaderQuene = [];
 			_assetsQuene = [];
 			_bmdQuene = [];
-			_quene = new WealthQuene();
+			_quene = new WealthQueueGroup();
 			if (false) {
 				_quene.loaderContext = new LoaderContext(false);
 			} else {
 				_quene.loaderContext = new LoaderContext(false, ApplicationDomain.currentDomain, SecurityDomain.currentDomain);
 			}
 			_quene.delay = 10;
-			_quene.addEventListener(WealthEvent.WEALTH_LOADED, this.wealthLoadedFunc);
+			_quene.addEventListener(WealthEvent.WEALTH_COMPLETE, this.wealthLoadedFunc);
 			_quene.addEventListener(WealthEvent.WEALTH_ERROR, this.wealthErrorFunc);
 			
 			var timer:Timer = new Timer(0);
@@ -131,10 +131,10 @@
 		
 		private function wealthLoadedFunc(evt:WealthEvent):void
 		{
-			var array:Array = evt.vo.path.split("/");
+			var array:Array = evt.vo.url.split("/");
 			var fileName:String = array[array.length-1];
 			fileName = fileName.split(".")[0];
-			var loader:Object = WealthPool.getIntance().take(evt.vo.path);
+			var loader:Object = WealthPool.getInstance().take(evt.vo.url);
 			if (loader as DisplayLoader) {
 				var arr:Array = fileName.split("_");
 				var action:String = arr.pop();
@@ -169,7 +169,7 @@
 
 		private function wealthErrorFunc(evt:WealthEvent):void
 		{
-			log("saiman", "[ERROR]:", evt.vo.path);
+			log("saiman", "[ERROR]:", evt.vo.url);
 			AvatarManager.coder::getInstance().loadedAvatarError(evt.vo.data.owner as String);
 		}
 
@@ -180,7 +180,7 @@
 			log("saiman", "加载动作资源：", smPath);
 			var key:String = Engine.coder::nextInstanceIndex().toString(16);
 			var groupVo:WealthGroupVo = new WealthGroupVo();
-			groupVo.level = WealthConstant.BUBBLE_LEVEL;
+			groupVo.type = WealthConst.BUBBLE_LEVEL;
 			groupVo.addWealth(smPath, {
 				"owner":oid,
 				"startTime":Engine.delayTime,
@@ -202,7 +202,7 @@
 			var url:String = EngineGlobal.getAvatarAssetsPath(avatarId + Engine.LINE + action);
 			if (this.checkLoadedFunc(url) == false) {
 				var groupVo:WealthGroupVo = new WealthGroupVo();
-				groupVo.level = WealthConstant.BUBBLE_LEVEL;
+				groupVo.type = WealthConst.BUBBLE_LEVEL;
 				groupVo.addWealth(url, {"action":action});
 				_quene.addGroup(groupVo);
 				if (this.assetHash.indexOf(url) == -1) {
@@ -250,11 +250,11 @@
 					url = url.split(".")[0];
 					needClean = parts.hasAssets(url);
 					if (needClean) {
-						var loader:DisplayLoader = WealthPool.getIntance().take(url) as DisplayLoader;
+						var loader:DisplayLoader = WealthPool.getInstance().take(url) as DisplayLoader;
 						if (loader) {
 							loader.dispose();
 						}
-						WealthPool.getIntance().remove(url);
+						WealthPool.getInstance().remove(url);
 						this.assetHash.splice(urlIdx, 1);
 					}
 					urlIdx--;
@@ -318,7 +318,7 @@
 				_local_2 = _local_1.avatarParts;
 				_local_5 = 0;
 				while (_local_5 < this.assetHash.length) {
-					_local_9 = (WealthPool.getIntance().take(this.assetHash[_local_5]) as DisplayLoader);
+					_local_9 = (WealthPool.getInstance().take(this.assetHash[_local_5]) as DisplayLoader);
 					_local_10 = this.assetHash[_local_5];
 					_local_11 = _local_10.split("/");
 					_local_10 = _local_11[(_local_11.length - 1)];
@@ -335,7 +335,7 @@
 							_local_9.dispose();
 						}
 						_local_9 = null;
-						WealthPool.getIntance().remove(this.assetHash[_local_5]);
+						WealthPool.getInstance().remove(this.assetHash[_local_5]);
 						this.assetHash.splice(_local_5, 1);
 						_local_5--;
 					}
@@ -396,7 +396,7 @@
 
 		public function checkLoadedFunc(url:String):Boolean
 		{
-			return WealthPool.getIntance().has(url);
+			return WealthPool.getInstance().has(url);
 		}
 
 		private function analyze(param:AvatarParam, contentLoaderInfo:LoaderInfo):void

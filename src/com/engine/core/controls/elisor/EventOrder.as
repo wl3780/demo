@@ -1,65 +1,59 @@
 ﻿package com.engine.core.controls.elisor
 {
 	import com.engine.core.Engine;
-	import com.engine.core.IOrderDispatcher;
 	import com.engine.core.controls.Order;
 	import com.engine.core.view.DisplayObjectPort;
-	import com.engine.namespaces.coder;
 	
+	import flash.events.IEventDispatcher;
 	import flash.net.registerClassAlias;
 
 	public class EventOrder extends Order 
 	{
+		private static var _orderQueue:Vector.<EventOrder> = new Vector.<EventOrder>();
 
-		public var listenerType:String;
-		
-		private var _listener:Function;
+		protected var _listenerType_:String;
+		protected var _listener_:Function;
 
 		public function EventOrder()
 		{
-			registerClassAlias("saiman.save.EventOrder", EventOrder);
-			this.$type = OrderMode.EVENT_ORDER;
+			super();
+			registerClassAlias("engine.save.EventOrder", EventOrder);
+			_orderMode_ = OrderMode.EVENT_ORDER;
+		}
+		
+		public static function createEventOrder():EventOrder
+		{
+			var order:EventOrder = _orderQueue.length ? _orderQueue.pop() : new EventOrder();
+			return order;
 		}
 
 		public function register(oid:String, type:String, listener:Function):void
 		{
-			_listener = listener;
-			this.listenerType = type;
-			this.$oid = oid;
-			this.$id = this.$oid + Engine.SIGN + type;
+			_oid_ = oid;
+			_id_ = _oid_ + Engine.SIGN + type;
+			_listenerType_ = type;
+			_listener_ = listener;
 		}
 
 		override public function dispose():void
 		{
-			var order:IOrderDispatcher = DisplayObjectPort.coder::getInstance().task(this.oid);
-			if (order) {
-				order.removeEventListener(this.listenerType, _listener);
-			}
-			_listener = null;
-			this.listenerType = null;
-			this.$id = null;
-			this.$oid = null;
-			super.dispose();
-		}
-
-		override public function execute():void
-		{
-			this.activate();
+			this.unactivate();
+			_orderQueue.push(this);
 		}
 
 		public function activate():void
 		{
-			var order:IOrderDispatcher = DisplayObjectPort.coder::getInstance().task(this.oid);
-			if (order) {
-				order.addEventListener(this.$id, _listener);
+			var pispatcher:IEventDispatcher = DisplayObjectPort.task(this.oid);
+			if (pispatcher) {
+				pispatcher.addEventListener(_listenerType_, _listener_);
 			}
 		}
 
 		public function unactivate():void
 		{
-			var order:IOrderDispatcher = DisplayObjectPort.coder::getInstance().task(this.oid);
-			if (order) {
-				order.removeEventListener(this.$id, _listener);
+			var pispatcher:IEventDispatcher = DisplayObjectPort.task(this.oid);
+			if (pispatcher) {
+				pispatcher.removeEventListener(_listenerType_, _listener_);
 			}
 		}
 

@@ -1,221 +1,418 @@
 ﻿package com.engine.core.controls.elisor
 {
-	import com.engine.core.controls.IOrder;
+	import com.engine.core.Engine;
 	import com.engine.core.model.Proto;
-	import com.engine.namespaces.coder;
+	import com.engine.utils.FPSUtils;
+	import com.engine.utils.Hash;
 	
-	import flash.utils.Dictionary;
-
-	public class FrameElisor extends Proto 
+	import flash.display.DisplayObject;
+	import flash.display.Stage;
+	import flash.events.Event;
+	import flash.utils.getTimer;
+	
+	public final class FrameElisor extends Proto
 	{
-
 		private static var _instance:FrameElisor;
-
-		private var _owners:Dictionary;
-		private var _quenes:Dictionary;
-		private var _orders:Dictionary;
-		private var _len:int;
-
-		coder static function getInstance():FrameElisor
+		
+		public var stop:Boolean;
+		
+		private var _heartbeatSize:int = 6;
+		private var _hash:Hash;
+		
+		private var enterFrameOrder:Vector.<Function>;
+		private var enterFrameHeartbeatState:Vector.<Boolean>;
+		private var enterFrameHeartbeatIndex:int;
+		
+		private var onStageFrameOrder:Vector.<Function>;
+		private var onStageDisplays:Vector.<DisplayObject>;
+		private var onStageHeartbeatState:Vector.<Boolean>;
+		private var onStageHeartbeatIndex:int;
+		
+		private var intervalFrameOrder:Vector.<Function>;
+		private var intervalQueue:Vector.<int>;
+		private var intervalCountQueue:Vector.<int>;
+		private var intervalHeartbeatState:Vector.<Boolean>;
+		private var intervalHeartbeatIndex:int;
+		
+		private var delayFrameOrder:Vector.<Function>;
+		private var delayFrameQueue:Vector.<int>;
+		private var delayHeartbeatState:Vector.<Boolean>;
+		private var delayHeartbeatIndex:int;
+		
+		public function FrameElisor()
 		{
-			if (_instance == null) {
-				_instance = new FrameElisor();
-				_instance.initialize();
-			}
-			return _instance;
+			super();
+			_hash = new Hash();
+			_hash.oid = this.id;
+			
+			enterFrameOrder = new Vector.<Function>();
+			enterFrameHeartbeatState = new Vector.<Boolean>();
+			
+			onStageFrameOrder = new Vector.<Function>();
+			onStageDisplays = new Vector.<DisplayObject>();
+			onStageHeartbeatState = new Vector.<Boolean>();
+			
+			intervalFrameOrder = new Vector.<Function>();
+			intervalQueue = new Vector.<int>();
+			intervalCountQueue = new Vector.<int>();
+			intervalHeartbeatState = new Vector.<Boolean>();
+			
+			delayFrameOrder = new Vector.<Function>();
+			delayFrameQueue = new Vector.<int>();
+			delayHeartbeatState = new Vector.<Boolean>();
 		}
-
-		public function initialize():void
+		
+		public static function getInstance():FrameElisor
 		{
-			_owners = new Dictionary();
-			_quenes = new Dictionary();
-			_orders = new Dictionary();
+			return _instance ||= new FrameElisor();
 		}
-
-		public function addOrder(order:FrameOrder, _arg_2:Boolean=false):Boolean
+		
+		public function setup(stage:Stage):void
 		{
-			if (order == null) {
-				return false;
-			}
-			var oid:String = order.oid;
-			var id:String = order.id;
-			var delay:String = order.delay+"";
-			if (oid && id && delay) {
-				var delayItem:DeayQuene;
-				if (_owners[oid] == null) {
-					_owners[oid] = new Dictionary();
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		public function hasFrameOrder(handler:Function):Boolean
+		{
+			return _hash.has(handler);
+		}
+		
+		public function takeFrameOrder(handler:Function):FrameOrder
+		{
+			return _hash.take(handler) as FrameOrder;
+		}
+		
+		public function addFrameOrder(order:FrameOrder):void
+		{
+			var handler:Function = order.applyHandler;
+			if (_hash.has(handler) == false) {
+				this.stop = true;
+				_hash.put(handler, order);
+				if (OrderMode.ENTER_FRAME_ORDER == order.orderMode) {
+					if (order.isOnStageHandler) {
+						onStageFrameOrder.push(handler);
+						onStageDisplays.push(order.display);
+						onStageHeartbeatState.push(order.stop);
+					} else {
+						enterFrameOrder.push(handler);
+						enterFrameHeartbeatState.push(order.stop);
+					}
+				} else if (OrderMode.INTERVAL_FRAME_ORDER == order.orderMode) {
+					intervalFrameOrder.push(handler);
+					intervalQueue.push(order.value);
+					intervalCountQueue.push(getTimer());
+					intervalHeartbeatState.push(order.stop);
+				} else if (OrderMode.DELAY_FRAME_ORDER == order.orderMode) {
+					delayFrameOrder.push(handler);
+					delayFrameQueue.push(getTimer() + order.value);
+					delayHeartbeatState.push(order.stop);
 				}
-				if (_quenes[delay] == null) {
-					delayItem = new DeayQuene(order.delay);
-					_quenes[delay] = delayItem;
+				this.stop = false;
+			}
+		}
+		
+		public function removeFrameOrder(handler:Function):void
+		{
+			var order:FrameOrder = _hash.remove(handler) as FrameOrder;
+			if (!order) {
+				return;
+			}
+			
+			var index:int;
+			this.stop = true;
+			if (OrderMode.ENTER_FRAME_ORDER == order.orderMode) {
+				if (order.isOnStageHandler) {
+					index = onStageFrameOrder.indexOf(handler);
+					if (index != -1) {
+						onStageDisplays.splice(index, 1);
+						onStageFrameOrder.splice(index, 1);
+						onStageHeartbeatState.splice(index, 1);
+						if (index < onStageHeartbeatIndex) {
+							onStageHeartbeatIndex --;
+						}
+					}
 				} else {
-					delayItem = _quenes[delay];
+					index = enterFrameOrder.indexOf(handler);
+					if (index != -1) {
+						enterFrameOrder.splice(index, 1);
+						enterFrameHeartbeatState.splice(index, 1);
+						if (index < enterFrameHeartbeatIndex) {
+							enterFrameHeartbeatIndex --;
+						}
+					}
 				}
-				delayItem.addOrder(order);
-				_owners[oid][id] = _orders[id] = order;
-				_len++;
-				return true;
+			} else if (OrderMode.INTERVAL_FRAME_ORDER == order.orderMode) {
+				index = intervalFrameOrder.indexOf(handler);
+				if (index != -1) {
+					intervalFrameOrder.splice(index, 1);
+					intervalQueue.splice(index, 1);
+					intervalCountQueue.splice(index, 1);
+					intervalHeartbeatState.splice(index, 1);
+					if (index < intervalHeartbeatIndex) {
+						intervalHeartbeatIndex --;
+					}
+				}
+			} else if (OrderMode.DELAY_FRAME_ORDER == order.orderMode) {
+				index = delayFrameOrder.indexOf(handler);
+				if (index != -1) {
+					delayFrameOrder.splice(index, 1);
+					delayFrameQueue.splice(index, 1);
+					delayHeartbeatState.splice(index, 1);
+					if (index < delayHeartbeatIndex) {
+						delayHeartbeatIndex --;
+					}
+				}
 			}
-			return false;
+			order.dispose();
+			this.stop = false;
 		}
-
-		public function stopOrder(id:String):void
+		
+		public function startFrameOrder(handler:Function):void
 		{
-			var order:FrameOrder = _orders[id] as FrameOrder;
-			if (order) {
-				order.stop = false;
+			var order:FrameOrder = _hash.take(handler) as FrameOrder;
+			if (!order) {
+				return;
+			}
+			
+			var index:int;
+			order.stop = false;
+			if (OrderMode.ENTER_FRAME_ORDER == order.orderMode) {
+				if (order.isOnStageHandler) {
+					index = onStageFrameOrder.indexOf(handler);
+					if (index != -1) {
+						onStageHeartbeatState[index] = false;
+					}
+				} else {
+					index = enterFrameOrder.indexOf(handler);
+					if (index != -1) {
+						enterFrameHeartbeatState[index] = false;
+					}
+				}
+			} else if (OrderMode.INTERVAL_FRAME_ORDER == order.orderMode) {
+				index = intervalFrameOrder.indexOf(handler);
+				if (index != -1) {
+					intervalHeartbeatState[index] = false;
+				}
+			} else if (OrderMode.DELAY_FRAME_ORDER == order.orderMode) {
+				index = delayFrameOrder.indexOf(handler);
+				if (index != -1) {
+					delayHeartbeatState[index] = false;
+				}
 			}
 		}
-
-		public function startOrder(id:String):void
+		
+		public function stopFrameOrder(handler:Function):void
 		{
-			var order:FrameOrder = _orders[id] as FrameOrder;
-			if (order) {
-				order.stop = true;
+			var order:FrameOrder = _hash.take(handler) as FrameOrder;
+			if (!order) {
+				return;
+			}
+			
+			var index:int;
+			order.stop = true;
+			if (OrderMode.ENTER_FRAME_ORDER == order.orderMode) {
+				if (order.isOnStageHandler) {
+					index = onStageFrameOrder.indexOf(handler);
+					if (index != -1) {
+						onStageHeartbeatState[index] = true;
+					}
+				} else {
+					index = enterFrameOrder.indexOf(handler);
+					if (index != -1) {
+						enterFrameHeartbeatState[index] = true;
+					}
+				}
+			} else if (OrderMode.INTERVAL_FRAME_ORDER == order.orderMode) {
+				index = intervalFrameOrder.indexOf(handler);
+				if (index != -1) {
+					intervalHeartbeatState[index] = true;
+				}
+			} else if (OrderMode.DELAY_FRAME_ORDER == order.orderMode) {
+				index = delayFrameOrder.indexOf(handler);
+				if (index != -1) {
+					delayHeartbeatState[index] = true;
+				}
 			}
 		}
-
-		public function removeOrder(id:String):FrameOrder
+		
+		public function stopFrameGroup(group_id:String):void
 		{
-			var order:FrameOrder = _orders[id] as FrameOrder;
-			if (order) {
-				order.stop = true;
-				delete _orders[id];
-				if (_owners[order.oid]) {
-					delete _owners[order.oid][id];
+			if (!group_id) {
+				return;
+			}
+			for each (var order:FrameOrder in _hash) {
+				if (order.oid == group_id) {
+					this.stopFrameOrder(order.applyHandler);
+				}
+			}
+		}
+		
+		public function startFrameGroup(group_id:String):void
+		{
+			if (!group_id) {
+				return;
+			}
+			for each (var order:FrameOrder in _hash) {
+				if (order.oid == group_id) {
+					this.startFrameOrder(order.applyHandler);
+				}
+			}
+		}
+		
+		public function removeFrameGroup(group_id:String):void
+		{
+			if (!group_id) {
+				return;
+			}
+			for each (var order:FrameOrder in _hash) {
+				if (order.oid == group_id) {
+					this.removeFrameOrder(order.applyHandler);
+				}
+			}
+		}
+		
+		private function onEnterFrame(event:Event):void
+		{
+			if (this.stop || !Engine.enabled) {
+				return;
+			}
+			
+			_heartbeatSize = FPSUtils.fps < 3 ? 2 : 6;
+			onEnterFrameHandler();
+			onStageFrameHandler();
+			onIntervalHandler();
+			onDelayHandler();
+		}
+		
+		private function onEnterFrameHandler():void
+		{
+			var orderNum:int = enterFrameOrder.length;
+			if (orderNum <= 0) {
+				return;
+			}
+			
+			var handler:Function = null;
+			var state:Boolean;
+			var orderIndex:int = Math.ceil(orderNum / _heartbeatSize);
+			var tmp:int = orderNum - orderIndex;
+			while (tmp >= 0 && !this.stop) {
+				if (enterFrameHeartbeatIndex >= enterFrameOrder.length) {
+					enterFrameHeartbeatIndex = 0;
 				}
 				
-				var dict:Dictionary = _owners[order.oid];
-				var delayItem:DeayQuene = _quenes[order.delay+""] as DeayQuene;
-				if (delayItem) {
-					delayItem.removeOrder(id);
+				handler = enterFrameOrder[enterFrameHeartbeatIndex];
+				state = enterFrameHeartbeatState[enterFrameHeartbeatIndex];
+				if (!state && handler != null) {
+					handler.apply();
 				}
-				_len--;
-				for each (var orderItem:FrameOrder in dict) {
-					order.dispose();
-					return order;
+				enterFrameHeartbeatIndex ++;
+				tmp--;
+			}
+		}
+		
+		private function onStageFrameHandler():void
+		{
+			var orderNum:int = onStageFrameOrder.length;
+			if (orderNum <= 0) {
+				return;
+			}
+			
+			var display:DisplayObject;
+			var handler:Function = null;
+			var state:Boolean;
+			var orderIndex:int = Math.ceil(orderNum / _heartbeatSize);
+			var tmp:int = orderNum - orderIndex;
+			while (tmp >= 0 && !this.stop) {
+				if (onStageHeartbeatIndex >= onStageFrameOrder.length) {
+					onStageHeartbeatIndex = 0;
 				}
-				delete _owners[order.oid];
-				order.dispose();
-				return order;
-			}
-			return null;
-		}
-
-		public function hasOrder(id:String):Boolean
-		{
-			if (_orders[id]) {
-				return true;
-			}
-			return false;
-		}
-
-		public function removeQuene(delayID:String):void
-		{
-			delete _quenes[delayID];
-		}
-
-		public function hasQuene(delayID:String):Boolean
-		{
-			if (_quenes[delayID]) {
-				return true;
-			}
-			return false;
-		}
-
-		public function takeQuene(delayID:String):DeayQuene
-		{
-			return _quenes[delayID];
-		}
-
-		public function takeOrder(id:String):FrameOrder
-		{
-			return _orders[id] as FrameOrder;
-		}
-
-		public function hasGroup(oid:String):Boolean
-		{
-			if (_owners[oid]) {
-				return true;
-			}
-			return false;
-		}
-
-		public function takeGroupOrder(oid:String):Vector.<IOrder>
-		{
-			var list:Vector.<IOrder> = new Vector.<IOrder>();
-			if (_owners[oid]) {
-				for each (var item:IOrder in _owners[oid]) {
-					list.push(item);
+				
+				display = onStageDisplays[onStageHeartbeatIndex];
+				handler = onStageFrameOrder[onStageHeartbeatIndex];
+				state = onStageHeartbeatState[onStageHeartbeatIndex];
+				if (display && display.stage && !state && handler != null) {
+					handler.apply();
 				}
+				onStageHeartbeatIndex ++;
+				tmp--;
 			}
-			return list;
 		}
-
-		public function disposeGroupOrders(oid:String):Vector.<IOrder>
+		
+		private function onIntervalHandler():void
 		{
-			var list:Vector.<IOrder> = new Vector.<IOrder>();
-			if (_owners[oid]) {
-				var item:FrameOrder;
-				for (var key:String in _owners[oid]) {
-					item = _owners[oid][key];
-					item.stop;
-					item.dispose();
-					list.push(item);
-					_len++;
+			var orderNum:int = intervalFrameOrder.length;
+			if (orderNum <= 0) {
+				return;
+			}
+			
+			var handler:Function = null;
+			var interval:int;
+			var time:int;
+			var state:Boolean;
+			var order:FrameOrder = null;
+			var orderIndex:int = Math.ceil(orderNum / _heartbeatSize);
+			var tmp:int = orderNum - orderIndex;
+			while (tmp >= 0 && !this.stop) {
+				if (intervalHeartbeatIndex >= intervalFrameOrder.length) {
+					intervalHeartbeatIndex = 0;
 				}
-				delete _owners[oid];
-			}
-			return list;
-		}
-
-		public function chageDeay(id:String, delay:int):Boolean
-		{
-			var order:FrameOrder = _orders[id] as FrameOrder;
-			if (order) {
-				var delayNew:DeayQuene;
-				var delayItem:DeayQuene = _quenes[order.delay+""] as DeayQuene;
-				if (delayItem) {
-					if (delayItem.delay == order.delay) {
-						delayItem.removeOrder(id);
-					}
-					order.coder::delay = delay;
-					if (_quenes[delay+""]) {
-						DeayQuene(_quenes[delay+""]).addOrder(order);
+				handler = intervalFrameOrder[intervalHeartbeatIndex];
+				time = intervalCountQueue[intervalHeartbeatIndex];
+				interval = intervalQueue[intervalHeartbeatIndex];
+				state = intervalHeartbeatState[intervalHeartbeatIndex];
+				if (!state && handler != null && (getTimer() - time) >= interval) {
+					order = _hash.take(handler) as FrameOrder;
+					if (order.proto) {
+						handler.apply(null, [order.proto]);
 					} else {
-						delayNew = new DeayQuene(delay);
-						_quenes[delay+""] = delayItem;
-						delayNew.addOrder(order);
+						handler.apply();
 					}
-				} else {
-					order.coder::delay = delay;
-					delayNew = new DeayQuene(delay);
-					_quenes[delay+""] = delayItem;
-					delayNew.addOrder(order);
+					intervalCountQueue[intervalHeartbeatIndex] = getTimer();
 				}
-				return true;
+				intervalHeartbeatIndex ++;
+				tmp--;
 			}
-			return false;
 		}
-
-		override public function dispose():void
+		
+		private function onDelayHandler():void
 		{
-			var delayItem:DeayQuene;
-			for (var key:String in _quenes) {
-				delayItem = _quenes[key];
-				delayItem.dispose();
-				delete _quenes[key];
+			var orderNum:int = delayFrameOrder.length;
+			if (orderNum <= 0) {
+				return;
 			}
-			_quenes = null;
-			for each (var item:FrameOrder in _orders) {
-				item.dispose();
+			
+			var handler:Function = null;
+			var time:int;
+			var state:Boolean;
+			var order:FrameOrder = null;
+			var orderIndex:int = Math.ceil(orderNum / _heartbeatSize);
+			var tmp:int = orderNum - orderIndex;
+			while (tmp >= 0 && !this.stop) {
+				if (delayHeartbeatIndex >= delayFrameOrder.length) {
+					delayHeartbeatIndex = 0;
+				}
+				handler = delayFrameOrder[delayHeartbeatIndex];
+				time = delayFrameQueue[delayHeartbeatIndex];
+				state = delayHeartbeatState[delayHeartbeatIndex];
+				if (!state && handler != null && (getTimer() - time) >= 0) {
+					order = _hash.remove(handler) as FrameOrder;
+					if (order.proto) {
+						handler.apply(null, [order.proto]);
+					} else {
+						handler.apply();
+					}
+					// 移除
+					delayFrameOrder.splice(delayHeartbeatIndex, 1);
+					delayFrameQueue.splice(delayHeartbeatIndex, 1);
+					delayHeartbeatState.splice(delayHeartbeatIndex, 1);
+					
+					order.dispose();
+					delayHeartbeatIndex --;
+				}
+				delayHeartbeatIndex ++;
+				tmp --;
 			}
-			_orders = null;
-			_owners = null;
-			_len = 0;
-			_instance = null;
-			super.dispose();
 		}
-
+		
 	}
 }

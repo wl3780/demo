@@ -17,16 +17,8 @@
 
 		public function TileGroup()
 		{
-			if (_instance == null) {
-				_instance = this;
-				this.initialize();
-				this.grids.init();
-				if (this.$hash) {
-					this.$hash.dispose();
-					this.$hash = null;
-					this.$hash = new Hash();
-				}
-			}
+			this.$hash = new Hash();
+			this.$grids = new Grids();
 		}
 
 		public static function getInstance():TileGroup
@@ -48,16 +40,9 @@
 			return (this.$hash);
 		}
 
-		public function dispose():void
+		public function reset():void
 		{
-			this.$hash.dispose();
-			this.$hash = null;
-			this.$grids = null;
-		}
-
-		public function initialize():void
-		{
-			this.$hash = new Hash();
+			this.$hash.reset();
 			this.$grids = new Grids();
 		}
 

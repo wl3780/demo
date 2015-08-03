@@ -65,10 +65,9 @@
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			
 			Engine.setup(this, "../", "zh_CN", "v1");
-			this.scene.buildTree(new Rectangle(0, 0, 10000, 10000));
 			this.scene.setup(Engine.stage, this);
 			this.scene.changeScene(5);
-			this.scene.$mapLayer.init("scene_" + 4);
+			this.scene.$mapLayer.init("scene_" + 10321);
 			this.scene.updateMainChar("100000002", null, null);
 			
 			this.scene.mainChar.speed = 270;
@@ -76,7 +75,7 @@
 			this.scene.mainChar.openShadow = true;
 			this.scene.mainChar.name = "HERO";
 			this.scene.mainChar.nameColor(0xFF0000);
-			this.scene.mainChar.point = new Point(3700, 1200);
+			this.scene.mainChar.point = new Point(1700, 1200);
 			this.scene.onSceneReadyFunc = this.setupReady;
 			this.addChild(this.scene);
 			// this.scene.setSceneFlyMode(true);
@@ -108,7 +107,7 @@
 				var char:Char = null;
 				while (robot_quene.length > num) {
 					char = robot_quene.pop() as Char;
-					this.scene.remove(char);
+					this.scene.removeItem(char);
 					char.recover();
 				}
 			} else {
@@ -179,22 +178,22 @@
 			var pen:Graphics = shape.graphics;
 			pen.lineStyle(1, 0x0);
 			var mapData:SquareMapData = GameScene.scene.mapData;
-			var cols:int = mapData.pixel_width / TileConst.TILE_SIZE;
-			var rows:int = mapData.pixel_height / TileConst.TILE_SIZE;
+			var cols:int = mapData.pixel_width / TileConst.TILE_WIDTH;
+			var rows:int = mapData.pixel_height / TileConst.TILE_HEIGHT;
 			for (var i:int=0; i<rows; i++) {
-				pen.moveTo(0, i*TileConst.TILE_SIZE);
-				pen.lineTo(cols*TileConst.TILE_SIZE, i*TileConst.TILE_SIZE);
+				pen.moveTo(0, i*TileConst.TILE_HEIGHT);
+				pen.lineTo(cols*TileConst.TILE_WIDTH, i*TileConst.TILE_HEIGHT);
 				for (var j:int=0; j<cols; j++) {
 					if (i == 0) {
-						pen.moveTo(j*TileConst.TILE_SIZE, 0);
-						pen.lineTo(j*TileConst.TILE_SIZE, rows*TileConst.TILE_SIZE);
+						pen.moveTo(j*TileConst.TILE_WIDTH, 0);
+						pen.lineTo(j*TileConst.TILE_WIDTH, rows*TileConst.TILE_HEIGHT);
 					}
 					
 					var key:String = j + "|" + i;
 					var sq:Square = SquareGroup.getInstance().take(key);
 					if (sq) {
 						pen.beginFill(sq.color, 0.2);
-						pen.drawRect(j*TileConst.TILE_SIZE, i*TileConst.TILE_SIZE, TileConst.TILE_SIZE, TileConst.TILE_SIZE);
+						pen.drawRect(j*TileConst.TILE_WIDTH, i*TileConst.TILE_HEIGHT, TileConst.TILE_WIDTH, TileConst.TILE_HEIGHT);
 					}
 				}
 			}

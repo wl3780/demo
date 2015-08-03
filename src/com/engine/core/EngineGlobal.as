@@ -55,15 +55,27 @@
 			return AVATAR_ASSETS_DIR_;
 		}
 		
+		public static function getAvatarAssetsConfigPath(idName:String):String
+		{
+			return AVATAR_ASSETS_DIR + "output/" + idName + SM_EXTENSION;
+		}
 		public static function getAvatarAssetsPath(idName:String):String
 		{
 			var idType:String = idName.split(Engine.LINE)[0];
 			return AVATAR_ASSETS_DIR + TYPE_REFLEX[idType] + "/" + idName + TMP_EXTENSION;
 		}
 		
-		public static function getAvatarAssetsConfigPath(idName:String):String
+		public static function getMapConfigPath(map_id:String):String
 		{
-			return AVATAR_ASSETS_DIR + "output/" + idName + SM_EXTENSION;
+			return EngineGlobal.SCENE_IMAGE_DIR + "map_data/scene_" + map_id + ".data?ver=" + EngineGlobal.version
+		}
+		public static function getMapMiniPath(map_id:String):String
+		{
+			return EngineGlobal.SCENE_IMAGE_DIR + "map_mini/scene_" + map_id + ".jpg?ver=" + EngineGlobal.version
+		}
+		public static function getMapImagePath(map_id:String, x:int, y:int):String
+		{
+			return EngineGlobal.SCENE_IMAGE_DIR + "map_image/scene_" + map_id + "/" + x + Engine.LINE + y + ".jpg?ver=" + EngineGlobal.version;
 		}
 	}
 }

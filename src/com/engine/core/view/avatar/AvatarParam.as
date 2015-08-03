@@ -2,7 +2,6 @@
 {
 	import com.engine.core.AvatarTypes;
 	import com.engine.core.Engine;
-	import com.engine.core.model.IProto;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
 	
@@ -147,7 +146,7 @@
 			return _isDisposed;
 		}
 
-		override public function clone():IProto
+		override public function clone():Object
 		{
 			var ret:AvatarParam = super.clone() as AvatarParam;
 			ret.coder::oid = this.oid;

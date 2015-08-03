@@ -1,201 +1,234 @@
 ﻿package com.engine.core.controls.wealth
 {
 	import com.engine.core.Engine;
-	import com.engine.core.controls.events.WealthEvent;
-	import com.engine.core.controls.events.WealthProgressEvent;
-	import com.engine.core.model.wealth.WealthGroupVo;
+	import com.engine.core.controls.wealth.loader.BingLoader;
+	import com.engine.core.controls.wealth.loader.DisplayLoader;
 	import com.engine.core.model.wealth.WealthVo;
+	import com.engine.interfaces.display.ILoader;
+	import com.engine.interfaces.system.IWealthQueue;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.Hash;
 	
-	import flash.events.ProgressEvent;
+	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
+	import flash.system.ApplicationDomain;
+	import flash.system.LoaderContext;
+	import flash.system.Security;
 	import flash.utils.Dictionary;
 
 	public class WealthManager 
 	{
-
+		internal static var instanceHash:Hash = new Hash();
+		
 		private static var _intance:WealthManager;
+		private static var _loaderContext:LoaderContext;
 
-		private var _queneHash:Hash;
-		private var _requestHash:Dictionary;
+		private var wealthSignHash:Dictionary;
 
 		public function WealthManager()
 		{
-			_queneHash = new Hash();
-			_requestHash = new Dictionary();
+			wealthSignHash = new Dictionary();
+			
+			if (WealthManager._loaderContext == null) {
+				var checkPolicy:Boolean = false;
+				if (Security.sandboxType == Security.REMOTE) {
+					checkPolicy = true;
+				}
+				WealthManager._loaderContext = new LoaderContext(checkPolicy, ApplicationDomain.currentDomain);
+			}
 		}
 
-		public static function getIntance():WealthManager
+		public static function getInstance():WealthManager
 		{
 			if (_intance == null) {
 				_intance = new WealthManager();
 			}
 			return _intance;
 		}
-
-		public function addQuene(quene:WealthQuene):void
+		
+		public static function getWealthQueue(id:String):IWealthQueue
 		{
-			_queneHash.put(quene.id, quene);
+			return WealthManager.instanceHash.take(id) as IWealthQueue;
 		}
-
-		public function takeQuene(id:String):WealthQuene
+		
+		public function loadWealth(wealthVo:WealthVo, lc:LoaderContext=null):void
 		{
-			return _queneHash.take(id) as WealthQuene;
-		}
-
-		public function removeQuene(id:String):void
-		{
-			_queneHash.remove(id);
-		}
-
-		public function addRequest(path:String, oid:String, qid:String):void
-		{
-			if (path == null) {
-				return;
+			var url:String = wealthVo.url;
+			var owner:String = wealthVo.id;
+			var sign:Sign = wealthSignHash[url] as Sign;
+			if (sign == null) {
+				sign = new Sign();
+				sign.url = url;
+				wealthSignHash[url] = sign;
 			}
-			if (_requestHash[path] == null) {
-				_requestHash[path] = new Dictionary();
+			if (sign.wealths.indexOf(owner) == -1) {
+				sign.wealths.push(owner);
 			}
-			_requestHash[path][oid] = {
-				"oid":oid,
-				"qid":qid,
-				"path":path
-			}
-		}
-
-		public function hasRequest(path:String):Boolean
-		{
-			if (_requestHash[path] == null) {
-				return false;
-			}
-			for (var key:String in _requestHash[path]) {
-				return true;
-			}
-			return false;
-		}
-
-		public function takeRequestLength(path:String):int
-		{
-			var num:int;
-			for (var key:String in _requestHash[path]) {
-				num++;
-			}
-			return num;
-		}
-
-		public function removeRequest(path:String, oid:String):void
-		{
-			if (_requestHash[path] == null || _requestHash[path][oid] == null) {
-				return;
-			}
-			delete _requestHash[path][oid];
-			for (var key:String in _requestHash[path]) {
-				return;
-			}
-			delete _requestHash[path];
-		}
-
-		coder function callSuccess(path:String):void
-		{
-			var dict:Dictionary = _requestHash[path];
-			for each (var item:Object in dict) {
-				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
-				var groupId:String = item.oid.split(path+Engine.SIGN)[1];
-				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
-				if (groupVo.lock) {
-					quene.removeGroup(groupVo.id);
-					groupVo.dispose();
-					continue;
+			
+			if (!sign.isLoaded && !sign.isPended) {
+				sign.lc = lc;
+				sign.isPended = true;
+				sign.wealth_id = owner;
+				var loader:ILoader = null;
+				if (wealthVo.type == WealthConst.BING_WEALTH || wealthVo.dataFormat == URLLoaderDataFormat.BINARY) {
+					loader = new BingLoader();
+					URLLoader(loader).dataFormat = wealthVo.dataFormat;
+					loader.loadElemt(url, _callSuccess_, _callError_, _callProgress_, lc ? lc : WealthManager._loaderContext);
+				} else if (wealthVo.type == WealthConst.SWF_WEALTH || wealthVo.type == WealthConst.IMG_WEALTH) {
+					loader = new DisplayLoader();
+					loader.loadElemt(url, _callSuccess_, _callError_, _callProgress_, lc ? lc : WealthManager._loaderContext);
 				}
-				
-				var wealthVo:WealthVo = groupVo.take(item.oid);
-				wealthVo.coder::loaded = true;
-				quene.dispatchWealthEvent(WealthEvent.WEALTH_LOADED, wealthVo);
-				
-				groupVo.checkFinish();
-				if (groupVo.loaded) {
-					quene.removeGroup(wealthVo.oid);
-					quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
+				this.updateWealthState(sign.wealths, "isPended", sign.isPended);
+			} else if (!sign.isLoaded && sign.isPended) {
+				this.updateWealthState(sign.wealths, "isPended", sign.isPended);
+			} else if (sign.isLoaded) {
+				this.updateWealthState(sign.wealths, "isLoaded", sign.isLoaded);
+			}
+		}
+		
+		private function updateWealthState(wealths:Vector.<String>, prop:String, value:Boolean):void
+		{
+			var wealthVo:WealthVo = null;
+			var wealthQueue:Object = null;
+			for each (var wealth_id:String in wealths) {
+				wealthVo = WealthVo.getWealthVo(wealth_id);
+				if (wealthVo) {
+					wealthQueue = WealthManager.getWealthQueue(wealthVo.wid);
+					if (wealthQueue) {
+						
+						if ("isPended" == prop) {
+							wealthVo.coder::isPended = value;
+							wealthQueue.setStateLimitIndex();	// 减少并发线程
+						} else if ("isLoaded" == prop) {
+							wealthVo.coder::isLoaded = value;
+							if (wealthVo.isLoaded) {
+								wealthQueue._callSuccess_(wealthVo.id);
+							}
+						}
+					}
 				}
 			}
-			delete _requestHash[wealthVo.path];
 		}
 
-		coder function callError(path:String):void
+		protected function _callSuccess_(path:String):void
 		{
-			var dict:Dictionary = _requestHash[path];
-			for each (var item:Object in dict) {
-				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
-				var groupId:String = item.oid.split(path+Engine.SIGN)[1];
-				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
-				if (groupVo.lock) {
-					quene.removeGroup(groupVo.id);
-					groupVo.dispose();
-					continue;
-				}
-				
-				var wealthVo:WealthVo = groupVo.take(item.oid);
-				if (wealthVo.retryCount > 0) {
-					wealthVo.retryCount--;
-					wealthVo.coder::lock = false;
+			var sign:Sign = wealthSignHash[path] as Sign;
+			if (sign) {
+				sign.isLoaded = true;
+				this.update(sign, 1);
+			}
+		}
+		
+		protected function _callError_(path:String):void
+		{
+			var sign:Sign = wealthSignHash[path] as Sign;
+			if (sign) {
+				var wealthData:WealthVo = WealthVo.getWealthVo(sign.wealth_id);
+				if (wealthData && sign.tryNum > 0) {
+					WealthPool.disposeLoaderByWealth(sign.url);	// 关闭Loader重新加载
+					sign.tryNum--;
+					sign.isPended = false;
+					this.loadWealth(wealthData, sign.lc);
 				} else {
-					wealthVo.coder::loaded = true;
-					quene.dispatchWealthEvent(WealthEvent.WEALTH_ERROR, wealthVo);
-					
-					groupVo.checkFinish();
-					if (groupVo.loaded) {
-						quene.removeGroup(wealthVo.oid);
-						quene.dispatchWealthEvent(WealthEvent.WEALTH_GROUP_LOADED, wealthVo);
-					}
+					sign.isLoaded = true;
+					this.update(sign, 0);
 				}
 			}
-			delete _requestHash[path];
 		}
-
-		coder function proFunc(path:String, evt:ProgressEvent):void
+		
+		protected function _callProgress_(path:String, bytesLoaded:Number, bytesTotal:Number):void
 		{
-			for each (var item:Object in _requestHash[path]) {
-				var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
-				if (quene == null) {
-					break;
-				}
-				var groupId:String = item.oid.split(path+Engine.SIGN)[1];
-				var groupVo:WealthGroupVo = quene.takeGroup(groupId);
-				if (groupVo == null) {
-					break;
-				}
-				var wealthVo:WealthVo = groupVo.take(item.oid);
-				if (wealthVo == null) {
-					break;
-				}
-				quene.dispatchWealthProgressEvent(WealthProgressEvent.Progress, evt, wealthVo);
+			var sign:Sign = wealthSignHash[path] as Sign;
+			if (sign) {
+				sign.isPended = true;
+				this.update(sign, 2, bytesLoaded, bytesTotal);
 			}
 		}
-
-		coder function removeGroupRequest(groupVo:WealthGroupVo):void
+		
+		private function update(sign:Sign, state:int, bytesLoaded:Number=0, bytesTotal:Number=0):void
 		{
-			var values:Vector.<WealthVo> = groupVo.coder::values();
-			for each (var wealthVo:WealthVo in values) {
-				this.removeRequest(wealthVo.path, wealthVo.id);
-				
-				var dict:Dictionary = _requestHash[wealthVo.path];
-				for each (var item:Object in dict) {
-					var quene:WealthQuene = _queneHash.take(item.qid) as WealthQuene;
-					if (quene == null) {
-						break;
+			var wealthData:WealthVo = null;
+			var wealthQueue:Object = null;
+			if (state == 0 || state == 1) {
+				while (sign.wealths.length) {
+					wealthData = WealthVo.getWealthVo( sign.wealths.shift() );
+					if (wealthData && wealthData.isLoaded == false && Engine.enabled) {
+						wealthQueue = WealthManager.getWealthQueue(wealthData.wid);
+						if (wealthQueue) {
+							if (state == 0) {
+								wealthQueue._callError_(wealthData.id);
+							} else if (state == 1) {
+								wealthQueue._callSuccess_(wealthData.id);
+							}
+						}
 					}
-					var groupId:String = item.oid.split(item.path+Engine.SIGN)[1];
-					groupVo = quene.takeGroup(groupId);
-					if (groupVo == null) {
-						break;
-					}
-					wealthVo = groupVo.take(item.oid);
-					if (wealthVo) {
-						wealthVo.coder::lock = false;
+				}
+			} else {
+				for each (var wealthId:String in sign.wealths) {
+					wealthData = WealthVo.getWealthVo(wealthId);
+					if (wealthData) {
+						wealthQueue = WealthManager.getWealthQueue(wealthData.wid);
+						if (wealthQueue && wealthQueue.name != WealthConst.AVATAR_REQUEST_WEALTH) {
+							wealthQueue._callProgress_(wealthData.id, bytesLoaded, bytesTotal);
+						}
 					}
 				}
 			}
 		}
 
+		public function cancelWealth(wealth_id:String):void
+		{
+			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			if (wealthVo) {
+				var url:String = wealthVo.url;
+				var sign:Sign = wealthSignHash[url] as Sign;
+				if (sign) {
+					var index:int = sign.wealths.indexOf(wealth_id);
+					if (index != -1) {
+						sign.wealths.splice(index, 1);
+						if (sign.isPended && !sign.isLoaded && sign.wealths.length == 0) {
+							WealthPool.disposeLoaderByWealth(url);	// 关闭Loader
+						}
+					}
+				}
+			}
+		}
+
+	}
+}
+
+import com.engine.core.model.Proto;
+
+import flash.system.LoaderContext;
+
+class Sign extends Proto
+{
+	public var url:String;
+	public var tryNum:int = 1;
+	/**
+	 * 下载WealthData的id集合
+	 */	
+	public var wealths:Vector.<String>;
+	public var isPended:Boolean;
+	public var isLoaded:Boolean;
+	/**
+	 * 下载标示
+	 */	
+	public var wealth_id:String;
+	public var lc:LoaderContext;
+	
+	public function Sign()
+	{
+		super();
+		wealths = new Vector.<String>();
+	}
+	
+	override public function dispose():void
+	{
+		super.dispose();
+		lc = null;
+		url = null;
+		wealths = null;
+		wealth_id = null;
 	}
 }

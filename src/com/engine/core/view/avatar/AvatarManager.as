@@ -3,7 +3,7 @@
 	import com.engine.core.Engine;
 	import com.engine.core.view.role.MainChar;
 	import com.engine.core.view.scenes.Scene;
-	import com.engine.core.view.scenes.SceneConstant;
+	import com.engine.core.view.scenes.SceneConst;
 	import com.engine.namespaces.coder;
 	
 	import flash.events.Event;
@@ -141,7 +141,7 @@
 						this.tmpIndex = 0;
 					}
 					parats = this.hashArray[this.tmpIndex];
-					if (parats.type == SceneConstant.CHAR) {
+					if (parats.type == SceneConst.CHAR) {
 						parats.bodyRender();
 						parats.effectRender();
 					} else {
@@ -170,7 +170,7 @@
 		public function put(parts:AvatartParts):void
 		{
 			if (parts) {
-				if (parts.type == SceneConstant.EFFECT) {
+				if (parts.type == SceneConst.EFFECT) {
 					if (this.effectHash[parts.id] == null) {
 						this.effectHash[parts.id] = parts;
 					}

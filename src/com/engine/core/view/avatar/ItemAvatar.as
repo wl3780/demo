@@ -5,7 +5,8 @@
 	import com.engine.core.tile.square.SquarePt;
 	import com.engine.core.view.items.Item;
 	import com.engine.core.view.scenes.Scene;
-	import com.engine.core.view.scenes.SceneConstant;
+	import com.engine.core.view.scenes.SceneConst;
+	import com.engine.interfaces.display.IAvatar;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.gome.LinearUtils;
 	import com.engine.utils.gome.SquareUitls;
@@ -20,7 +21,7 @@
 	import flash.text.TextFormat;
 	import flash.utils.Dictionary;
 
-	public class ItemAvatar extends Item implements IAvatar 
+	public class ItemAvatar extends Item implements IAvatar
 	{
 
 		coder static var $itemAvataInstanceNumber:int;
@@ -37,7 +38,6 @@
 		protected var bitmapdata_mid:Bitmap;
 		protected var bitmapdata_wid:Bitmap;
 		
-		protected var $isDisposed:Boolean = false;
 		protected var _pt:SquarePt;
 		protected var _point:Point;
 		
@@ -114,15 +114,6 @@
 			super.y = val;
 			_point.y = val;
 			_pt = SquareUitls.pixelsToSquare(_point);
-		}
-
-		public function get isDisposed():Boolean
-		{
-			return this.$isDisposed;
-		}
-		public function set isDisposed(val:Boolean):void
-		{
-			this.$isDisposed = val;
 		}
 
 		public function get avatarParts():AvatartParts
@@ -216,7 +207,7 @@
 		public function setup():void
 		{
 			this.avatarParts = new AvatartParts();
-			this.avatarParts.type = SceneConstant.EFFECT;
+			this.avatarParts.type = SceneConst.EFFECT;
 			this.avatarParts.onRender = this.onRender;
 			this.avatarParts.clear = coder::clear;
 			this.avatarParts.disposeEffectsFunc = coder::disposeEffects;
@@ -230,7 +221,7 @@
 
 		coder function loadErrorFunc():void
 		{
-			if (this.avatarParts.type == SceneConstant.EFFECT && this.isSceneItem) {
+			if (this.avatarParts.type == SceneConst.EFFECT && this.isSceneItem) {
 				this.dispose();
 			}
 		}
@@ -256,7 +247,7 @@
 				return null;
 			}
 			if (avatarNum) {
-				this.avatarParts.type = SceneConstant.EFFECT;
+				this.avatarParts.type = SceneConst.EFFECT;
 				AvatarManager.coder::getInstance().put(this.avatarParts);
 				AvatarAssetManager.getInstance().loadAvatar(avatarType, avatarNum, this.avatarParts.id);
 			} else {
@@ -547,7 +538,7 @@
 			this.isDisposed = true;
 			_pt = null;
 			if (Scene.scene) {
-				Scene.scene.remove(this);
+				Scene.scene.removeItem(this);
 			}
 			ItemAvatar.coder::$itemAvataInstanceNumber--;
 		}

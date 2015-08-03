@@ -3,7 +3,7 @@
 	import com.engine.core.AvatarTypes;
 	import com.engine.core.view.avatar.ItemAvatar;
 	import com.engine.core.view.role.Char;
-	import com.engine.core.view.scenes.SceneConstant;
+	import com.engine.core.view.scenes.SceneConst;
 	import com.engine.utils.gome.LinearUtils;
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Linear;
@@ -39,7 +39,7 @@
 					p.x = (p.x + (((Math.random() * (area / 2)) >> 0) * dir[((Math.random() * 2) >> 0)]));
 					p.y = (p.y + (((Math.random() * (area / 2)) >> 0) * dir[((Math.random() * 2) >> 0)]));
 				}
-				getEffect(effect_id, p, null, SceneConstant.MIDDLE_LAYER);
+				getEffect(effect_id, p, null, SceneConst.MIDDLE_LAYER);
 				num_--;
 			}
 			var array:Array = [];
@@ -72,7 +72,7 @@
 				var _local_1:Point = array.shift();
 				_local_1.x = (_local_1.x + (((Math.random() * 1) >> 0) * arr[((Math.random() * 2) >> 0)]));
 				_local_1.y = (_local_1.y + (((Math.random() * 1) >> 0) * arr[((Math.random() * 2) >> 0)]));
-				var _local_2:ItemAvatar = FightUtils.getEffect(effect_id, _local_1, null, SceneConstant.BOTTOM_LAYER);
+				var _local_2:ItemAvatar = FightUtils.getEffect(effect_id, _local_1, null, SceneConst.BOTTOM_LAYER);
 			}
 			array = LinearUtils.lineAttck(startPoint, endPoint, interval);
 			arr = [1, -1];
@@ -101,7 +101,7 @@
 			_playEndFunc = playEndFunc;
 			var p:Point = LinearUtils.pointBetweenPoint(endPoint, startPoint, -100);
 			p.y = (p.y - 60);
-			effect = getEffect(pass_effect, p, startPoint, SceneConstant.TOP_LAYER);
+			effect = getEffect(pass_effect, p, startPoint, SceneConst.TOP_LAYER);
 			var _x:int = endPoint.x;
 			var _y:int = endPoint.y;
 			var start_time:Number = getTimer();
@@ -190,7 +190,7 @@
 			_playEndFunc = playEndFunc;
 			var p:Point = LinearUtils.pointBetweenPoint(new Point(attatched.x, attatched.y), startPoint, -60);
 			p.y = (p.y - 60);
-			effect = getEffect(pass_effect, p, startPoint, SceneConstant.TOP_LAYER);
+			effect = getEffect(pass_effect, p, startPoint, SceneConst.TOP_LAYER);
 			_x = attatched.x;
 			_y = (attatched.y - 60);
 			var start_time:Number = getTimer();
@@ -228,7 +228,7 @@
 			var dis:int = Point.distance(startPoint, endPoint);
 			time = (dis / 600);
 			if (num == 1) {
-				effect = getEffect(pass_effect, startPoint, new Point(startPoint.x, (startPoint.y - 60)), SceneConstant.TOP_LAYER);
+				effect = getEffect(pass_effect, startPoint, new Point(startPoint.x, (startPoint.y - 60)), SceneConst.TOP_LAYER);
 				_x = endPoint.x;
 				_y = (endPoint.y - 60);
 				TweenLite.to(effect, time, {
@@ -258,7 +258,7 @@
 					var p:Point = arr.shift();
 					var _x:int = p.x;
 					var _y:int = p.y;
-					effect = getEffect(pass_effect, startPoint, p, SceneConstant.TOP_LAYER);
+					effect = getEffect(pass_effect, startPoint, p, SceneConst.TOP_LAYER);
 					TweenLite.to(effect, time, {
 						"x":_x,
 						"y":_y,
