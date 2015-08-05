@@ -166,14 +166,14 @@
 				this.parent.removeChild(this);
 			}
 			this.removeTotalOrders();
-			DisplayObjectPort.remove(this);
+			DisplayObjectPort.remove(this.id);
 			_id_ = null;
 			_oid_ = null;
 			_type_ = null;
 			_proto_ = null;
 			_isDisposed_ = true;
 			this.graphics.clear();
-			DisplayObjectUtil.removeDisplayObject(this);
+			DisplayObjectUtil.clearDisplayObject(this);
 		}
 		
 		override public function toString():String

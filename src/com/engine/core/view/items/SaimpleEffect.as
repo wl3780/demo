@@ -10,7 +10,7 @@ package com.engine.core.view.items
     import com.engine.core.view.scenes.Scene;
     import com.engine.utils.Hash;
     
-    import core.HeartbeatFactory;
+    import com.engine.core.HeartbeatFactory;
     
     import flash.display.BitmapData;
     import flash.geom.Matrix;

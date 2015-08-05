@@ -7,6 +7,10 @@
 		 */
 		public static const WALK:String = "walk";
 		/**
+		 * 跑
+		 */		
+		public static const RUN:String = "run";
+		/**
 		 * 站立
 		 */
 		public static const STAND:String = "stand";
@@ -51,9 +55,18 @@
 		 */		
 		public static const SKILL3:String = "skill3";
 
+		public static const AttackWarm:String = "attack_warm";
 		
-		public static const All_Actions:Array = [
-			WALK,STAND,DEATH,QUNGONG,ATTACK,FLY,HIT,COLLECTION,MEDITATION,SKILL1,SKILL2,SKILL3
-			];
+		public static const WalkWarm:String = "walk_warm";
+		
+		public static const RunWarm:String = "run_warm";
+		
+		public static const SkillWarm:String = "skill_warm";
+		
+		public static const warmHash:Object = {
+			attack:"attack_warm",
+			walk:"walk_warm",
+			run:"run_warm"
+		}
 	}
 }

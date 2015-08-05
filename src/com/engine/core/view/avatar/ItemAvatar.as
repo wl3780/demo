@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.avatar
 {
-	import com.engine.core.AvatarTypes;
+	import com.engine.core.AvatarUnitTypes;
 	import com.engine.core.Engine;
 	import com.engine.core.tile.square.SquarePt;
 	import com.engine.core.view.items.Item;
@@ -253,22 +253,22 @@
 			} else {
 				this.avatarParts.removeAvatarPartByType(avatarType);
 				switch (avatarType) {
-					case AvatarTypes.BODY_TYPE:
+					case AvatarUnitTypes.BODY_TYPE:
 						if (this.bitmapdata_mid) {
 							this.bitmapdata_mid.bitmapData = null;
 						}
 						break;
-					case AvatarTypes.WEAPON_TYPE:
+					case AvatarUnitTypes.WEAPON_TYPE:
 						if (this.bitmapdata_wid) {
 							this.bitmapdata_wid.bitmapData = null;
 						}
 						break;
-					case AvatarTypes.MOUNT_TYPE:
+					case AvatarUnitTypes.MOUNT_TYPE:
 						if (this.bitmapdata_midm) {
 							this.bitmapdata_midm.bitmapData = null;
 						}
 						break;
-					case AvatarTypes.WING_TYPE:
+					case AvatarUnitTypes.WING_TYPE:
 						if (this.bitmapdata_wgid) {
 							this.bitmapdata_wgid.bitmapData = null;
 						}
@@ -369,7 +369,7 @@
 			}
 			if (this.stageIntersects) {
 				var bmp:Bitmap;
-				if (avatarType == AvatarTypes.BODY_TYPE) {
+				if (avatarType == AvatarUnitTypes.BODY_TYPE) {
 					if (this.bitmapdata_mid == null) {
 						this.bitmapdata_mid = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -386,7 +386,7 @@
 						}
 					}
 					bmp = this.bitmapdata_mid;
-				} else if (avatarType == AvatarTypes.WEAPON_TYPE) {
+				} else if (avatarType == AvatarUnitTypes.WEAPON_TYPE) {
 					if (this.bitmapdata_wid == null) {
 						this.bitmapdata_wid = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -403,7 +403,7 @@
 						}
 					}
 					bmp = this.bitmapdata_wid;
-				} else if (avatarType == AvatarTypes.MOUNT_TYPE) {
+				} else if (avatarType == AvatarUnitTypes.MOUNT_TYPE) {
 					if (this.bitmapdata_midm == null) {
 						this.bitmapdata_midm = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -420,7 +420,7 @@
 						}
 					}
 					bmp = this.bitmapdata_midm;
-				} else if (avatarType == AvatarTypes.WING_TYPE) {
+				} else if (avatarType == AvatarUnitTypes.WING_TYPE) {
 					if (this.bitmapdata_midm == null) {
 						this.bitmapdata_wgid = new Bitmap();
 						if (this.bitmapdata_midm) {
@@ -437,7 +437,7 @@
 						}
 					}
 					bmp = this.bitmapdata_wgid;
-				} else if (avatarType == AvatarTypes.EFFECT_TYPE) {
+				} else if (avatarType == AvatarUnitTypes.EFFECT_TYPE) {
 					if (this.eid_avatarBitmaps == null) {
 						this.eid_avatarBitmaps = new Dictionary();
 					}
@@ -482,13 +482,13 @@
 				return;
 			}
 			switch (avatarType) {
-				case AvatarTypes.EFFECT_TYPE:
+				case AvatarUnitTypes.EFFECT_TYPE:
 					return;
-				case AvatarTypes.BODY_TYPE:
+				case AvatarUnitTypes.BODY_TYPE:
 					return;
-				case AvatarTypes.WEAPON_TYPE:
+				case AvatarUnitTypes.WEAPON_TYPE:
 					return;
-				case AvatarTypes.MOUNT_TYPE:
+				case AvatarUnitTypes.MOUNT_TYPE:
 					return;
 			}
 		}

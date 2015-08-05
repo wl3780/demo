@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.avatar
 {
-	import com.engine.core.AvatarTypes;
+	import com.engine.core.AvatarUnitTypes;
 	import com.engine.core.Engine;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
@@ -58,7 +58,7 @@
 			this.avatarType = avatarId.split("_")[0];
 			this.action = xml.@id;
 			this.frames = xml.@frames;
-			if (avatarType != AvatarTypes.EFFECT_TYPE) {
+			if (avatarType != AvatarUnitTypes.EFFECT_TYPE) {
 				this.speed = int(xml.@speed) / Engine._Lessen_Frame_;
 			} else {
 				this.speed = xml.@speed;

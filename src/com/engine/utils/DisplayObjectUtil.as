@@ -10,13 +10,13 @@
 	public class DisplayObjectUtil 
 	{
 		
-		public static function removeDisplayObject(target:DisplayObjectContainer):void
+		public static function clearDisplayObject(target:DisplayObjectContainer):void
 		{
 			var child:DisplayObject = null;
 			while (target.numChildren) {
 				child = target.removeChildAt(target.numChildren - 1);
 				if ((child is DisplayObjectContainer) && (child as DisplayObjectContainer).numChildren) {
-					removeDisplayObject(child as DisplayObjectContainer);
+					clearDisplayObject(child as DisplayObjectContainer);
 				} else if (child is IDisplay) {
 					IDisplay(child).dispose();
 				}

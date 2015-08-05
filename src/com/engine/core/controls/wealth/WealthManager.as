@@ -91,7 +91,7 @@
 			var wealthVo:WealthVo = null;
 			var wealthQueue:Object = null;
 			for each (var wealth_id:String in wealths) {
-				wealthVo = WealthVo.getWealthVo(wealth_id);
+				wealthVo = WealthVo.takeWealthVo(wealth_id);
 				if (wealthVo) {
 					wealthQueue = WealthManager.getWealthQueue(wealthVo.wid);
 					if (wealthQueue) {
@@ -123,7 +123,7 @@
 		{
 			var sign:Sign = wealthSignHash[path] as Sign;
 			if (sign) {
-				var wealthData:WealthVo = WealthVo.getWealthVo(sign.wealth_id);
+				var wealthData:WealthVo = WealthVo.takeWealthVo(sign.wealth_id);
 				if (wealthData && sign.tryNum > 0) {
 					WealthPool.disposeLoaderByWealth(sign.url);	// 关闭Loader重新加载
 					sign.tryNum--;
@@ -151,7 +151,7 @@
 			var wealthQueue:Object = null;
 			if (state == 0 || state == 1) {
 				while (sign.wealths.length) {
-					wealthData = WealthVo.getWealthVo( sign.wealths.shift() );
+					wealthData = WealthVo.takeWealthVo( sign.wealths.shift() );
 					if (wealthData && wealthData.isLoaded == false && Engine.enabled) {
 						wealthQueue = WealthManager.getWealthQueue(wealthData.wid);
 						if (wealthQueue) {
@@ -165,7 +165,7 @@
 				}
 			} else {
 				for each (var wealthId:String in sign.wealths) {
-					wealthData = WealthVo.getWealthVo(wealthId);
+					wealthData = WealthVo.takeWealthVo(wealthId);
 					if (wealthData) {
 						wealthQueue = WealthManager.getWealthQueue(wealthData.wid);
 						if (wealthQueue && wealthQueue.name != WealthConst.AVATAR_REQUEST_WEALTH) {
@@ -178,7 +178,7 @@
 
 		public function cancelWealth(wealth_id:String):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo) {
 				var url:String = wealthVo.url;
 				var sign:Sign = wealthSignHash[url] as Sign;

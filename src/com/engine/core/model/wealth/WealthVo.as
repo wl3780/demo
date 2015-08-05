@@ -34,7 +34,7 @@
 			WealthVo.instanceHash.put(this.id, this);
 		}
 		
-		public static function getWealthVo(id:String):WealthVo
+		public static function takeWealthVo(id:String):WealthVo
 		{
 			return WealthVo.instanceHash.take(id) as WealthVo;
 		}
@@ -132,6 +132,12 @@
 		public function get type():String
 		{
 			return _type;
+		}
+		
+		override public function dispose():void
+		{
+			WealthVo.instanceHash.remove(this.id);
+			super.dispose();
 		}
 		
 	}

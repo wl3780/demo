@@ -1,6 +1,6 @@
 ﻿package com.engine.core
 {
-	public class AvatarTypes 
+	public class AvatarUnitTypes 
 	{
 		/**
 		 * eid

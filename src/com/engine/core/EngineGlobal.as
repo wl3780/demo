@@ -1,5 +1,7 @@
 ﻿package com.engine.core
 {
+	import com.engine.core.view.avatar.data.AvatarActionFormat;
+	import com.engine.core.view.avatar.data.AvatarActionFormatGroup;
 	
 
 	public class EngineGlobal
@@ -27,6 +29,22 @@
 		public static const wid:String = "wid";
 		public static const wgid:String = "wgid";
 		public static const midm:String = "midm";
+		
+		public static var SHADOW_ID:String = "npc054";
+		public static var MALE_SHADOW:String = "ym1001";
+		public static var FAMALE_SHADOW:String = "yw1001";
+		
+		public static var shadowAvatarGroupMale:AvatarActionFormatGroup;
+		public static var shadowAvatarGroupFamale:AvatarActionFormatGroup;
+		public static var shadowAvatarGroupBaseMale:AvatarActionFormatGroup;
+		public static var shadowAvatarGroupBaseFamale:AvatarActionFormatGroup;
+		public static var shadowAvatarGroup:AvatarActionFormatGroup;
+		
+		public static var avatarData:AvatarActionFormat;
+		public static var avatarDataMale:AvatarActionFormat;
+		public static var avatarDataFamale:AvatarActionFormat;
+		public static var avatarDataBaseMale:AvatarActionFormat;
+		public static var avatarDataBaseFamale:AvatarActionFormat;
 		
 		public static const DELIMITER:String = "&";
 		public static const SM_EXTENSION:String = ".sm";
@@ -59,10 +77,10 @@
 		{
 			return AVATAR_ASSETS_DIR + "output/" + idName + SM_EXTENSION;
 		}
-		public static function getAvatarAssetsPath(idName:String):String
+		public static function getAvatarAssetsPath(idName:String, action:String, dir:int):String
 		{
 			var idType:String = idName.split(Engine.LINE)[0];
-			return AVATAR_ASSETS_DIR + TYPE_REFLEX[idType] + "/" + idName + TMP_EXTENSION;
+			return AVATAR_ASSETS_DIR + TYPE_REFLEX[idType] + "/" + idName + Engine.LINE + action + Engine.LINE + dir + TMP_EXTENSION;
 		}
 		
 		public static function getMapConfigPath(map_id:String):String

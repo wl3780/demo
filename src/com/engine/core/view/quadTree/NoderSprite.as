@@ -35,7 +35,7 @@
 			if (val == super.x) {
 				return;
 			}
-			super.x = Number(val.toFixed(1));
+			super.x = val;
 			this.updata(val, super.y, this.nodeKey);
 		}
 
@@ -44,7 +44,7 @@
 			if (val == super.y) {
 				return;
 			}
-			super.y = Number(val.toFixed(1));
+			super.y = val;
 			this.updata(super.x, val, this.nodeKey);
 		}
 

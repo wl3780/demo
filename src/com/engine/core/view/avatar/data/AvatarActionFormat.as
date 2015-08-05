@@ -23,6 +23,9 @@
 		public var hitFrame:int;
 		public var totalDir:int;
 		public var totalTime:int;
+		public var isDisposed:Boolean = false;
+		public var path:String;
+		
 		public var intervalTimes:Vector.<int>;
 		public var txs:Vector.<Vector.<int>>;
 		public var tys:Vector.<Vector.<int>>;
@@ -32,8 +35,6 @@
 		public var max_rects:Vector.<Vector.<uint>>;
 		public var dirOffsetX:Vector.<int>;
 		public var dirOffsetY:Vector.<int>;
-		public var isDisposed:Boolean = false;
-		public var path:String;
 		
 		private var actState:Object;
 
@@ -49,12 +50,7 @@
 			return _instanceHash_;
 		}
 		
-		public static function takeAvatarDataFormat(id:String):AvatarActionFormat
-		{
-			return AvatarActionFormat._instanceHash_.take(id) as AvatarActionFormat;
-		}
-		
-		public static function createAvatarDataFormat():AvatarActionFormat
+		public static function createAvatarActionFormat():AvatarActionFormat
 		{
 			var result:AvatarActionFormat = null;
 			if (_recoverQueue_.length) {
@@ -67,6 +63,11 @@
 				result.init();
 			}
 			return result;
+		}
+		
+		public static function takeAvatarActionFormat(id:String):AvatarActionFormat
+		{
+			return AvatarActionFormat._instanceHash_.take(id) as AvatarActionFormat;
 		}
 
 		public function resetActReady():void
@@ -88,7 +89,6 @@
 		
 		public function init():void
 		{
-			isDisposed = false;
 			offset_x = 0;
 			offset_y = 0;
 			actionName = "";
@@ -98,6 +98,7 @@
 			skillFrame = 0;
 			hitFrame = 0;
 			totalDir = 0;
+			
 			intervalTimes = new Vector.<int>();
 			txs = new Vector.<Vector.<int>>();
 			tys = new Vector.<Vector.<int>>();
@@ -111,19 +112,21 @@
 		
 		override public function clone():Object
 		{
-			var result:AvatarActionFormat = AvatarActionFormat.createAvatarDataFormat();
+			var result:AvatarActionFormat = AvatarActionFormat.createAvatarActionFormat();
 			result.bitmapdatas = this.bitmapdatas.slice();
 			return result;
 		}
 		
 		public function recover():void
 		{
-			if (isDisposed) {
+			if (this.isDisposed) {
 				return;
 			}
-			this.dispose();
 			if (_recoverQueue_.length <= _recoverIndex_) {
+				AvatarActionFormat._instanceHash_.remove(this.id);
 				_recoverQueue_.push(this);
+			} else {
+				this.dispose();
 			}
 		}
 		
@@ -131,7 +134,7 @@
 		{
 			AvatarActionFormat._instanceHash_.remove(this.id);
 			super.dispose();
-			isDisposed = true;
+			this.isDisposed = true;
 		}
 		
 		public function getLink(dir:int, frame:int):String

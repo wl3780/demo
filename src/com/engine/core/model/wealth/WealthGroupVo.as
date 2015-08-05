@@ -1,5 +1,6 @@
 ﻿package com.engine.core.model.wealth
 {
+	import com.engine.core.Engine;
 	import com.engine.core.controls.wealth.WealthConst;
 	import com.engine.core.model.Proto;
 	import com.engine.namespaces.coder;
@@ -36,6 +37,7 @@
 			var group:WealthGroupVo = null;
 			if (_recoverQueue_.length) {
 				group = _recoverQueue_.pop();
+				group.coder::id = Engine.getSoleId();
 				WealthGroupVo.instanceHash.put(group.id, group);
 			} else {
 				group = new WealthGroupVo();
@@ -69,6 +71,16 @@
 				_wealthList.slice(idx, 1);
 			}
 			return wealthVo;
+		}
+		
+		public function hashWealth(url:String):Boolean
+		{
+			for each (var wealthVo:WealthVo in _wealthList) {
+				if (wealthVo.url == url) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public function wealths():Array
@@ -126,6 +138,12 @@
 		{
 			_wealthList.sortOn(names, options);
 		}
+		
+		public function resetWealths():void
+		{
+			_wealthList.length = 0;
+			_wealthHash = new Dictionary();
+		}
 
 		override public function dispose():void
 		{
@@ -136,6 +154,7 @@
 			_wealthHash = new Dictionary();
 			_wealthList.length = 0;
 			_loaded = false;
+			super.dispose();
 			this.type = WealthConst.PRIORITY_LEVEL;
 		}
 		

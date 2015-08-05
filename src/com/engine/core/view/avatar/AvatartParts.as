@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.avatar
 {
-	import com.engine.core.AvatarTypes;
+	import com.engine.core.AvatarUnitTypes;
 	import com.engine.core.DirConst;
 	import com.engine.core.Engine;
 	import com.engine.core.model.Proto;
@@ -216,7 +216,7 @@
 						}
 						_totalFrames = param.frames;
 						var playType:String = param.avatarType;
-						if (_currentFrame >= param.frames && (!this.isFlyMode || playType != AvatarTypes.MOUNT_TYPE)) {
+						if (_currentFrame >= param.frames && (!this.isFlyMode || playType != AvatarUnitTypes.MOUNT_TYPE)) {
 							if (this.specialMode == 1 && _currentFrame >= param.frames) {
 								_currentFrame = 0;
 							} else if (!(_currRestrict && _currRestrict.state == playAction) && _currRestrict.stopInLastFrame) {
@@ -244,7 +244,7 @@
 						}
 						var bmd:BitmapData;
 						var playFrame:int;
-						if (playType == AvatarTypes.MOUNT_TYPE && this.isFlyMode) {
+						if (playType == AvatarUnitTypes.MOUNT_TYPE && this.isFlyMode) {
 							playFrame = param.frames - 1;
 							if (_fly_currentFrame > playFrame) {
 								_fly_currentFrame = 0;
@@ -253,7 +253,7 @@
 						} else {
 							bmd = param.getBitmapData(this.dir, _currentFrame);
 						}
-						if (this.isFlyMode && playType == AvatarTypes.MOUNT_TYPE && playFrame < _currentFrame) {
+						if (this.isFlyMode && playType == AvatarUnitTypes.MOUNT_TYPE && playFrame < _currentFrame) {
 							bmd = param.getBitmapData(this.dir, _fly_currentFrame);
 						}
 						if (param.maxRects[this.dir] == null) {
@@ -270,7 +270,7 @@
 						}
 						
 						if (param.replay > 0 || param.replay == -1) {
-							if (this.isFlyMode && playType == AvatarTypes.MOUNT_TYPE) {
+							if (this.isFlyMode && playType == AvatarUnitTypes.MOUNT_TYPE) {
 								this.onRender(this.id, this.dir, bmd, rect, param.avatarType, param.id, param.txs[this.dir][_fly_currentFrame], param.tys[this.dir][_fly_currentFrame]);
 							} else {
 								this.onRender(this.id, this.dir, bmd, rect, param.avatarType, param.id, param.txs[this.dir][_currentFrame], param.tys[this.dir][_currentFrame]);
@@ -461,7 +461,7 @@
 			for each (var dict:Dictionary in this.avatarParts) {
 				for (var subKey:String in dict) {
 					var subType:String = subKey.split("_")[0];
-					if (subType == avatarType && subType != AvatarTypes.EFFECT_TYPE && avatarId != subKey) {
+					if (subType == avatarType && subType != AvatarUnitTypes.EFFECT_TYPE && avatarId != subKey) {
 						var param:AvatarParam = dict[subKey];
 						delete dict[subKey];
 						if (param) {
@@ -510,7 +510,7 @@
 			var tmpAction:String = param.action;
 			var tmpOid:String = param.oid;
 			if (tmpOid) {
-				if (param.avatarType == AvatarTypes.EFFECT_TYPE) {
+				if (param.avatarType == AvatarUnitTypes.EFFECT_TYPE) {
 					if (this.effectsParts == null) {
 						this.effectsParts = new Dictionary();
 					}
@@ -521,13 +521,13 @@
 					this.eid_len++;
 				} else {
 					var itemType:String = tmpOid.split("_")[0];
-					if (itemType == AvatarTypes.BODY_TYPE) {
+					if (itemType == AvatarUnitTypes.BODY_TYPE) {
 						this.mid_id = tmpOid;
 					}
-					if (itemType == AvatarTypes.MOUNT_TYPE) {
+					if (itemType == AvatarUnitTypes.MOUNT_TYPE) {
 						this.midm_id = tmpOid;
 					}
-					if (itemType == AvatarTypes.WEAPON_TYPE) {
+					if (itemType == AvatarUnitTypes.WEAPON_TYPE) {
 						this.wid_id = tmpOid;
 					}
 					if (this.avatarParts == null) {

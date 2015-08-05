@@ -143,7 +143,7 @@
 		
 		internal final function _callSuccess_(wealth_id:String):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo && wealthVo.isLoaded == false) {
 				_limitIndex++;
 				if (_limitIndex > _limitIndexMax) {
@@ -158,7 +158,7 @@
 		
 		internal final function _callError_(wealth_id:String):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo && wealthVo.isLoaded == false) {
 				_limitIndex++;
 				if (_limitIndex > _limitIndexMax) {
@@ -173,7 +173,7 @@
 		
 		internal final function _callProgress_(wealth_id:String, bytesLoaded:Number, bytesTotal:Number):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo) {
 				this.dispatchWealthProgressEvent(wealthVo.url, wealth_id, wealthVo.oid, bytesLoaded, bytesTotal);
 			}

@@ -12,16 +12,16 @@
 		private static var _recoverQueue_:Vector.<AvatarActionFormatGroup> = new Vector.<AvatarActionFormatGroup>();
 		private static var _recoverIndex_:int = 50;
 
-		public var isCreateWarn:Boolean = true;
+		public var idName:String;
 		public var owner:String;
 		public var type:String;
 		public var isLoaded:Boolean;
-		public var isPend:Boolean;
+		public var isPended:Boolean;
 		public var isDisposed:Boolean = false;
 		public var quoteQueue:Vector.<String>;
-		public var idName:String;
 		public var wealth_path:String;
 		public var wealth_id:String;
+		public var isCreateWarn:Boolean = true;
 		
 		private var _actionGroup:Hash;
 
@@ -33,7 +33,7 @@
 			AvatarActionFormatGroup._instanceHash_.put(this.id, this);
 		}
 		
-		public static function createAvatarActionDataGroup():AvatarActionFormatGroup
+		public static function createAvatarActionFormatGroup():AvatarActionFormatGroup
 		{
 			var result:AvatarActionFormatGroup = null;
 			if (_recoverQueue_.length) {
@@ -46,14 +46,19 @@
 			return result;
 		}
 		
-		public static function takeAvatarDataFormatGroup(id:String):AvatarActionFormatGroup
+		public static function takeAvatarActionFormatGroup(id:String):AvatarActionFormatGroup
 		{
 			return AvatarActionFormatGroup._instanceHash_.take(id) as AvatarActionFormatGroup;
 		}
 		
-		public static function removeAvatarDataFormatGroup(id:String):void
+		public static function removeAvatarActionFormatGroup(id:String):void
 		{
 			AvatarActionFormatGroup._instanceHash_.remove(id);
+		}
+		
+		public function addAction(action:String, format:AvatarActionFormat):void
+		{
+			_actionGroup.put(action, format);
 		}
 
 		public function takeAction(action:String):AvatarActionFormat
@@ -64,11 +69,6 @@
 		public function removeAction(action:String):AvatarActionFormat
 		{
 			return _actionGroup.remove(action) as AvatarActionFormat;
-		}
-		
-		public function addAction(action:String, dataFormat:AvatarActionFormat):void
-		{
-			_actionGroup.put(action, dataFormat);
 		}
 		
 		public function hasAction(action:String):Boolean
@@ -100,7 +100,8 @@
 			if (_recoverQueue_.length < _recoverIndex_) {
 				_actionGroup.reset();
 				this.quoteQueue.length = 0;
-				_recoverQueue_.push(this);
+				AvatarActionFormatGroup._recoverQueue_.push(this);
+				AvatarActionFormatGroup._instanceHash_.remove(this.id);
 			} else {
 				this.dispose();
 			}

@@ -1,7 +1,13 @@
 ﻿package com.engine.core.view.avatar.data
 {
 	import com.engine.core.Engine;
+	import com.engine.core.EngineGlobal;
 	import com.engine.core.model.Proto;
+	import com.engine.core.view.avatar.AvatarRequestElisor;
+	import com.engine.core.view.avatar.AvatarUnit;
+	import com.engine.core.view.avatar.AvatarUnitDisplay;
+	import com.engine.core.view.role.Char;
+	import com.engine.interfaces.display.IAvatar;
 	import com.engine.namespaces.coder;
 	import com.engine.utils.Hash;
 	
@@ -133,7 +139,7 @@
 		public function set avatarDataFormatGroup_id(value:String):void
 		{
 			_avatarDataFormatGroup_id_ = value;
-			_dataFormatGroup_ = AvatarActionFormatGroup.takeAvatarDataFormatGroup(value);
+			_dataFormatGroup_ = AvatarActionFormatGroup.takeAvatarActionFormatGroup(value);
 		}
 		
 		public function getBitmapData(dir:uint, frame:uint):BitmapData

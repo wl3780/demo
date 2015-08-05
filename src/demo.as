@@ -8,7 +8,7 @@
 	import com.engine.core.view.avatar.Avatar;
 	import com.engine.core.view.role.Char;
 	
-	import core.HeartbeatFactory;
+	import com.engine.core.HeartbeatFactory;
 	
 	import flash.display.Graphics;
 	import flash.display.Shape;

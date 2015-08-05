@@ -1,15 +1,14 @@
 ﻿package com.engine.core
 {
-	import com.engine.namespaces.coder;
 	import com.engine.utils.FPSUtils;
 	import com.engine.utils.SuperKey;
-	
-	import core.HeartbeatFactory;
 	
 	import flash.display.BitmapData;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
 	import flash.geom.Rectangle;
+	import flash.system.System;
+	import flash.utils.getTimer;
 
 	public class Engine 
 	{
@@ -33,8 +32,7 @@
 		public static var EYE_SHOT_RECT:Rectangle = new Rectangle(0, 0, 0x0400, 0x0300);
 		
 		public static var stage:Stage;
-		/** 四叉树id */
-		public static var SCENE_ITEM_NODER:String = "SCENE_ITEM_NODER";
+		
 		public static var CORE_RECT:Rectangle;
 		public static var _Lessen_Frame_:int = 1;
 		public static var stopMove:Boolean = true;
@@ -55,8 +53,11 @@
 		
 		private static var coreTarget:DisplayObjectContainer;
 		private static var INSTANCE_INDEX:int = 0;
+		
+		private static var _Memory_:Number = 0;
+		private static var _MemoryIndex_:Number = 0;
 
-		coder static function nextInstanceIndex():int
+		private static function nextInstanceIndex():int
 		{
 			if (INSTANCE_INDEX > 2147483646) {
 				INSTANCE_INDEX = 0;
@@ -67,7 +68,16 @@
 		
 		public static function getSoleId():String
 		{
-			return Engine.coder::nextInstanceIndex().toString(16);
+			return Engine.nextInstanceIndex().toString(16);
+		}
+		
+		public static function get currMemory():int
+		{
+			if ((getTimer() - _MemoryIndex_) > 30000) {
+				_MemoryIndex_ = getTimer();
+				_Memory_ = System.privateMemory / 0x0400 / 0x0400;
+			}
+			return _Memory_;
 		}
 
 		public static function setup(target:DisplayObjectContainer, path:String, lang:String="zh_CN", ver:String="v1.0"):void

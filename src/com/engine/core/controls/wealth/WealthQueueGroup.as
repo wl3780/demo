@@ -118,7 +118,7 @@
 		
 		public function removeWealthById(wealth_id:String):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo && wealthVo.oid) {
 				var group:WealthGroupVo = _wealthGroupHash.take(wealthVo.oid) as WealthGroupVo;
 				if (group) {
@@ -165,7 +165,7 @@
 
 		internal final function _callSuccess_(wealth_id:String):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo) {
 				_limitIndex++;
 				wealthVo.coder::isLoaded = true;
@@ -181,7 +181,7 @@
 		
 		internal final function _callError_(wealth_id:String):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo) {
 				_limitIndex++;
 				wealthVo.coder::isLoaded = true;
@@ -197,7 +197,7 @@
 		
 		internal final function _callProgress_(wealth_id:String, bytesLoaded:Number, bytesTotal:Number):void
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo) {
 				this.dispatchWealthProgressEvent(wealthVo.url, wealth_id, wealthVo.oid, bytesLoaded, bytesTotal);
 			}
@@ -225,7 +225,7 @@
 		
 		private function updateWealthGroup(wealth_id:String):WealthGroupVo
 		{
-			var wealthVo:WealthVo = WealthVo.getWealthVo(wealth_id);
+			var wealthVo:WealthVo = WealthVo.takeWealthVo(wealth_id);
 			if (wealthVo) {
 				var group:WealthGroupVo = this.takeWealthGroup(wealthVo.oid);
 				group.checkTotalFinish();

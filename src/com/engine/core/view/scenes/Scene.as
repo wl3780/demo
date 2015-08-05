@@ -1,6 +1,6 @@
 ﻿package com.engine.core.view.scenes
 {
-	import com.engine.core.AvatarTypes;
+	import com.engine.core.AvatarUnitTypes;
 	import com.engine.core.Engine;
 	import com.engine.core.RecoverUtils;
 	import com.engine.core.model.map.SquareMapData;
@@ -162,10 +162,10 @@
 				} else {
 					char.hp_height = 150;
 				}
-				char.loadAvatarPart(AvatarTypes.BODY_TYPE, modelId);
-				char.loadAvatarPart(AvatarTypes.WEAPON_TYPE, weaponId);
-				char.loadAvatarPart(AvatarTypes.FLY_TYPE, wingId);
-				char.loadAvatarPart(AvatarTypes.MOUNT_TYPE, mountId);
+				char.loadAvatarPart(AvatarUnitTypes.BODY_TYPE, modelId);
+				char.loadAvatarPart(AvatarUnitTypes.WEAPON_TYPE, weaponId);
+				char.loadAvatarPart(AvatarUnitTypes.FLY_TYPE, wingId);
+				char.loadAvatarPart(AvatarUnitTypes.MOUNT_TYPE, mountId);
 				char.avatarParts.bodyRender(true);
 				this.addItem(char, SceneConst.MIDDLE_LAYER);
 			}

@@ -8,7 +8,7 @@ package com.engine.utils
     import com.engine.core.view.DisplaySprite;
     import flash.display.Shape;
     import flash.utils.Dictionary;
-    import core.HeartbeatFactory;
+    import com.engine.core.HeartbeatFactory;
     import flash.utils.getTimer;
     import flash.events.Event;
     import flash.display.Graphics;
